@@ -20,7 +20,7 @@ You can also watch this [video](https://www.youtube.com/watch?v=f09c-nw15K8&t=16
 - Confirm that Flutter has been installed with the following command: flutter doctor
 
 ### Get a working local copy of the Afterhours code
-- Navigate to the directory where you want to store your local copy of the Afterhours code, then create a local copy of the Afterhours code: `git clone [https://github.com/PraxisAppDev/afterhours.git](https://github.com/PraxisAppDev/mobile-application.git)`
+- Navigate to the directory where you want to store your local copy of the Afterhours code, then create a local copy of the Afterhours code: `git clone https://github.com/PraxisAppDev/mobile-application.git(https://github.com/PraxisAppDev/mobile-application.git)`
 - Once you open the code in an IDE of your choice (VS Code, Android Studio, etc.), navigate to the “client” directory and run flutter pub get to get Dart packages for Flutter
 
 ### Using the app
