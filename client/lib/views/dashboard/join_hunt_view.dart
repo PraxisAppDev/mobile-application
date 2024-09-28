@@ -7,6 +7,7 @@ import 'package:praxis_afterhours/apis/api_utils/token.dart';
 import 'package:praxis_afterhours/constants/colors.dart';
 import 'package:praxis_afterhours/reusables/hunt_structure.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_options/join_team_view.dart';
+import 'package:praxis_afterhours/views/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/instructions.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
@@ -99,13 +100,22 @@ class _JoinHuntViewState extends State<JoinHuntView> {
           _hunts.isEmpty
               ? SliverFillRemaining(
                   child: Center(
-                    child: Text(
+                    /* child: Text(
                       "No hunts available!",
                       style: GoogleFonts.poppins(
                         color: praxisBlack,
                         fontSize: 32,
                       ),
-                    ),
+                    ), */
+                    child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HuntModeView()),
+                          );
+                        },
+                        child: const Text("Go to Hunt Mode Screen")),
                   ),
                 )
               : SliverList(
