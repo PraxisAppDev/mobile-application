@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-class JoinATeamView extends StatelessWidget {
-  const JoinATeamView({super.key});
+class ChallengeView extends StatelessWidget {
+  const ChallengeView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Join A Team Screen'),
+          title: const Text('Challenge Screen'),
         ),
         body: const Center(
           child: Text(
-            'Join A Team Screen, waiting for team leader to start hunt...',
+            'Challenge Screen',
             style: TextStyle(fontSize: 24), // Set font size
           ),
         ),

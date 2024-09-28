@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/create_a_team_view.dart';
 import 'package:praxis_afterhours/views/join_a_team_view.dart';
 
 class HuntWithTeamView extends StatelessWidget {
@@ -12,14 +13,31 @@ class HuntWithTeamView extends StatelessWidget {
           title: const Text('Hunt With Team Screen'),
         ),
         body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const JoinATeamView()),
-              );
-            },
-            child: const Text('Go to Join A Team Screen'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CreateATeamView()),
+                  );
+                },
+                child: const Text('Go to Create A Team Screen'),
+              ),
+              const SizedBox(height: 20), // Add space between buttons
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const JoinATeamView()),
+                  );
+                },
+                child: const Text('Go to Join A Team Screen'),
+              ),
+            ],
           ),
         ),
       ),
