@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/hunt_alone_view.dart';
-import 'package:praxis_afterhours/views/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 
 class HuntModeView extends StatelessWidget {
   const HuntModeView({super.key});

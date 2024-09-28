@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/create_a_team_view.dart';
-import 'package:praxis_afterhours/views/join_a_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/create_a_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
 
 class HuntWithTeamView extends StatelessWidget {
   const HuntWithTeamView({super.key});

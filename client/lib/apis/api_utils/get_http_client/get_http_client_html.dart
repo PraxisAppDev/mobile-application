@@ -7,7 +7,6 @@ http.Client getHttpClient() {
     credentials: RequestCredentials.cors,
     cache: RequestCache.byDefault,
     referrer: '',
-    integrity: '',
     redirectPolicy: RedirectPolicy.alwaysFollow,
     streamRequests: false,
   );

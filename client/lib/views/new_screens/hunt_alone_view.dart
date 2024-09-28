@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/start_hunt_view.dart';
+import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 
 class HuntAloneView extends StatelessWidget {
   const HuntAloneView({super.key});
