@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 
 class CreateATeamView extends StatelessWidget {
   const CreateATeamView({super.key});
