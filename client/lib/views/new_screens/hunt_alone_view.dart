@@ -9,15 +9,9 @@ class HuntAloneView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Hunt Alone Screen'),
-        ),
+        appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
         body: DecoratedBox(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("images/cracked_background.jpg"),
-                fit: BoxFit.cover),
-          ),
+            decoration: AppStyles.backgroundStyle,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -129,7 +123,7 @@ class HuntAloneView extends StatelessWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt'),
+                    child: const Text('Start Hunt', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 50), // Add space between buttons
@@ -146,7 +140,7 @@ class HuntAloneView extends StatelessWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Delete Team'),
+                    child: const Text('Delete Team', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
