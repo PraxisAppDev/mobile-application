@@ -7,16 +7,22 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Challenge Screen'),
-        ),
-        body: const Center(
-          child: Text(
-            'Challenge Screen',
-            style: TextStyle(fontSize: 24), // Set font size
+          appBar: AppBar(
+            title: const Text('Challenge Screen'),
           ),
-        ),
-      ),
+          body: const DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("images/cracked_background.jpg"),
+                  fit: BoxFit.cover),
+            ),
+            child: Center(
+              child: Text(
+                'Challenge Screen',
+                style: TextStyle(fontSize: 24, color: Colors.white),
+              ),
+            ),
+          )),
     );
   }
 }
