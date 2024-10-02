@@ -20,6 +20,9 @@ class AppStyles {
   static TextStyle logisticsStyle =
       TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'InriaSerif');
 
+  static TextStyle titleStyle =
+      TextStyle(fontSize: 30, color: Colors.white, fontFamily: 'InriaSerif');
+
   static BoxDecoration infoBoxStyle = BoxDecoration(
     gradient: const LinearGradient(
       begin: Alignment.topCenter,
@@ -75,6 +78,34 @@ class AppStyles {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10),
     ),
+  );
+
+  static BoxDecoration buttonStyleVariation1 = BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: <Color>[
+        Color(0xFF313342),
+        Color(0xFF876D6D),
+        Color(0xFF2A2730)
+      ],
+      stops: [0.0, 0.5, 1.0],
+    ),
+    borderRadius: BorderRadius.circular(20)
+  );
+
+  static BoxDecoration buttonStyleVariation2 = BoxDecoration(
+    gradient: const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: <Color>[
+        Color(0xFF836A6B),
+        Color(0xFF3A3947),
+        Color(0xFF876D6D),
+      ],
+      stops: [0.0, 0.5, 1.0],
+    ),
+    borderRadius: BorderRadius.circular(20)
   );
 
   static AppBar appBarStyle(String screenName, dynamic context) {
