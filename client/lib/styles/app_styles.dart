@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class AppStyles {
-  static TextStyle appBarTextStyle = TextStyle(
+  static TextStyle appBarTextStyle = const TextStyle(
     fontSize: 30,
     color: Colors.white,
     fontFamily: 'InriaSerif',
     fontWeight: FontWeight.bold
   );
 
-  static BoxDecoration backgroundStyle = BoxDecoration(
+  static BoxDecoration backgroundStyle = const BoxDecoration(
     image: DecorationImage(
         image: AssetImage(
             "images/cracked_background.jpg"
@@ -18,7 +18,7 @@ class AppStyles {
   );
 
   static TextStyle logisticsStyle =
-      TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'InriaSerif');
+      const TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'InriaSerif');
 
   static BoxDecoration infoBoxStyle = BoxDecoration(
     gradient: const LinearGradient(
@@ -81,7 +81,7 @@ class AppStyles {
     return AppBar(
         title: Text(screenName, style: AppStyles.appBarTextStyle),
         leading: IconButton(
-          icon: Icon(Icons.keyboard_double_arrow_left,
+          icon: const Icon(Icons.keyboard_double_arrow_left,
               color: Colors.white, size: 40),
           onPressed: () {
             Navigator.pop(context);
@@ -91,7 +91,7 @@ class AppStyles {
         flexibleSpace: Align(
           alignment: Alignment.center,
           child: Image(
-            image: AssetImage("images/small_boomerang.jpg"),
+            image: const AssetImage("images/small_boomerang.jpg"),
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.cover,
           ),

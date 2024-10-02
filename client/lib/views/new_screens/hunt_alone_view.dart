@@ -32,20 +32,20 @@ class HuntAloneView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
-                            Icon(Icons.location_pin, color: Colors.white),
+                            const Icon(Icons.location_pin, color: Colors.white),
                             Text(
                               "The Greene Turtle (in-person only)",
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
                         ),
-                        SizedBox(height: 20),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
-                            Icon(Icons.calendar_month, color: Colors.white),
+                            const Icon(Icons.calendar_month, color: Colors.white),
                             Text(
                               "01/30/2024 at 8:30pm",
                               style: AppStyles.logisticsStyle,
@@ -67,26 +67,26 @@ class HuntAloneView extends StatelessWidget {
                   decoration: AppStyles.infoBoxStyle,
                   child: Row(
                     children: [
-                      Icon(Icons.person, color: Colors.white),
+                      const Icon(Icons.person, color: Colors.white),
                       const SizedBox(width: 5),
                       SizedBox(
                         width: 205,
                         child: TextField(
                           decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.edit, color: Colors.white),
+                              suffixIcon: const Icon(Icons.edit, color: Colors.white),
                               border: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.white)),
+                                  borderSide: const BorderSide(color: Colors.white)),
                               labelText: 'Enter name here...',
                               labelStyle:
-                                  TextStyle(color: Colors.white, fontSize: 14),
+                                  const TextStyle(color: Colors.white, fontSize: 14),
                               filled: true,
                               fillColor: Colors.grey),
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ),
                       const SizedBox(width: 5),
-                      Icon(Icons.lock, color: Colors.white),
+                      const Icon(Icons.lock, color: Colors.white),
                       const SizedBox(width: 5),
                       Text(
                         "(Solo)",
