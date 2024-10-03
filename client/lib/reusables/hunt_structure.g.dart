@@ -60,8 +60,8 @@ Map<String, dynamic> _$ChallengeToJson(Challenge instance) => <String, dynamic>{
     };
 
 Sequence _$SequenceFromJson(Map<String, dynamic> json) => Sequence(
-      num: json['num'] as int,
-      order: json['order'] as int,
+      num: (json['num'] as num).toInt(),
+      order: (json['order'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SequenceToJson(Sequence instance) => <String, dynamic>{
@@ -93,7 +93,7 @@ Map<String, dynamic> _$ScoringToJson(Scoring instance) => <String, dynamic>{
 
 TimeDecay _$TimeDecayFromJson(Map<String, dynamic> json) => TimeDecay(
       type: json['type'] as String,
-      timeLimit: json['timeLimit'] as int?,
+      timeLimit: (json['timeLimit'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TimeDecayToJson(TimeDecay instance) => <String, dynamic>{
@@ -116,30 +116,29 @@ Map<String, dynamic> _$ResponseToJson(Response instance) => <String, dynamic>{
 Hunt _$HuntFromJson(Map<String, dynamic> json) => Hunt(
       id: json['_id'] as String,
       name: json['name'] as String,
-      description: json['description'] as String,
+      venue: json['venue'] as String,
+      address: json['address'] as String,
+      city: json['city'] as String,
+      stateAbbr: json['stateAbbr'] as String,
+      zipcode: (json['zipcode'] as num).toInt(),
+      logoURL: json['logoURL'] as String,
       startDate: _DateUtil._fromJson(json['startDate'] as String),
-      joinableAfterDate:
-          _DateUtil._fromJsonNullable(json['joinableAfterDate'] as String?),
       endDate: _DateUtil._fromJson(json['endDate'] as String),
-      huntLocation:
-          HuntLocation.fromJson(json['huntLocation'] as Map<String, dynamic>),
-      challenges: (json['challenges'] as List<dynamic>)
-          .map((e) => Challenge.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      maxTeamSize: json['maxTeamSize'] as int,
+      teamLimit: (json['teamLimit'] as num).toInt(),
     );
 
 Map<String, dynamic> _$HuntToJson(Hunt instance) => <String, dynamic>{
       '_id': instance.id,
       'name': instance.name,
-      'description': instance.description,
+      'venue': instance.venue,
+      'address': instance.address,
+      'city': instance.city,
+      'stateAbbr': instance.stateAbbr,
+      'zipcode': instance.zipcode,
+      'logoURL': instance.logoURL,
       'startDate': _DateUtil._toJson(instance.startDate),
-      'joinableAfterDate':
-          _DateUtil._toJsonNullable(instance.joinableAfterDate),
       'endDate': _DateUtil._toJson(instance.endDate),
-      'huntLocation': instance.huntLocation,
-      'challenges': instance.challenges,
-      'maxTeamSize': instance.maxTeamSize,
+      'teamLimit': instance.teamLimit,
     };
 
 Player _$PlayerFromJson(Map<String, dynamic> json) => Player(

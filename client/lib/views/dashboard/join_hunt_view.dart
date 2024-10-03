@@ -9,6 +9,7 @@ import 'package:praxis_afterhours/reusables/hunt_structure.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_options/join_team_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/instructions.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
@@ -54,10 +55,13 @@ class _JoinHuntViewState extends State<JoinHuntView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
+        body: DecoratedBox(
+      decoration: AppStyles.backgroundStyle,
+      child: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 120,
+            //expandedHeight: 120,
+            expandedHeight: 100,
             pinned: true,
             floating: true,
             automaticallyImplyLeading: false,
@@ -100,6 +104,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
           _hunts.isEmpty
               ? SliverFillRemaining(
                   child: Center(
+                    // This text normally appears when there are no hunts available
                     /* child: Text(
                       "No hunts available!",
                       style: GoogleFonts.poppins(
@@ -107,15 +112,197 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                         fontSize: 32,
                       ),
                     ), */
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const HuntModeView()),
-                          );
-                        },
-                        child: const Text("Go to Hunt Mode Screen")),
+                    // This is what we want in our new "Get Hunts" screen
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                            height: 135,
+                            width: 450,
+                            padding: const EdgeInsets.all(16),
+                            decoration: AppStyles.infoBoxStyle,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Explore Praxis",
+                                      textAlign: TextAlign.left,
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_pin,
+                                        color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "The Greene Turtle (in-person only)",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      height: 50,
+                                      width: 75,
+                                      decoration: AppStyles.confirmButtonStyle,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HuntModeView()),
+                                          );
+                                        },
+                                        style: AppStyles.elevatedButtonStyle,
+                                        child: const Text(
+                                          'GO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_month,
+                                        color: Colors.white),
+                                    Text(
+                                      "08/01/2024 at 4:00pm",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
+                        SizedBox(height: 20),
+                        Container(
+                            height: 135,
+                            width: 450,
+                            padding: const EdgeInsets.all(16),
+                            decoration: AppStyles.infoBoxStyle,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Praxis Intern Challenge",
+                                      textAlign: TextAlign.left,
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_pin,
+                                        color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Praxis HQ (in-person only)",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      height: 50,
+                                      width: 75,
+                                      decoration: AppStyles.confirmButtonStyle,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HuntModeView()),
+                                          );
+                                        },
+                                        style: AppStyles.elevatedButtonStyle,
+                                        child: const Text(
+                                          'GO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_month,
+                                        color: Colors.white),
+                                    Text(
+                                      "09/30/2024 at 4:00pm",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
+                        SizedBox(height: 20),
+                        Container(
+                            height: 135,
+                            width: 450,
+                            padding: const EdgeInsets.all(16),
+                            decoration: AppStyles.infoBoxStyle,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Praxis Employee Hunt",
+                                      textAlign: TextAlign.left,
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_pin,
+                                        color: Colors.white),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      "Praxis HQ (in-person only)",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      height: 50,
+                                      width: 75,
+                                      decoration: AppStyles.confirmButtonStyle,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const HuntModeView()),
+                                          );
+                                        },
+                                        style: AppStyles.elevatedButtonStyle,
+                                        child: const Text(
+                                          'GO',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_month,
+                                        color: Colors.white),
+                                    Text(
+                                      "11/01/2024 at 4:00pm",
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
+                      ],
+                    ),
                   ),
                 )
               : SliverList(
@@ -143,7 +330,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                 ),
         ],
       ),
-    );
+    ));
   }
 }
 
@@ -197,14 +384,14 @@ class HuntWidget extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      hunt.description,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                    // Text(
+                    //   hunt.description,
+                    //   style: const TextStyle(
+                    //     fontSize: 16,
+                    //     color: Colors.grey,
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 16),
                     Row(
                       children: [
                         const Icon(
@@ -237,7 +424,7 @@ class HuntWidget extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            hunt.huntLocation.locationName,
+                            hunt.venue,
                             style: const TextStyle(
                               fontSize: 14,
                               color: praxisRed,

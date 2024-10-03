@@ -11,7 +11,7 @@ class HuntAloneView extends StatelessWidget {
       home: Scaffold(
         appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
         body: DecoratedBox(
-            decoration: AppStyles.backgroundStyle,
+          decoration: AppStyles.backgroundStyle,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -54,7 +54,8 @@ class HuntAloneView extends StatelessWidget {
                         ),
                       ],
                     )),
-                const SizedBox(height: 20),
+                //const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Text(
                   "You are currently hunting alone as...",
                   style: AppStyles.logisticsStyle,
@@ -95,7 +96,7 @@ class HuntAloneView extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                //const SizedBox(height: 20),
                 const SizedBox(width: 350, child: Divider(thickness: 2)),
                 Container(
                   width: 350,
@@ -109,7 +110,8 @@ class HuntAloneView extends StatelessWidget {
                         fontFamily: 'InriaSerif'),
                   ),
                 ),
-                const SizedBox(height: 50), // Add space between buttons
+                //const SizedBox(height: 50), // Add space between buttons
+                const SizedBox(height: 10),
                 Container(
                   height: 50,
                   width: 175,
@@ -123,24 +125,21 @@ class HuntAloneView extends StatelessWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Start Hunt',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(height: 50), // Add space between buttons
+                //const SizedBox(height: 50), // Add space between buttons
+                const SizedBox(height: 10),
                 Container(
                   height: 50,
                   width: 175,
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const StartHuntView()),
-                      );
-                    },
+                    onPressed: () {},
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Delete Team', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Delete Team',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

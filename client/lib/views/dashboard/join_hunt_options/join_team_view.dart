@@ -208,7 +208,7 @@ class _JoinTeamViewState extends State<JoinTeamView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Members (${team.players.length}/${hunt.maxTeamSize}):",
+                    "Members (${team.players.length}/${hunt.teamLimit}):",
                     style: const TextStyle(fontSize: 16),
                     textAlign: TextAlign.start,
                   ),
@@ -229,7 +229,7 @@ class _JoinTeamViewState extends State<JoinTeamView> {
                     }).toList(),
                   ),
                   const SizedBox(height: 16),
-                  if (team.players.length == hunt.maxTeamSize)
+                  if (team.players.length == hunt.teamLimit)
                     const SizedBox(
                       width: double.infinity,
                       child: Text(

@@ -151,7 +151,7 @@ class Response {
   Map<String, dynamic> toJson() => _$ResponseToJson(this);
 }
 
-@JsonSerializable()
+/* @JsonSerializable()
 class Hunt {
   @JsonKey(name: '_id')
   final String id;
@@ -178,6 +178,43 @@ class Hunt {
     required this.huntLocation,
     required this.challenges,
     required this.maxTeamSize,
+  });
+
+  factory Hunt.fromJson(Map<String, dynamic> json) => _$HuntFromJson(json);
+
+  Map<String, dynamic> toJson() => _$HuntToJson(this);
+}
+*/
+
+@JsonSerializable()
+class Hunt {
+  @JsonKey(name: '_id')
+  final String id;
+  final String name;
+  final String venue;
+  final String address;
+  final String city;
+  final String stateAbbr;
+  final int zipcode;
+  final String logoURL;
+  @JsonKey(fromJson: _DateUtil._fromJson, toJson: _DateUtil._toJson)
+  final DateTime startDate;
+  @JsonKey(fromJson: _DateUtil._fromJson, toJson: _DateUtil._toJson)
+  final DateTime endDate;
+  final int teamLimit;
+
+  Hunt({
+    required this.id,
+    required this.name,
+    required this.venue,
+    required this.address,
+    required this.city,
+    required this.stateAbbr,
+    required this.zipcode,
+    required this.logoURL,
+    required this.startDate,
+    required this.endDate,
+    required this.teamLimit,
   });
 
   factory Hunt.fromJson(Map<String, dynamic> json) => _$HuntFromJson(json);

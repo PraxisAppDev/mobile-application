@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 //import 'package:praxis_afterhours/storage/secure_storage.dart';
 import 'package:praxis_afterhours/views/bottom_nav_bar.dart';
 
+import '../styles/app_styles.dart';
+
 class Splash extends StatefulWidget {
   const Splash({super.key});
 
@@ -35,7 +37,7 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xffFFFFFF),
       body: Stack(
         children: [
@@ -44,7 +46,7 @@ class _SplashState extends State<Splash> {
                 child: Image(
                     width: 1000,
                     height: 1000,
-                    image: AssetImage('../../assets/logo/logo.png'))),
+                    image: AssetImage('assets/logo/logo.png'))),
           ),
           Positioned(
               bottom: -40,
@@ -54,7 +56,7 @@ class _SplashState extends State<Splash> {
                 child: Image(
                     width: 200,
                     height: 200,
-                    image: AssetImage('../../assets/logo/corner_logo.png')),
+                    image: AssetImage('assets/logo/corner_logo.png')),
               )),
           Positioned(
               bottom: 0,
@@ -63,7 +65,7 @@ class _SplashState extends State<Splash> {
               child: Image(
                   width: 100,
                   height: 100,
-                  image: AssetImage('../../assets/logo/copyright.png'))),
+                  image: AssetImage('assets/logo/copyright.png'))),
         ],
       ),
     );
