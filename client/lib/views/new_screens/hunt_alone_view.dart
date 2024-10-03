@@ -137,10 +137,10 @@ class HuntAloneView extends StatefulWidget {
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const StartHuntView()),
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content:
+                            Text('Deleted team: $teamName')),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
