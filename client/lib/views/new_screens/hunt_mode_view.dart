@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 
 class HuntModeView extends StatelessWidget {
@@ -21,12 +21,12 @@ class HuntModeView extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const HuntAloneView()),
+                        builder: (context) => const HuntAloneTeamNameView()),
                   );
                 },
                 child: const Text('Go to Hunt Alone Screen'),
               ),
-              const SizedBox(height: 20), // Add space between buttons
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
