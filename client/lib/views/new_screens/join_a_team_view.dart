@@ -141,11 +141,11 @@ class _TeamTileState extends State<TeamTile> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Joined ${widget.teamName}')),
                       );
-                      // // *****************
+                      // *****************
                       // setState(() {
-                      //   widget.members.add();
+                      //   widget.members.add("CURRENT USER NAME");
                       // });
-                      // // **************
+                      // **************
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: widget.isLocked
