@@ -12,42 +12,81 @@ import 'package:praxis_afterhours/apis/api_utils/get_http_client/get_http_client
 
 part 'hunts_api.g.dart'; // Ensure the file name matches
 
-
 @JsonSerializable()
 class HuntResponseModel {
-  final String message;
+  final String id;
+  final String name;
+  final String venue;
+  final String address;
+  final String city;
+  final String stateAbbr;
+  final String zipcode;
+  final String logoURL;
+  final String startDate;
+  final String endDate;
+  final int teamLimit;
 
   HuntResponseModel({
-    required this.message,
+    required this.id,
+    required this.name,
+    required this.venue,
+    required this.address,
+    required this.city,
+    required this.stateAbbr,
+    required this.zipcode,
+    required this.logoURL,
+    required this.startDate,
+    required this.endDate,
+    required this.teamLimit,
   });
 
- // Correct function name for deserialization
+  // Correct function name for deserialization
   factory HuntResponseModel.fromJson(Map<String, dynamic> json) =>
       _$HuntResponseModelFromJson(json);
 
   // Correct function name for serialization
   Map<String, dynamic> toJson() => _$HuntResponseModelToJson(this);
 }
-Future<HuntResponseModel> getHunts() async {
+Future<List<HuntResponseModel>> getHunts({String? startdate, String? enddate, int? limit}) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts";
 
-  try {
-    final response = await get_http_client.getHttpClient().get(Uri.parse(apiUrl));
-    print(response);
+  print(startdate);
+  print(enddate);
+  print(limit);
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      print("Raw data: $data");  // Log raw data for debugging
+    final queryParams = {
+      if (startdate != null) 'startDate': startdate else 'startDate': "Bob",
+      if (enddate != null) 'endDate': enddate else 'endDate': "Sam",
+      if (limit != null) 'teamLimit': limit.toString() else 'teamLimit': "raaa",
+    };
 
-      // Ensure that the JSON structure matches your model
-      return HuntResponseModel.fromJson(data);
-    } else {
-      throw Exception("Failed to load hunts. Status code: ${response.statusCode}");
+    // Build the URI with query parameters
+    final uri = Uri.parse(apiUrl).replace(queryParameters: queryParams);
+    print('Request URI: $uri');  // Log the final request URI
+
+
+    try {
+      final response = await get_http_client.getHttpClient().get(uri);
+      
+      // Log response details
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        // Process successful response
+        List<dynamic> data = jsonDecode(response.body);
+        List<HuntResponseModel> hunts = data.map((hunt) => HuntResponseModel.fromJson(hunt)).toList();
+        print("Parsed hunts: $hunts");
+        return hunts;
+      } else {
+        throw Exception("Failed to load hunts. Status code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error occurred during the request: $e");
+      throw Exception("Error occurred during the request: $e");
     }
-  } catch (e) {
-    print("Error occurred during the request: $e");
-    throw Exception("Error occurred during the request: $e");
+
   }
-}
+
 
 
