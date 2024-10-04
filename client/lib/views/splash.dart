@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/authentication/sign_in_view.dart';
-import 'package:praxis_afterhours/storage/secure_storage.dart';
+//import 'package:praxis_afterhours/views/authentication/sign_in_view.dart';
+//import 'package:praxis_afterhours/storage/secure_storage.dart';
 import 'package:praxis_afterhours/views/bottom_nav_bar.dart';
 
 class Splash extends StatefulWidget {

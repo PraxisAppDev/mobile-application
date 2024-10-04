@@ -1,11 +1,11 @@
-import 'dart:convert';
+/* import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:praxis_afterhours/apis/api_client.dart';
 import 'package:praxis_afterhours/apis/api_utils/token.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-/* @JsonSerializable()
+@JsonSerializable()
 class TeamsResponseModel {
   final String message;
 
