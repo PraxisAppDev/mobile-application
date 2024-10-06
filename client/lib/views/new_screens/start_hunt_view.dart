@@ -9,7 +9,7 @@ class StartHuntView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppStyles.appBarStyle("Start Hunt Screen", context),
+        appBar: AppStyles.appBarStyle("Start Hunt", context),
         body: DecoratedBox(
           decoration: AppStyles.backgroundStyle,
           child: Center(
