@@ -46,7 +46,7 @@ dependencies:
   flutter_bounceable: ^1.1.0
   auto_size_text: ^3.0.0
   page_transition: ^2.1.0
-  json_annotation: ^4.8.1
+  json_annotation: ^4.9.0
   fetch_client: ^1.0.2
   win32: ^5.5.4
 
@@ -106,7 +106,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  fonts: 
+  fonts:
     - family: InriaSerif
       fonts:
         - asset: assets/fonts/InriaSerif-Regular.ttf
