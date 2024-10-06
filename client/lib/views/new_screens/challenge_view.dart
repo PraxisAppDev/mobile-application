@@ -21,9 +21,9 @@ class ChallengeView extends StatelessWidget {
           ),
           child: Column(
             children: [
-              // Header container taking up 1/5th of the screen height
+             
               HeaderWidget(),
-              // Push the content up by an additional 15%
+              
               Spacer(flex: 1),
               Expanded(
                 flex: 5,
@@ -75,7 +75,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.2, // Take 1/5th of the screen height
+      height: MediaQuery.of(context).size.height * 0.2, 
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: const BoxDecoration(
         color: Colors.black45, // Slight background color for better visibility
@@ -83,25 +83,25 @@ class _HeaderWidgetState extends State<HeaderWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Left Logo Image (3x size)
+         
           Image.asset(
             'images/huntlogo.png',
-            height: 120, // 3 times original size (40*3)
+            height: 120, 
             width: 120,
           ),
-          // Dynamic Text in the Center
+          
           Text(
-            _texts[_currentTextIndex], // Swap between texts
+            _texts[_currentTextIndex], 
             style: const TextStyle(
               fontSize: 20,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Right Logo Image (3x size)
+          
           Image.asset(
             'images/huntlogo.png',
-            height: 120, // 3 times original size (40*3)
+            height: 120, 
             width: 120,
           ),
         ],
@@ -130,7 +130,7 @@ class _QuestionSectionState extends State<QuestionSection> {
     "Is Jim the GOAT??"
   ];
 
-  // Add corresponding hints (text or image paths)
+ 
   final List<Widget> _hints = [
     Image.asset('images/President.png'), // Image hint for question 1
     const Text("2000 and what?", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 2
@@ -143,14 +143,14 @@ class _QuestionSectionState extends State<QuestionSection> {
   void _nextQuestion() {
     setState(() {
       _currentQuestionIndex = (_currentQuestionIndex + 1) % _questions.length;
-      _answerController.clear(); // Clear the answer box for the next question
+      _answerController.clear(); 
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20), // Adjust horizontal margin
+      margin: const EdgeInsets.symmetric(horizontal: 20), 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,30 +176,30 @@ class _QuestionSectionState extends State<QuestionSection> {
             ),
           ),
           const SizedBox(height: 20),
-          // Visual Hint Label
+        
           const Text(
             "Hint",
             style: TextStyle(fontSize: 18, color: Colors.white70, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
-          // Display the corresponding hint based on the question index
+          
           Container(
             height: 120,
-            width: MediaQuery.of(context).size.width * 0.7, // Adjusted width for the hint box
+            width: MediaQuery.of(context).size.width * 0.7, 
             decoration: BoxDecoration(
               color: Colors.white54,
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: Colors.white, width: 2),
             ),
             child: Center(
-              child: _hints[_currentQuestionIndex], // Show corresponding hint widget
+              child: _hints[_currentQuestionIndex], 
             ),
           ),
           const SizedBox(height: 20),
           // Answer Input Box
           Container(
             height: 50,
-            width: MediaQuery.of(context).size.width * 0.7, // Match width of the visual hint box
+            width: MediaQuery.of(context).size.width * 0.7, 
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -217,7 +217,7 @@ class _QuestionSectionState extends State<QuestionSection> {
             ),
           ),
           const SizedBox(height: 30),
-          // Buttons for Submit and Skip
+          
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
            children: [
@@ -228,7 +228,7 @@ class _QuestionSectionState extends State<QuestionSection> {
               ),
               child: const Text(
                 "Submit",
-                style: TextStyle(color: Colors.black), // Text color for "Submit"
+                style: TextStyle(color: Colors.black),
               ),
             ),
             const SizedBox(width: 20),
@@ -239,7 +239,7 @@ class _QuestionSectionState extends State<QuestionSection> {
               ),
               child: const Text(
                 "Skip",
-                style: TextStyle(color: Colors.red), // Text color for "Skip"
+                style: TextStyle(color: Colors.red), 
               ),
             ),
         ],
