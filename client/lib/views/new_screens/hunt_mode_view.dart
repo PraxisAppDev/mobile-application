@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
@@ -75,7 +76,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HuntAloneView()),
+                            builder: (context) => const HuntAloneTeamNameView()),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
