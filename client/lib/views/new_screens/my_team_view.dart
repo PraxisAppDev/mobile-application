@@ -13,6 +13,9 @@ class MyTeamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
+    Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
+    Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
     return MaterialApp(
       home: Scaffold(
           appBar: AppStyles.appBarStyle("My Team", context),
@@ -178,3 +181,160 @@ class _TeamTileState extends State<TeamTile> {
         ));
   }
 }
+
+Future<void> ShowTeamFullDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                              width: 32,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Icon(Icons.close, color: Colors.white)))
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Your team has reached it\'s limit, waiting for team leader to start game',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
+    },
+  );
+}
+
+//Tells players the game is starting, dissappears after 3 seconds
+Future<void> ShowGameStartDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      Future.delayed(Duration(seconds: 3), () => Navigator.of(context).pop());
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                            width: 32,
+                          )
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Your team leader has started the game, beginning play',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
+    },
+  );
+}
+
+final DotDivider = Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+  ],
+);
