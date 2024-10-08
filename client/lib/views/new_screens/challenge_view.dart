@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
+import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({super.key});
@@ -7,9 +9,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Challenge Screen'),
-          ),
+          appBar: AppStyles.appBarStyle("Challenge Screen", context),
           body: const DecoratedBox(
             decoration: BoxDecoration(
               image: DecorationImage(

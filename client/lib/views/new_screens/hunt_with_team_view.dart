@@ -4,7 +4,10 @@ import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class HuntWithTeamView extends StatelessWidget {
-  const HuntWithTeamView({super.key});
+  final String huntName;
+  final String venue;
+  final String huntDate;
+  const HuntWithTeamView({super.key, required this.huntName, required this.venue, required this.huntDate});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +30,7 @@ class HuntWithTeamView extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              "Explore Praxis",
+                              huntName,
                               textAlign: TextAlign.left,
                               style: AppStyles.logisticsStyle,
                             ),
@@ -38,7 +41,7 @@ class HuntWithTeamView extends StatelessWidget {
                           children: [
                             Icon(Icons.location_pin, color: Colors.white),
                             Text(
-                              "The Greene Turtle (in-person only)",
+                              venue,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -48,7 +51,7 @@ class HuntWithTeamView extends StatelessWidget {
                           children: [
                             Icon(Icons.calendar_month, color: Colors.white),
                             Text(
-                              "01/30/2024 at 8:30pm",
+                              huntDate,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],

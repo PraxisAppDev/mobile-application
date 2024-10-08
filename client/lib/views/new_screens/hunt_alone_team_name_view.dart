@@ -4,7 +4,10 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 
 
 class HuntAloneTeamNameView extends StatefulWidget {
- const HuntAloneTeamNameView({super.key});
+  final String huntName;
+  final String venue;
+  final String huntDate;
+  const HuntAloneTeamNameView({super.key, required this.huntName, required this.venue, required this.huntDate});
 
 
  @override
@@ -56,7 +59,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                        Row(
                          children: [
                            Text(
-                             "Explore Praxis",
+                             widget.huntName,
                              textAlign: TextAlign.left,
                              style: AppStyles.logisticsStyle,
                            ),
@@ -67,7 +70,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          children: [
                            Icon(Icons.location_pin, color: Colors.white),
                            Text(
-                             "The Greene Turtle (in-person only)",
+                             widget.venue,
                              style: AppStyles.logisticsStyle,
                            ),
                          ],
@@ -77,7 +80,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          children: [
                            Icon(Icons.calendar_month, color: Colors.white),
                            Text(
-                             "01/30/2024 at 8:30pm",
+                             widget.huntDate,
                              style: AppStyles.logisticsStyle,
                            ),
                          ],
@@ -143,7 +146,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          Navigator.push(
                            context,
                            MaterialPageRoute(
-                             builder: (context) => HuntAloneView(teamName: _teamNameController.text),  // Pass the teamName
+                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the teamName
                            ),
                          );
                        },
