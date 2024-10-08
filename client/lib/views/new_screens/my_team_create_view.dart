@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 
 class MyTeamCreateView extends StatefulWidget {
   final String teamName;
@@ -134,12 +137,14 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ChallengeView(),
-                        ),
-                      );
+                      ShowGameStartDialog(context).then((_) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ChallengeView(),
+                          ),
+                        );
+                      });
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -155,9 +160,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Deleted team')),
-                      );
+                      ShowDeleteConfirmationDialog(context);
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -173,4 +176,269 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       ),
     );
   }
+}
+
+Future<void> ShowTeamFullDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                              width: 32,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Icon(Icons.close, color: Colors.white)))
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Your team has reached it\'s limit, waiting for team leader to start game',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
+    },
+  );
+}
+
+//Tells players the game is starting, dissappears after 3 seconds
+Future<void> ShowGameStartDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      Future.delayed(Duration(seconds: 3), () => Navigator.of(context).pop());
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                            width: 32,
+                          )
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'You have started the game, beginning play soon',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
+    },
+  );
+}
+
+final DotDivider = Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+  ],
+);
+
+Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap a button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        backgroundColor: Colors.black,
+        contentPadding: const EdgeInsets.all(0),
+        content: DecoratedBox(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                Color(0xff261919),
+                Color(0xff332323),
+                Color(0xff261919),
+              ],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 45,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 32),
+                      Expanded(child: DotDivider),
+                      SizedBox(
+                        width: 32,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          icon: const Icon(Icons.close, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const Flexible(
+                  child: Text(
+                    'Are you sure you want to delete the team?',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // No Button
+                    Container(
+                      decoration: AppStyles.cancelButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'No',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    // Yes Button
+                    Container(
+                      decoration: AppStyles.confirmButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const JoinHuntView(),
+                            ),
+                          ); // Navigate back to hunt mode screen
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(height: 45, child: DotDivider),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
