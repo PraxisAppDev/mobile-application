@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
-import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 
 class CreateATeamView extends StatefulWidget {
   const CreateATeamView({super.key});
