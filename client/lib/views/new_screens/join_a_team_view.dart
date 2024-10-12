@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/new_screens/my_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class JoinATeamView extends StatelessWidget {
@@ -43,7 +44,7 @@ class _TeamListState extends State<TeamList> {
     },
     {
       'teamName': 'Bob’s Team',
-      'members': ['Bob', 'Alice'],
+      'members': ['Bob', 'Alice', 'Jane'],
       'isLocked': false,
     },
     {
@@ -159,10 +160,17 @@ class _TeamTileState extends State<TeamTile> {
                             ? null // Disable button if team is locked
                             : () {
                                 // Join team functionality
+                                /*
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content:
                                           Text('Joined ${widget.teamName}')),
+                                );
+                                */
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyTeamView()),
                                 );
                                 // *****************
                                 // setState(() {
