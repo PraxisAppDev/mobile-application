@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/constants/colors.dart';
-import 'package:praxis_afterhours/views/hunt_history_view.dart';
+//import 'package:praxis_afterhours/views/hunt_history_view.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/profile_view.dart';
 
