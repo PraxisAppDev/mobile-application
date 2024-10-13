@@ -13,7 +13,7 @@ class MyTeamCreateView extends StatefulWidget {
   const MyTeamCreateView({
     Key? key,
     required this.teamName,
-    required this.individualName,
+    required this.individualName, required String huntName, required String venue, required String huntDate,
   }) : super(key: key);
 
   @override
@@ -53,7 +53,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _unfocusTextField,  // Unfocus when tapping outside the TextField
+      onTap: _unfocusTextField,  
       child: Scaffold(
         appBar: AppStyles.appBarStyle("My Team", context),
         body: DecoratedBox(
