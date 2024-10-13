@@ -225,7 +225,7 @@ class TeamStatisticsView extends StatelessWidget {
             ),
           ),
           for (var questionList in questions)
-            Container(
+            SizedBox(
               height: 700,
               child: Timeline.tileBuilder(
                 padding: const EdgeInsets.only(left: 13, right: 16, top: 50),

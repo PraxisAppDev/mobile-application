@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/styles/app_styles.dart';
-import 'package:praxis_afterhours/views/new_screens/my_team_view.dart';
+import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
 
 class JoinATeamView extends StatelessWidget {
   const JoinATeamView({super.key});
@@ -9,16 +8,36 @@ class JoinATeamView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppStyles.appBarStyle("Join A Team", context),
-        body: DecoratedBox(
-            decoration: AppStyles.backgroundStyle, child: const TeamList()),
-        // body: const Center(
-        //   child: Text(
-        //     'Join A Team Screen, waiting for team leader to start hunt...',
-        //     style: TextStyle(fontSize: 24), // Set font size
-        //   ),
-        // ),
-      ),
+          appBar: AppBar(
+            title: const Text('Join A Team Screen'),
+          ),
+          body: FutureBuilder<List<hunts_api.HuntResponseModel>>(
+            future: hunts_api.getHunts(
+                startdate: '2024-10-01', enddate: '2024-10-31', limit: 10),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else if (snapshot.hasData) {
+                // If the data was successfully retrieved, display it
+                final List<hunts_api.HuntResponseModel> huntResponse =
+                    snapshot.data!;
+                print(snapshot.data);
+                return ListView.builder(
+                  itemCount: huntResponse.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(huntResponse[index].name),
+                      subtitle: Text(huntResponse[index].venue),
+                    );
+                  },
+                );
+              } else {
+                return const Center(child: Text('No data available.'));
+              }
+            },
+          )),
     );
   }
 }
