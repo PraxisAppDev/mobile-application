@@ -47,46 +47,77 @@ class HuntResponseModel {
   // Correct function name for serialization
   Map<String, dynamic> toJson() => _$HuntResponseModelToJson(this);
 }
-Future<List<HuntResponseModel>> getHunts({String? startdate, String? enddate, int? limit}) async {
+
+Future<List<HuntResponseModel>> getHunts(
+    {String? startdate, String? enddate, int? limit}) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts";
 
   print(startdate);
   print(enddate);
   print(limit);
 
-    final queryParams = {
-      if (startdate != null) 'startDate': startdate else 'startDate': "Bob",
-      if (enddate != null) 'endDate': enddate else 'endDate': "Sam",
-      if (limit != null) 'teamLimit': limit.toString() else 'teamLimit': "raaa",
-    };
+  final queryParams = {
+    if (startdate != null) 'startDate': startdate else 'startDate': "Bob",
+    if (enddate != null) 'endDate': enddate else 'endDate': "Sam",
+    if (limit != null) 'teamLimit': limit.toString() else 'teamLimit': "raaa",
+  };
 
-    // Build the URI with query parameters
-    final uri = Uri.parse(apiUrl).replace(queryParameters: queryParams);
-    print('Request URI: $uri');  // Log the final request URI
+  // Build the URI with query parameters
+  final uri = Uri.parse(apiUrl).replace(queryParameters: queryParams);
+  print('Request URI: $uri'); // Log the final request URI
 
+  try {
+    final response = await get_http_client.getHttpClient().get(uri);
 
-    try {
-      final response = await get_http_client.getHttpClient().get(uri);
-      
-      // Log response details
-      print('Response status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-      
-      if (response.statusCode == 200) {
-        // Process successful response
-        List<dynamic> data = jsonDecode(response.body);
-        List<HuntResponseModel> hunts = data.map((hunt) => HuntResponseModel.fromJson(hunt)).toList();
-        print("Parsed hunts: $hunts");
-        return hunts;
-      } else {
-        throw Exception("Failed to load hunts. Status code: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Error occurred during the request: $e");
-      throw Exception("Error occurred during the request: $e");
+    // Log response details
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // Process successful response
+      List<dynamic> data = jsonDecode(response.body);
+      List<HuntResponseModel> hunts =
+          data.map((hunt) => HuntResponseModel.fromJson(hunt)).toList();
+      print("Parsed hunts: $hunts");
+      return hunts;
+    } else {
+      throw Exception(
+          "Failed to load hunts. Status code: ${response.statusCode}");
     }
-
+  } catch (e) {
+    print("Error occurred during the request: $e");
+    throw Exception("Error occurred during the request: $e");
   }
+}
 
+Future<HuntResponseModel> getHunt(int huntID) async {
+  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID";
 
+  final uri = Uri.parse(apiUrl);
 
+  print('Request URI: $uri'); // Log the final request URI
+
+  try {
+    final response = await get_http_client.getHttpClient().get(uri);
+
+    // Log response details
+    print('Response status code: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // Process successful response
+
+      Map<String, dynamic> data = jsonDecode(response.body);
+      HuntResponseModel hunt = HuntResponseModel.fromJson(data);
+
+      print("Parsed hunts: $hunt");
+      return hunt;
+    } else {
+      throw Exception(
+          "Failed to load hunts. Status code: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Error occurred during the request: $e");
+    throw Exception("Error occurred during the request: $e");
+  }
+}

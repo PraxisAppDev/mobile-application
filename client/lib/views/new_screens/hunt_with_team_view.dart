@@ -65,7 +65,8 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const JoinATeamView()),
+                            builder: (context) =>
+                                const JoinATeamView(huntID: 1)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
