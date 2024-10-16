@@ -13,7 +13,7 @@ class MyTeamCreateView extends StatefulWidget {
   const MyTeamCreateView({
     Key? key,
     required this.teamName,
-    required this.individualName, required String huntName, required String venue, required String huntDate,
+    required this.individualName,
   }) : super(key: key);
 
   @override
@@ -53,7 +53,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _unfocusTextField,  
+      onTap: _unfocusTextField,  // Unfocus when tapping outside the TextField
       child: Scaffold(
         appBar: AppStyles.appBarStyle("My Team", context),
         body: DecoratedBox(
@@ -197,7 +197,7 @@ Future<void> ShowTeamFullDialog(context) async {
                   colors: <Color>[
                     Color(0xff261919),
                     Color(0xff332323),
-                    Color(0xff261919),
+                    Color(0xff281717),
                   ],
                   stops: [0.0, 0.5, 1.0],
                 ),
@@ -257,19 +257,7 @@ Future<void> ShowGameStartDialog(context) async {
           backgroundColor: Colors.black,
           contentPadding: EdgeInsets.all(0),
           content: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[
-                    Color(0xff261919),
-                    Color(0xff332323),
-                    Color(0xff261919),
-                  ],
-                  stops: [0.0, 0.5, 1.0],
-                ),
-              ),
+              decoration: AppStyles.popupStyle(),
               child: Padding(
                 padding: EdgeInsets.all(8),
                 child: Column(
@@ -347,19 +335,7 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
         backgroundColor: Colors.black,
         contentPadding: const EdgeInsets.all(0),
         content: DecoratedBox(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: <Color>[
-                Color(0xff261919),
-                Color(0xff332323),
-                Color(0xff261919),
-              ],
-              stops: [0.0, 0.5, 1.0],
-            ),
-          ),
+          decoration: AppStyles.popupStyle(),
           child: Padding(
             padding: const EdgeInsets.all(8),
             child: Column(

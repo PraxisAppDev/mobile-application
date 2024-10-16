@@ -3,7 +3,8 @@ import 'package:praxis_afterhours/reusables/hunt_structure.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:praxis_afterhours/apis/hunts_api.dart'; 
-import 'package:praxis_afterhours/apis/teams_api.dart'; 
+import 'package:praxis_afterhours/apis/teams_api.dart';
+import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart'; 
 
 class CreateATeamView extends StatefulWidget {
   final String huntName;
@@ -195,6 +196,23 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                     onPressed: _createTeam, // Call the create team function
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text('Create', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.cancelButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => StartHuntView()),
+                      );
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text('Start Hunt',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

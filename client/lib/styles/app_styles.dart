@@ -128,4 +128,20 @@ class AppStyles {
           ),
         ));
   }
+
+  static BoxDecoration popupStyle() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xff261919),
+          Color(0xff332323),
+          Color(0xff281717),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+    );
+  }
 }
