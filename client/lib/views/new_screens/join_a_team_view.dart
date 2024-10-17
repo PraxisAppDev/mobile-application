@@ -69,6 +69,7 @@ class _TeamListState extends State<TeamList> {
     {
       'teamName': 'Bob’s Team',
       'members': ['Bob', 'Alice', 'Jane'],
+      'members': ['Bob', 'Alice', 'Jane'],
       'isLocked': false,
     },
     {
@@ -185,10 +186,17 @@ class _TeamTileState extends State<TeamTile> {
                             : () {
                                 // Join team functionality
                                 /*
+                                /*
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                       content:
                                           Text('Joined ${widget.teamName}')),
+                                );
+                                */
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MyTeamView()),
                                 );
                                 */
                                 Navigator.push(

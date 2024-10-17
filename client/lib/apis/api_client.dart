@@ -4,5 +4,6 @@ import 'package:praxis_afterhours/apis/api_utils/get_http_client/get_http_client
     if (dart.library.html) './api_utils/get_http_client/get_http_client_web.dart'
     as get_http_client;
 
+//var apiUrl = "http://localhost:8001";
 var apiUrl = "http://afterhours.praxiseng.com";
 var client = get_http_client.getHttpClient();

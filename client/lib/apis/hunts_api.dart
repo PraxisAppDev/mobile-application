@@ -7,7 +7,7 @@ import 'package:praxis_afterhours/apis/api_utils/token.dart';
 // Import the correct HTTP client based on the platform
 import 'package:praxis_afterhours/apis/api_utils/get_http_client/get_http_client_default.dart'
     if (dart.library.io) './api_utils/get_http_client/get_http_client_io.dart'
-    if (dart.library.html) './api_utils/get_http_client/get_http_client_web.dart'
+    if (dart.library.html) './api_utils/get_http_client/get_http_client_html.dart'
     as get_http_client;
 
 part 'hunts_api.g.dart'; // Ensure the file name matches
@@ -52,9 +52,9 @@ Future<List<HuntResponseModel>> getHunts(
     {String? startdate, String? enddate, int? limit}) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts";
 
-  print(startdate);
-  print(enddate);
-  print(limit);
+  print("Start Date: $startdate");
+  print("End Date: $enddate");
+  print("Limit: $limit");
 
   final queryParams = {
     if (startdate != null) 'startDate': startdate else 'startDate': "Bob",
@@ -80,38 +80,6 @@ Future<List<HuntResponseModel>> getHunts(
           data.map((hunt) => HuntResponseModel.fromJson(hunt)).toList();
       print("Parsed hunts: $hunts");
       return hunts;
-    } else {
-      throw Exception(
-          "Failed to load hunts. Status code: ${response.statusCode}");
-    }
-  } catch (e) {
-    print("Error occurred during the request: $e");
-    throw Exception("Error occurred during the request: $e");
-  }
-}
-
-Future<HuntResponseModel> getHunt(int huntID) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID";
-
-  final uri = Uri.parse(apiUrl);
-
-  print('Request URI: $uri'); // Log the final request URI
-
-  try {
-    final response = await get_http_client.getHttpClient().get(uri);
-
-    // Log response details
-    print('Response status code: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      // Process successful response
-
-      Map<String, dynamic> data = jsonDecode(response.body);
-      HuntResponseModel hunt = HuntResponseModel.fromJson(data);
-
-      print("Parsed hunts: $hunt");
-      return hunt;
     } else {
       throw Exception(
           "Failed to load hunts. Status code: ${response.statusCode}");
