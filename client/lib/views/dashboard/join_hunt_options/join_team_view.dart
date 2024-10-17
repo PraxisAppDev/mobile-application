@@ -283,6 +283,8 @@ class _JoinTeamViewState extends State<JoinTeamView> {
       ),
     );
   }
+  
+  void openWaitingRoomView(BuildContext context, Hunt hunt, Team team, String userId) {}
 }
 
 enum BasicTextFieldType {

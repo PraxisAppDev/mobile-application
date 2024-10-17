@@ -191,7 +191,7 @@ class TeamWaitingRoomView extends StatelessWidget {
       case teams_api.JoinRequestStatus.accepted:
         return Column(
           children: [
-            ElevatedButton(
+            /*ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
                   JoinTeamPageRoute(
@@ -214,7 +214,7 @@ class TeamWaitingRoomView extends StatelessWidget {
                 "My Team",
                 style: TextStyle(fontSize: 18),
               ),
-            ),
+            ),*/
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {
@@ -299,7 +299,7 @@ class WaitingRoomPageRoute extends MaterialPageRoute {
     },
   );
 
-  @override
+  /*@override
   bool didPop(result) {
     if(kDebugMode) {
       print("Popping Waiting Room Page");
@@ -310,7 +310,7 @@ class WaitingRoomPageRoute extends MaterialPageRoute {
       Fluttertoast.showToast(msg: "Error leaving waiting room: $error");
     });
     return super.didPop(result);
-  }
+  }*/
 }
 
 Future<void> openWaitingRoomView(BuildContext context, Hunt hunt, Team team, String userId) async {
