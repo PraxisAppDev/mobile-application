@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
 import 'package:praxis_afterhours/apis/hunts_api.dart';
+import 'package:praxis_afterhours/apis/post_join_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import '../../apis/new_teams_api.dart';
 import 'my_team_view.dart';
@@ -8,89 +10,43 @@ import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
 class JoinATeamView extends StatelessWidget {
   const JoinATeamView({super.key, required this.huntID});
-  final int huntID;
+  final String huntID;
+
   @override
   Widget build(BuildContext context) {
-    hunts_api.getHunt(huntID);
-    teams_api.getTeams(1);
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Join A Team Screen'),
-          ),
-          body: FutureBuilder<List<teams_api.Team>>(
-            future: teams_api.getTeams(huntID),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                // If the data was successfully retrieved, display it
-                final List<teams_api.Team> huntResponse = snapshot.data!;
-                print(snapshot.data);
-                return ListView.builder(
-                  itemCount: huntResponse.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(huntResponse[index].name),
-                      subtitle: Text(""),
-                    );
-                  },
-                );
-              } else {
-                return const Center(child: Text('No data available.'));
-              }
-            },
-          )),
-    );
-  }
-}
-
-// * will change based on state *
-// holds list of all teams that are available
-// list of TeamTile objects
-class TeamList extends StatefulWidget {
-  const TeamList({super.key});
-
-  @override
-  State<TeamList> createState() => _TeamListState();
-}
-
-class _TeamListState extends State<TeamList> {
-  // Hardcoding team data for now
-  // ** later teams will be set equal to response from web socket for current teams **
-  final List<Map<String, dynamic>> teams = [
-    {
-      'teamName': 'Chiefs!',
-      'members': ['John', 'Doe', 'Jane', 'Smith'],
-      'isLocked': true,
-    },
-    {
-      'teamName': 'Bob’s Team',
-      'members': ['Bob', 'Alice', 'Jane'],
-      'members': ['Bob', 'Alice', 'Jane'],
-      'isLocked': false,
-    },
-    {
-      'teamName': 'Science #1',
-      'members': ['John B.', 'Melissa'],
-      'isLocked': false,
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: teams.length,
-      itemBuilder: (context, index) {
-        final team = teams[index];
-        return TeamTile(
-          teamName: team['teamName'],
-          members: team['members'],
-          isLocked: team['isLocked'],
-        );
-      },
+        appBar: AppStyles.appBarStyle("Join A Team", context),
+        body: DecoratedBox(
+            decoration: AppStyles.backgroundStyle,
+            child: FutureBuilder<Map<String, dynamic>>(
+              future: fetchTeamsFromHunt(huntID!),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (snapshot.hasData) {
+                  // If the data was successfully retrieved, display it
+                  List<dynamic> teams = snapshot.data!['teams'];
+                  print(snapshot.data);
+                  return ListView.builder(
+                    itemCount: teams.length,
+                    itemBuilder: (context, index) {
+                      return TeamTile(
+                          teamID: teams[index]['id'],
+                          huntID: huntID,
+                          isLocked: teams[index]['lockStatus'],
+                          teamName: teams[index]['name'],
+                          members: teams[index]['players']);
+                    },
+                  );
+                } else {
+                  return const Center(child: Text('No data available.'));
+                }
+              },
+            )),
+      ),
     );
   }
 }
@@ -99,11 +55,15 @@ class _TeamListState extends State<TeamList> {
 // individual team widget
 class TeamTile extends StatefulWidget {
   final String teamName;
-  final List<String> members;
+  final List<dynamic> members;
   final bool isLocked;
+  final String huntID;
+  final String teamID;
 
   const TeamTile({
     Key? key,
+    required this.huntID,
+    required this.teamID,
     required this.teamName,
     required this.members,
     required this.isLocked,
@@ -147,7 +107,8 @@ class _TeamTileState extends State<TeamTile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.members.asMap().entries.map((entry) {
                   int index = entry.key;
-                  String member = entry.value;
+                  String member = entry.value['name'];
+                  bool teamLeader = entry.value['teamLeader'];
                   return Column(children: [
                     Divider(
                         color: Colors.grey,
@@ -162,7 +123,7 @@ class _TeamTileState extends State<TeamTile> {
                             member,
                             style: AppStyles.logisticsStyle,
                           ),
-                          if (index == 0) // Add crown to the first member
+                          if (teamLeader) // Add crown to team leader
                             const Padding(
                               padding: EdgeInsets.only(left: 8.0),
                               child: Icon(Icons.star, color: Colors.amber),
@@ -184,6 +145,7 @@ class _TeamTileState extends State<TeamTile> {
                         onPressed: widget.isLocked
                             ? null // Disable button if team is locked
                             : () {
+                                joinTeam(widget.huntID, widget.teamName);
                                 // Join team functionality
                                 /*
                                 /*
@@ -202,7 +164,10 @@ class _TeamTileState extends State<TeamTile> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => MyTeamView()),
+                                      builder: (context) => MyTeamView(
+                                            huntID: widget.huntID,
+                                            teamID: widget.teamID,
+                                          )),
                                 );
                                 // *****************
                                 // setState(() {
@@ -219,32 +184,3 @@ class _TeamTileState extends State<TeamTile> {
         ));
   }
 }
-
-/*
-FutureBuilder<List<hunts_api.HuntResponseModel>>(
-            future: hunts_api.getHunts(
-                startdate: '2024-10-01', enddate: '2024-10-31', limit: 10),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                // If the data was successfully retrieved, display it
-                final List<hunts_api.HuntResponseModel> huntResponse =
-                    snapshot.data!;
-                print(snapshot.data);
-                return ListView.builder(
-                  itemCount: huntResponse.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(huntResponse[index].name),
-                      subtitle: Text(huntResponse[index].venue),
-                    );
-                  },
-                );
-              } else {
-                return const Center(child: Text('No data available.'));
-              }
-            },
-          )*/ 
