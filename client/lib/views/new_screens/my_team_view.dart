@@ -10,8 +10,31 @@ class MyTeamView extends StatelessWidget {
   final String teamID;
   final String huntID;
   late String teamName;
+
+
+  // Auxiliary function to handle leave team POST API call and handle view updates
+  Future<void> leaveTeamAndUpdateView(BuildContext context) async {
+    try {
+      // Call the leaveTeam API
+      await leaveTeam(huntID, teamID);
+      // Show a success message or refresh the view
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully left the team')),
+      );
+      // Navigate back after leaving the team
+      Navigator.pop(context);
+    } catch (error) {
+      // Handle any errors from the leaveTeam call
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error leaving the team: $error')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // print("current huntID: $huntID");
+    // print("current teamID: $teamID");
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
     //Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
     //Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
@@ -51,9 +74,8 @@ class MyTeamView extends StatelessWidget {
                         decoration: AppStyles.cancelButtonStyle,
                         child: ElevatedButton(
                           onPressed: () {
-                            leaveTeam(huntID, teamName);
-                            //TODO: Implement Leaving Team API Call
-                            Navigator.pop(context);
+                            // aux function to handle leave_team api call
+                            leaveTeamAndUpdateView(context);
                           },
                           style: AppStyles.elevatedButtonStyle,
                           child: const Text('Leave Team'),

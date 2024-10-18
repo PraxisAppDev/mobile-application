@@ -74,6 +74,33 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
+
+  // Function to handle the join_team API call and navigate to MyTeamView after successful joining
+  void _handleJoinTeam(BuildContext context) async {
+    try {
+      await joinTeam(widget.huntID, widget.teamName);
+
+      /* FOR TESTING PURPOSES */
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Successfully joined ${widget.teamName} with response ${response}')),
+      // );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyTeamView(
+            huntID: widget.huntID,
+            teamID: widget.teamID,
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error joining team: $e')),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -145,7 +172,19 @@ class _TeamTileState extends State<TeamTile> {
                         onPressed: widget.isLocked
                             ? null // Disable button if team is locked
                             : () {
-                                joinTeam(widget.huntID, widget.teamName);
+                                _handleJoinTeam(context);
+
+                                // joinTeam(widget.huntID, widget.teamName);
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //       builder: (context) => MyTeamView(
+                                //             huntID: widget.huntID,
+                                //             teamID: widget.teamID,
+                                //           )),
+                                // );
+                                
+                                
                                 // Join team functionality
                                 /*
                                 /*
@@ -161,14 +200,7 @@ class _TeamTileState extends State<TeamTile> {
                                       builder: (context) => MyTeamView()),
                                 );
                                 */
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyTeamView(
-                                            huntID: widget.huntID,
-                                            teamID: widget.teamID,
-                                          )),
-                                );
+                                
                                 // *****************
                                 // setState(() {
                                 //   widget.members.add("CURRENT USER NAME");
