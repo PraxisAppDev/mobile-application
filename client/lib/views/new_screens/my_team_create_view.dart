@@ -13,7 +13,7 @@ class MyTeamCreateView extends StatefulWidget {
   const MyTeamCreateView({
     Key? key,
     required this.teamName,
-    required this.individualName,
+    required this.individualName, required String huntName, required String venue, required String huntDate,
   }) : super(key: key);
 
   @override
