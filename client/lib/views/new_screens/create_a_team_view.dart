@@ -4,7 +4,8 @@ import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 
 class CreateATeamView extends StatefulWidget {
-  const CreateATeamView({super.key});
+  final String huntId;
+  const CreateATeamView({super.key, required this.huntId});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -115,7 +116,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MyTeamCreateView(teamName: _teamNameController.text, individualName: _individualNameController.text)),
+                            builder: (context) => MyTeamCreateView(huntId: widget.huntId, teamName: _teamNameController.text, individualName: _individualNameController.text)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

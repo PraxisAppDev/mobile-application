@@ -6,12 +6,12 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class HuntModeView extends StatelessWidget {
   //const HuntModeView({super.key});
-  final String huntID;
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntModeView({super.key, required this.huntID, required this.huntName, required this.venue, required this.huntDate});
-
+  const HuntModeView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
+  
   //@override
   //_HuntModeViewState createState() => _HuntModeViewState();
 
@@ -84,7 +84,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntAloneTeamNameView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntAloneTeamNameView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -103,7 +103,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntWithTeamView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntWithTeamView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

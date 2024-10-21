@@ -1,41 +1,52 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
-import 'package:praxis_afterhours/apis/put_start_hunt.dart' as put_start_hunt;
+import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
+import 'package:praxis_afterhours/apis/fetch_hunts.dart';
+import 'package:praxis_afterhours/apis/fetch_teams.dart';
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 
 class HuntAloneView extends StatefulWidget {
   final String teamName;
-  final String huntID;
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
 
-  const HuntAloneView(
-      {super.key,
-      required this.teamName,
-      required this.huntID,
-      required this.huntName,
-      required this.venue,
-      required this.huntDate});
+  const HuntAloneView({
+    super.key,
+    required this.teamName,
+    required this.huntId, 
+    required this.huntName,
+    required this.venue,
+    required this.huntDate
+  });
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
 }
 
 class _HuntAloneViewState extends State<HuntAloneView> {
-  late TextEditingController _teamNameController;
+  late TextEditingController _playerNameController;
   late FocusNode _focusNode;
   bool _isEditing = false;
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
+  
+  late String huntName;
+  late String venue;
 
   @override
   void initState() {
     super.initState();
-    _teamNameController = TextEditingController(text: widget.teamName);
+    _playerNameController = TextEditingController();
     _focusNode = FocusNode();
+    huntName = widget.huntName;
+    venue = widget.venue;
 
     _focusNode.addListener(() {
       setState(() {
@@ -46,9 +57,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
 
   @override
   void dispose() {
-    _teamNameController.dispose();
+    _playerNameController.dispose();
     _focusNode.dispose();
-    _timer?.cancel();
+    _timer?.cancel(); 
     super.dispose();
   }
 
@@ -58,113 +69,119 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
+  Future<void> addTeam() async {
+    if (widget.huntId == null) {
+      throw Exception("Hunt ID is not available");
+    }
+    
+    String playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      throw Exception("Player name cannot be empty");
+    }
+
+    try {
+      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
+      final putResponse = await startHunt(widget.huntId, postResponse['teamId']);
+      print("Team created successfully");
+    } catch (e) {
+      print("Failed to create team: $e");
+      throw e;
+    }
+  }
+
   void _startHunt() async {
-    setState(() {
-      _showPopup = true;
-    });
+    try {
+      await addTeam();
+      
+      setState(() {
+        _showPopup = true;
+      });
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-              setState(() {
-                if (_countdown > 1) {
-                  _countdown--;
-                } else {
-                  timer.cancel();
-                  Future.delayed(const Duration(seconds: 1), () {
-                    _showPopup = false; // Hide the popup
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ChallengeView()),
-                    );
-                  });
-                }
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                setState(() {
+                  if (_countdown > 1) {
+                    _countdown--;
+                  } else {
+                    timer.cancel();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      _showPopup = false;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ChallengeView()),
+                      );
+                    });
+                  }
+                });
               });
-            });
 
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'You have started the hunt!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'You have started the hunt!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Game will begin in',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Game will begin in',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        '$_countdown',
-                        style: const TextStyle(
-                          fontSize: 48,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 20),
+                        Text(
+                          '$_countdown',
+                          style: const TextStyle(
+                            fontSize: 48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'seconds',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+                        const SizedBox(height: 10),
+                        const Text(
+                          'seconds',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     _timer?.cancel(); // Stop the timer
-                      //     Navigator.pop(context); // Close the dialog
-                      //   },
-                      //   child: const Text('Cancel'),
-                      // ),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    // Timer.periodic(Duration(seconds: 1), (timer) {
-    //   setState(() {
-    //     if (_countdown > 0) {
-    //       _countdown--;
-    //     } else {
-    //       timer.cancel();
-    //       _showPopup = false;
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(builder: (context) => const ChallengeView()),
-    //       );
-    //     }
-    //   });
-    // });
+              );
+            },
+          );
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start hunt: $e')),
+      );
+    }
   }
 
   @override
@@ -221,7 +238,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "You are currently hunting alone as: ${widget.teamName}",
+                    "You are currently hunting in team: ${widget.teamName}",
                     style: AppStyles.logisticsStyle,
                   ),
                   const SizedBox(width: 350, child: Divider(thickness: 2)),
@@ -237,7 +254,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                         SizedBox(
                           width: 205,
                           child: TextField(
-                            controller: _teamNameController,
+                            controller: _playerNameController,
                             focusNode: _focusNode,
                             decoration: InputDecoration(
                               suffixIcon: Icon(Icons.edit, color: Colors.white),
@@ -245,7 +262,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.white),
                               ),
-                              hintText: _isEditing ? null : widget.teamName,
+                              hintText: _isEditing ? null : "Enter Player Name",
                               labelStyle: const TextStyle(
                                   color: Colors.white, fontSize: 14),
                               filled: true,
@@ -284,10 +301,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     width: 175,
                     decoration: AppStyles.confirmButtonStyle,
                     child: ElevatedButton(
-                      onPressed: () {
-                        _startHunt();
-                        put_start_hunt.startHunt();
-                      },
+                      onPressed: _startHunt,
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Start Hunt',
                           style: TextStyle(fontWeight: FontWeight.bold)),
@@ -300,9 +314,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     decoration: AppStyles.cancelButtonStyle,
                     child: ElevatedButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Deleted solo team')),
-                        );
+                        Navigator.pop(context);
                       },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Delete Team',

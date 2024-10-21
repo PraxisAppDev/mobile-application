@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
-import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
-import 'package:praxis_afterhours/apis/put_start_hunt.dart' as put_start_hunt;
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 
 class MyTeamCreateView extends StatefulWidget {
+  final String huntId;
   final String teamName;
   final String individualName;
 
   const MyTeamCreateView({
     Key? key,
+    required this.huntId,
     required this.teamName,
     required this.individualName,
   }) : super(key: key);
