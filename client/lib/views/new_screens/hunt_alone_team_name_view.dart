@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
-
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
 
 class HuntAloneTeamNameView extends StatefulWidget {
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntAloneTeamNameView({super.key, required this.huntName, required this.venue, required this.huntDate});
+  final String huntID;
+  const HuntAloneTeamNameView({super.key, required this.huntName, required this.venue, required this.huntDate, required this.huntID});
 
 
  @override
@@ -17,9 +18,10 @@ class HuntAloneTeamNameView extends StatefulWidget {
 
 class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
  final TextEditingController _teamNameController = TextEditingController();
+ final TextEditingController _individualNameController = TextEditingController();
  final FocusNode _focusNode = FocusNode();
  bool _isFocused = false;
-
+ late Map<String, dynamic> createData = {};
 
  @override
  void initState() {
@@ -38,6 +40,14 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
    _teamNameController.dispose();
    super.dispose();
  }
+
+ Future<void> createTeamData() async {
+   var data = await createTeam(widget.huntID, _teamNameController.text, _individualNameController.text, true); // Call the imported fetchChallenges function
+   setState(() {
+     createData = data;
+   });
+ }
+
  @override
  Widget build(BuildContext context) {
    return MaterialApp(
@@ -143,10 +153,11 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                      ElevatedButton(
                        style: AppStyles.elevatedButtonStyle,
                        onPressed: () {
+                         createTeamData();
                          Navigator.push(
                            context,
                            MaterialPageRoute(
-                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the teamName
+                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate, huntID: widget.huntID, teamID: createData["teamId"].toString()),  // Pass the teamName
                            ),
                          );
                        },

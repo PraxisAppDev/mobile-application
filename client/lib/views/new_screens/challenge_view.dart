@@ -4,7 +4,10 @@ import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView({super.key});
+  final String huntID;
+  final String teamID;
+
+  const ChallengeView({super.key, required this.huntID, required this.teamID});
 
   @override
   Widget build(BuildContext context) {
@@ -122,8 +125,8 @@ class _QuestionSectionState extends State<QuestionSection> {
   final List<Widget> _hints = [
     Image.asset("images/President.png"), // Image hint for question 1
     const Text("2000 and what?", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 2
-    Image.asset("images/location.png"), // Image hint for question 3
-    const Text("CS...", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 4
+    Image.asset("images/Location.png"), // Image hint for question 3
+    const Text("GD...", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 4
     Image.asset("images/Continent.png"), // Image hint for question 5
     const Text("Duh ofc he is🤦‍♂️", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 6
   ];
@@ -163,7 +166,7 @@ class _QuestionSectionState extends State<QuestionSection> {
               textAlign: TextAlign.center,
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           const Text(
             "Hint",
             style: TextStyle(fontSize: 18, color: Colors.white70, fontWeight: FontWeight.bold),
@@ -181,7 +184,7 @@ class _QuestionSectionState extends State<QuestionSection> {
               child: _hints[_currentQuestionIndex],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           // Answer Input Box
           Container(
             height: 50,
@@ -202,7 +205,7 @@ class _QuestionSectionState extends State<QuestionSection> {
               style: const TextStyle(color: Colors.black),
             ),
           ),
-          const SizedBox(height: 30),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

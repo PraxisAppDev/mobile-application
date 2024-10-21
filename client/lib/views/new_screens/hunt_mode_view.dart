@@ -9,7 +9,8 @@ class HuntModeView extends StatelessWidget {
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntModeView({super.key, required this.huntName, required this.venue, required this.huntDate});
+  final String huntID;
+  const HuntModeView({super.key, required this.huntName, required this.venue, required this.huntDate, required this.huntID});
 
   //@override
   //_HuntModeViewState createState() => _HuntModeViewState();
@@ -83,7 +84,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntAloneTeamNameView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntAloneTeamNameView(huntName: huntName, venue: venue, huntDate: huntDate, huntID: huntID)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -102,7 +103,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntWithTeamView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntWithTeamView(huntName: huntName, venue: venue, huntDate: huntDate, huntID: huntID)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

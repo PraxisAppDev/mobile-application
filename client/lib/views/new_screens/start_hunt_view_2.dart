@@ -220,24 +220,24 @@ class _StartHuntView2State extends State<StartHuntView2> {
                   ),
                 ),
                 Text("\nEnd", style: TextStyle(fontSize: 12)),
-                const SizedBox(height: 20),
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.confirmButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ChallengeView()),
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt 3',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
+                // const SizedBox(height: 20),
+                // Container(
+                //   height: 50,
+                //   width: 175,
+                //   decoration: AppStyles.confirmButtonStyle,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //             builder: (context) => ChallengeView()),
+                //       );
+                //     },
+                //     style: AppStyles.elevatedButtonStyle,
+                //     child: const Text('Start Hunt 3',
+                //         style: TextStyle(fontWeight: FontWeight.bold)),
+                //   ),
+                // ),
               ],
             ),
           ),

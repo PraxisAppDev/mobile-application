@@ -8,13 +8,17 @@ class HuntAloneView extends StatefulWidget {
   final String huntName;
   final String venue;
   final String huntDate;
+  final String huntID;
+  final String teamID;
 
   const HuntAloneView(
       {super.key,
       required this.teamName,
       required this.huntName,
       required this.venue,
-      required this.huntDate});
+      required this.huntDate,
+      required this.huntID,
+      required this.teamID});
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
@@ -76,7 +80,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     _showPopup = false; // Hide the popup
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const ChallengeView()),
+                      MaterialPageRoute(builder: (context) => ChallengeView(huntID: widget.huntID, teamID: widget.teamID)),
                     );
                   });
                 }
@@ -234,8 +238,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                         SizedBox(
                           width: 205,
                           child: TextField(
-                            controller: _teamNameController,
-                            focusNode: _focusNode,
+                            //controller: _teamNameController,
+                            //focusNode: _focusNode,
                             decoration: InputDecoration(
                               suffixIcon: Icon(Icons.edit, color: Colors.white),
                               border: UnderlineInputBorder(

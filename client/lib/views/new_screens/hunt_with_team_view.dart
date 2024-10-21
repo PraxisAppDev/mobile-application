@@ -7,7 +7,8 @@ class HuntWithTeamView extends StatelessWidget {
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntWithTeamView({super.key, required this.huntName, required this.venue, required this.huntDate});
+  final String huntID;
+  const HuntWithTeamView({super.key, required this.huntName, required this.venue, required this.huntDate, required this.huntID});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,7 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const JoinATeamView()),
+                            builder: (context) => JoinATeamView(huntID: huntID)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -86,7 +87,7 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const CreateATeamView()),
+                            builder: (context) => CreateATeamView(huntID: huntID)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

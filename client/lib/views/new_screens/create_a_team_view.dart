@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
 
 class CreateATeamView extends StatefulWidget {
-  const CreateATeamView({super.key});
+  final String huntID;
+
+  const CreateATeamView({super.key, required this.huntID});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -15,7 +18,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
   final TextEditingController _individualNameController = TextEditingController();
   final FocusNode _teamFocusNode = FocusNode();
   final FocusNode _individualFocusNode = FocusNode();
-  //bool _isFocused = false;
+  late Map<String, dynamic> createData = {};
 
   @override
   void initState() {
@@ -34,6 +37,13 @@ class _CreateATeamViewState extends State<CreateATeamView> {
     _individualNameController.dispose();
     _individualFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> createTeamData() async {
+    var data = await createTeam(widget.huntID, _teamNameController.text, _individualNameController.text, true); // Call the imported fetchChallenges function
+    setState(() {
+      createData = data;
+    });
   }
 
   @override
@@ -112,10 +122,11 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
+                      createTeamData();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MyTeamCreateView(teamName: _teamNameController.text, individualName: _individualNameController.text)),
+                            builder: (context) => MyTeamCreateView(teamName: _teamNameController.text, individualName: _individualNameController.text, teamID: createData["teamId"].toString(), huntID: widget.huntID)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

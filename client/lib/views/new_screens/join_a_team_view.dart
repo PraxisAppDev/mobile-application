@@ -3,7 +3,9 @@ import 'package:praxis_afterhours/views/new_screens/my_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class JoinATeamView extends StatelessWidget {
-  const JoinATeamView({super.key});
+  final String huntID;
+
+  const JoinATeamView({super.key, required this.huntID});
 
   @override
   Widget build(BuildContext context) {

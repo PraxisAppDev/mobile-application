@@ -3,17 +3,22 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 
 class MyTeamCreateView extends StatefulWidget {
   final String teamName;
   final String individualName;
+  final String teamID;
+  final String huntID;
 
   const MyTeamCreateView({
     Key? key,
     required this.teamName,
     required this.individualName,
+    required this.teamID,
+    required this.huntID,
   }) : super(key: key);
 
   @override
@@ -24,6 +29,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   late TextEditingController _teamNameController;
   late FocusNode _focusNode;
   bool _isEditing = false;
+  late Map<String, dynamic> startData = {};
 
   @override
   void initState() {
@@ -48,6 +54,13 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
     }
+  }
+
+  Future<void> startHuntData() async {
+    var data = await startHunt(widget.huntID, widget.teamID);
+    setState(() {
+      startData = data;
+    });
   }
 
   @override
@@ -138,10 +151,11 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   child: ElevatedButton(
                     onPressed: () {
                       ShowGameStartDialog(context).then((_) {
+                        startHuntData();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ChallengeView(),
+                            builder: (context) => ChallengeView(huntID: widget.huntID, teamID: widget.teamID),
                           ),
                         );
                       });
