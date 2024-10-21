@@ -6,10 +6,11 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class HuntModeView extends StatelessWidget {
   //const HuntModeView({super.key});
+  final String huntID;
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntModeView({super.key, required this.huntName, required this.venue, required this.huntDate});
+  const HuntModeView({super.key, required this.huntID, required this.huntName, required this.venue, required this.huntDate});
 
   //@override
   //_HuntModeViewState createState() => _HuntModeViewState();

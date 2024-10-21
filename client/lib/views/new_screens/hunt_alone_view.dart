@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart' as put_start_hunt;
 
 class HuntAloneView extends StatefulWidget {
   final String teamName;
+  final String huntID;
   final String huntName;
   final String venue;
   final String huntDate;
@@ -12,6 +14,7 @@ class HuntAloneView extends StatefulWidget {
   const HuntAloneView(
       {super.key,
       required this.teamName,
+      required this.huntID,
       required this.huntName,
       required this.venue,
       required this.huntDate});
@@ -55,7 +58,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  void _startHunt() {
+  void _startHunt() async {
     setState(() {
       _showPopup = true;
     });
@@ -281,7 +284,10 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     width: 175,
                     decoration: AppStyles.confirmButtonStyle,
                     child: ElevatedButton(
-                      onPressed: _startHunt,
+                      onPressed: () {
+                        _startHunt();
+                        put_start_hunt.startHunt();
+                      },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Start Hunt',
                           style: TextStyle(fontWeight: FontWeight.bold)),
