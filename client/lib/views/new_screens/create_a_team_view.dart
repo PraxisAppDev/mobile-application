@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
 
 class CreateATeamView extends StatefulWidget {
   final String huntId;
@@ -13,9 +14,9 @@ class CreateATeamView extends StatefulWidget {
 
 class _CreateATeamViewState extends State<CreateATeamView> {
   final TextEditingController _teamNameController = TextEditingController();
-  final TextEditingController _individualNameController = TextEditingController();
+  final TextEditingController _playerNameController = TextEditingController();
   final FocusNode _teamFocusNode = FocusNode();
-  final FocusNode _individualFocusNode = FocusNode();
+  final FocusNode _playerFocusNode = FocusNode();
   //bool _isFocused = false;
 
   @override
@@ -23,7 +24,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
     super.initState();
     _teamFocusNode.addListener(() {
       //setState(() {
-        //_isFocused = _focusNode.hasFocus;
+      //_isFocused = _focusNode.hasFocus;
       //});
     });
   }
@@ -32,9 +33,49 @@ class _CreateATeamViewState extends State<CreateATeamView> {
   void dispose() {
     _teamNameController.dispose();
     _teamFocusNode.dispose();
-    _individualNameController.dispose();
-    _individualFocusNode.dispose();
+    _playerNameController.dispose();
+    _playerFocusNode.dispose();
     super.dispose();
+  }
+
+  Future<String> makeTeam() async {
+    try {
+      String playerName = _playerNameController.text.trim();
+      if (playerName.isEmpty) {
+        throw Exception("Player name cannot be empty");
+      }
+      String teamName = _teamNameController.text.trim();
+      if (teamName.isEmpty) {
+        throw Exception("Team name cannot be empty");
+      }
+      final postResponse =
+          await createTeam(widget.huntId, teamName, playerName, true);
+      return postResponse['teamId'];
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  void _createTeam() async {
+    try {
+      final String teamId = await makeTeam();
+      
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MyTeamCreateView(
+                huntId: widget.huntId,
+                teamId: teamId,
+                teamName: _teamNameController.text,
+                playerName: _playerNameController.text)),
+      );
+    } catch (e) {
+      print("Failed to create team: $e");
+      // Not working
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Failed to create team: $e')),
+      // );
+    }
   }
 
   @override
@@ -64,7 +105,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                             borderSide: BorderSide(color: Colors.white)),
                         labelText: 'Enter team name here...',
                         labelStyle:
-                        TextStyle(color: Colors.white, fontSize: 14),
+                            TextStyle(color: Colors.white, fontSize: 14),
                         filled: true,
                         fillColor: Colors.grey),
                     style: TextStyle(color: Colors.white),
@@ -87,8 +128,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                       SizedBox(
                         width: 205,
                         child: TextField(
-                          controller: _individualNameController,
-                          focusNode: _individualFocusNode,
+                          controller: _playerNameController,
+                          focusNode: _playerFocusNode,
                           decoration: InputDecoration(
                               suffixIcon: Icon(Icons.edit, color: Colors.white),
                               border: UnderlineInputBorder(
@@ -96,7 +137,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                                   borderSide: BorderSide(color: Colors.white)),
                               labelText: 'Enter name here...',
                               labelStyle:
-                              TextStyle(color: Colors.white, fontSize: 14),
+                                  TextStyle(color: Colors.white, fontSize: 14),
                               filled: true,
                               fillColor: Colors.grey),
                           style: TextStyle(color: Colors.white),
@@ -112,13 +153,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   width: 175,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyTeamCreateView(huntId: widget.huntId, teamName: _teamNameController.text, individualName: _individualNameController.text)),
-                      );
-                    },
+                    onPressed: _createTeam,
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text('Create',
                         style: TextStyle(fontWeight: FontWeight.bold)),

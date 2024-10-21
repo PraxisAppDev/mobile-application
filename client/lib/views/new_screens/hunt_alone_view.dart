@@ -69,11 +69,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  Future<void> addTeam() async {
-    if (widget.huntId == null) {
-      throw Exception("Hunt ID is not available");
-    }
-    
+  Future<void> makeTeam() async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
       throw Exception("Player name cannot be empty");
@@ -81,17 +77,15 @@ class _HuntAloneViewState extends State<HuntAloneView> {
 
     try {
       final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
-      final putResponse = await startHunt(widget.huntId, postResponse['teamId']);
-      print("Team created successfully");
+      await startHunt(widget.huntId, postResponse['teamId']);
     } catch (e) {
-      print("Failed to create team: $e");
       throw e;
     }
   }
 
   void _startHunt() async {
     try {
-      await addTeam();
+      await makeTeam();
       
       setState(() {
         _showPopup = true;
@@ -314,7 +308,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     decoration: AppStyles.cancelButtonStyle,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        ShowDeleteConfirmationDialog(context);
                       },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Delete Team',
@@ -363,4 +357,123 @@ class _HuntAloneViewState extends State<HuntAloneView> {
       ),
     );
   }
+}
+
+final DotDivider = Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+  ],
+);
+
+Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap a button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        backgroundColor: Colors.black,
+        contentPadding: const EdgeInsets.all(0),
+        content: DecoratedBox(
+          decoration: AppStyles.popupStyle(),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 45,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 32),
+                      Expanded(child: DotDivider),
+                      SizedBox(
+                        width: 32,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          icon: const Icon(Icons.close, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const Flexible(
+                  child: Text(
+                    'Are you sure you want to delete the team?',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // No Button
+                    Container(
+                      decoration: AppStyles.cancelButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'No',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    // Yes Button
+                    Container(
+                      decoration: AppStyles.confirmButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop();
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(height: 45, child: DotDivider),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
