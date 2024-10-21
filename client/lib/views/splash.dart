@@ -44,7 +44,7 @@ class _SplashState extends State<Splash> {
                 child: Image(
                     width: 1000,
                     height: 1000,
-                    image: AssetImage('../../assets/logo/logo.png'))),
+                    image: AssetImage('assets/logo/logo.png'))),
           ),
           Positioned(
               bottom: -40,
@@ -54,7 +54,7 @@ class _SplashState extends State<Splash> {
                 child: Image(
                     width: 200,
                     height: 200,
-                    image: AssetImage('../../assets/logo/corner_logo.png')),
+                    image: AssetImage('assets/logo/corner_logo.png')),
               )),
           Positioned(
               bottom: 0,
@@ -63,7 +63,7 @@ class _SplashState extends State<Splash> {
               child: Image(
                   width: 100,
                   height: 100,
-                  image: AssetImage('../../assets/logo/copyright.png'))),
+                  image: AssetImage('assets/logo/copyright.png'))),
         ],
       ),
     );

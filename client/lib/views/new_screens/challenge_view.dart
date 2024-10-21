@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'dart:async';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({super.key});
@@ -23,6 +26,13 @@ class ChallengeView extends StatelessWidget {
             children: [
               HeaderWidget(),
               Spacer(flex: 1),
+        appBar: AppStyles.appBarStyle("Challenge Screen", context),
+        body: DecoratedBox(
+          decoration: AppStyles.backgroundStyle,
+          child: Column(
+            children: [
+              HeaderWidget(),
+              SizedBox(height: 20),
               Expanded(
                 flex: 5,
                 child: QuestionSection(),
@@ -44,13 +54,39 @@ class HeaderWidget extends StatefulWidget {
 }
 
 class _HeaderWidgetState extends State<HeaderWidget> {
+  String currentDate = DateFormat('EEEE, MMMM d, y').format(DateTime.now());
+  late Timer _timer;
+  int _currentTextIndex = 0;
+  final List<String> _texts = [
+    DateFormat('EEEE, MMMM d, y').format(DateTime.now()),
+    "Let's Hunt!",
+    'Praxis Engineering',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Start a timer to change the text every 3 seconds
+    _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      setState(() {
+        _currentTextIndex = (_currentTextIndex + 1) % _texts.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Cancel the timer when the widget is disposed
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.2,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: const BoxDecoration(
-        color: Colors.black45,
+        color: Colors.black45, // Slight background color for better visibility
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -291,6 +327,7 @@ class _QuestionSectionState extends State<QuestionSection> {
             ),
           ),
           const SizedBox(height: 20),
+          // Answer Input Box
           Container(
             height: 50,
             width: MediaQuery.of(context).size.width * 0.7,

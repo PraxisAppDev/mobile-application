@@ -60,8 +60,8 @@ Map<String, dynamic> _$ChallengeToJson(Challenge instance) => <String, dynamic>{
     };
 
 Sequence _$SequenceFromJson(Map<String, dynamic> json) => Sequence(
-      num: json['num'] as int,
-      order: json['order'] as int,
+      num: (json['num'] as num).toInt(),
+      order: (json['order'] as num).toInt(),
     );
 
 Map<String, dynamic> _$SequenceToJson(Sequence instance) => <String, dynamic>{
@@ -93,7 +93,7 @@ Map<String, dynamic> _$ScoringToJson(Scoring instance) => <String, dynamic>{
 
 TimeDecay _$TimeDecayFromJson(Map<String, dynamic> json) => TimeDecay(
       type: json['type'] as String,
-      timeLimit: json['timeLimit'] as int?,
+      timeLimit: (json['timeLimit'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TimeDecayToJson(TimeDecay instance) => <String, dynamic>{
@@ -126,7 +126,7 @@ Hunt _$HuntFromJson(Map<String, dynamic> json) => Hunt(
       challenges: (json['challenges'] as List<dynamic>)
           .map((e) => Challenge.fromJson(e as Map<String, dynamic>))
           .toList(),
-      maxTeamSize: json['maxTeamSize'] as int,
+      maxTeamSize: (json['maxTeamSize'] as num).toInt(),
     );
 
 Map<String, dynamic> _$HuntToJson(Hunt instance) => <String, dynamic>{
