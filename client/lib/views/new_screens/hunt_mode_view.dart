@@ -75,7 +75,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const HuntAloneView()),
+                            builder: (context) => const HuntAloneTeamNameView()),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

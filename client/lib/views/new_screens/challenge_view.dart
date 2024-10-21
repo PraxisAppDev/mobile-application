@@ -163,7 +163,7 @@ class _QuestionSectionState extends State<QuestionSection> {
 
   void _submitAnswer(int huntId, int teamId) async {
     // Construct the URL dynamically using huntId, teamId, and challengeId
-    String apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/hunts/$huntId/teams/$teamId/challenges/${_currentQuestionIndex}/solve";
+    String apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/${_currentQuestionIndex}/solve";
 
     String userAnswer = _answerController.text;
     String solutionType = _solutionTypes[_currentQuestionIndex];
@@ -184,7 +184,7 @@ class _QuestionSectionState extends State<QuestionSection> {
         // Handle success
         var result = json.decode(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Answer submitted: ${result['message']}")),
+          SnackBar(content: Text("Answer submitted: ${result['challengeSolved']}")),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
