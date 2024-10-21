@@ -4,10 +4,11 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 
 
 class HuntAloneTeamNameView extends StatefulWidget {
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntAloneTeamNameView({super.key, required this.huntName, required this.venue, required this.huntDate});
+  const HuntAloneTeamNameView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
 
 
  @override
@@ -146,7 +147,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          Navigator.push(
                            context,
                            MaterialPageRoute(
-                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the teamName
+                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntId: widget.huntId, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the huntID
                            ),
                          );
                        },

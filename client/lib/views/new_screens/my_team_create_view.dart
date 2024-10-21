@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
-import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 
 class MyTeamCreateView extends StatefulWidget {
+  final String huntId;
+  final String teamId;
   final String teamName;
-  final String individualName;
+  final String playerName;
 
   const MyTeamCreateView({
     Key? key,
+    required this.huntId,
+    required this.teamId,
     required this.teamName,
-    required this.individualName,
+    required this.playerName,
   }) : super(key: key);
 
   @override
@@ -47,6 +52,24 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _unfocusTextField() {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
+    }
+  }
+
+  void _startHunt() async {
+    try {
+      await startHunt(widget.huntId, widget.teamId);
+      ShowGameStartDialog(context).then((_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ChallengeView(),
+          ),
+        );
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start hunt: $e')),
+      );
     }
   }
 
@@ -118,7 +141,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       const SizedBox(width: 5),
                       SizedBox(
                         child: Text(
-                          widget.individualName,
+                          widget.playerName,
                           style: AppStyles.logisticsStyle,
                         ),
                       ),
@@ -136,16 +159,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   width: 175,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
-                    onPressed: () {
-                      ShowGameStartDialog(context).then((_) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChallengeView(),
-                          ),
-                        );
-                      });
-                    },
+                    onPressed: _startHunt,
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
                       'Start Hunt',
@@ -324,6 +338,7 @@ final DotDivider = Row(
 );
 
 Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+  print(context.widget);
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap a button!
@@ -392,12 +407,9 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop(); // Close dialog
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const JoinHuntView(),
-                            ),
-                          ); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         },
                         style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(

@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
+import 'package:praxis_afterhours/apis/fetch_hunts.dart';
+import 'package:praxis_afterhours/apis/fetch_teams.dart';
+import 'package:praxis_afterhours/apis/post_create_teams.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 
 class HuntAloneView extends StatefulWidget {
   final String teamName;
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
 
-  const HuntAloneView(
-      {super.key,
-      required this.teamName,
-      required this.huntName,
-      required this.venue,
-      required this.huntDate});
+  const HuntAloneView({
+    super.key,
+    required this.teamName,
+    required this.huntId, 
+    required this.huntName,
+    required this.venue,
+    required this.huntDate
+  });
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
@@ -171,18 +180,23 @@ class HuntAloneView extends StatefulWidget {
 
 
 class _HuntAloneViewState extends State<HuntAloneView> {
-  late TextEditingController _teamNameController;
+  late TextEditingController _playerNameController;
   late FocusNode _focusNode;
   bool _isEditing = false;
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
+  
+  late String huntName;
+  late String venue;
 
   @override
   void initState() {
     super.initState();
-    _teamNameController = TextEditingController(text: widget.teamName);
+    _playerNameController = TextEditingController();
     _focusNode = FocusNode();
+    huntName = widget.huntName;
+    venue = widget.venue;
 
     _focusNode.addListener(() {
       setState(() {
@@ -193,9 +207,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
 
   @override
   void dispose() {
-    _teamNameController.dispose();
+    _playerNameController.dispose();
     _focusNode.dispose();
-    _timer?.cancel();
+    _timer?.cancel(); 
     super.dispose();
   }
 
@@ -205,113 +219,113 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  void _startHunt() {
-    setState(() {
-      _showPopup = true;
-    });
+  Future<void> makeTeam() async {
+    String playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      throw Exception("Player name cannot be empty");
+    }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-              setState(() {
-                if (_countdown > 1) {
-                  _countdown--;
-                } else {
-                  timer.cancel();
-                  Future.delayed(const Duration(seconds: 1), () {
-                    _showPopup = false; // Hide the popup
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const ChallengeView()),
-                    );
-                  });
-                }
+    try {
+      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
+      await startHunt(widget.huntId, postResponse['teamId']);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  void _startHunt() async {
+    try {
+      await makeTeam();
+      
+      setState(() {
+        _showPopup = true;
+      });
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                setState(() {
+                  if (_countdown > 1) {
+                    _countdown--;
+                  } else {
+                    timer.cancel();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      _showPopup = false;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ChallengeView()),
+                      );
+                    });
+                  }
+                });
               });
-            });
 
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'You have started the hunt!',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'You have started the hunt!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Game will begin in',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Game will begin in',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        '$_countdown',
-                        style: const TextStyle(
-                          fontSize: 48,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: 20),
+                        Text(
+                          '$_countdown',
+                          style: const TextStyle(
+                            fontSize: 48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'seconds',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
+                        const SizedBox(height: 10),
+                        const Text(
+                          'seconds',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     _timer?.cancel(); // Stop the timer
-                      //     Navigator.pop(context); // Close the dialog
-                      //   },
-                      //   child: const Text('Cancel'),
-                      // ),
-                    ],
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    );
-
-    // Timer.periodic(Duration(seconds: 1), (timer) {
-    //   setState(() {
-    //     if (_countdown > 0) {
-    //       _countdown--;
-    //     } else {
-    //       timer.cancel();
-    //       _showPopup = false;
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(builder: (context) => const ChallengeView()),
-    //       );
-    //     }
-    //   });
-    // });
+              );
+            },
+          );
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start hunt: $e')),
+      );
+    }
   }
 
   @override
@@ -368,7 +382,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "You are currently hunting alone as: ${widget.teamName}",
+                    "You are currently hunting in team: ${widget.teamName}",
                     style: AppStyles.logisticsStyle,
                   ),
                   const SizedBox(width: 350, child: Divider(thickness: 2)),
@@ -384,7 +398,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                         SizedBox(
                           width: 205,
                           child: TextField(
-                            controller: _teamNameController,
+                            controller: _playerNameController,
                             focusNode: _focusNode,
                             decoration: InputDecoration(
                               suffixIcon: Icon(Icons.edit, color: Colors.white),
@@ -392,7 +406,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.white),
                               ),
-                              hintText: _isEditing ? null : widget.teamName,
+                              hintText: _isEditing ? null : "Enter Player Name",
                               labelStyle: const TextStyle(
                                   color: Colors.white, fontSize: 14),
                               filled: true,
@@ -444,9 +458,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     decoration: AppStyles.cancelButtonStyle,
                     child: ElevatedButton(
                       onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Deleted solo team')),
-                        );
+                        ShowDeleteConfirmationDialog(context);
                       },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Delete Team',
@@ -495,4 +507,123 @@ class _HuntAloneViewState extends State<HuntAloneView> {
       ),
     );
   }
+}
+
+final DotDivider = Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+    SizedBox(
+      width: 5,
+    ),
+    Container(
+      width: 5.0,
+      height: 5.0,
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+    ),
+  ],
+);
+
+Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap a button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+        backgroundColor: Colors.black,
+        contentPadding: const EdgeInsets.all(0),
+        content: DecoratedBox(
+          decoration: AppStyles.popupStyle(),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SizedBox(
+                  height: 45,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const SizedBox(width: 32),
+                      Expanded(child: DotDivider),
+                      SizedBox(
+                        width: 32,
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          icon: const Icon(Icons.close, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const Flexible(
+                  child: Text(
+                    'Are you sure you want to delete the team?',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // No Button
+                    Container(
+                      decoration: AppStyles.cancelButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'No',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    // Yes Button
+                    Container(
+                      decoration: AppStyles.confirmButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close dialog
+                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop();
+                        },
+                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                SizedBox(height: 45, child: DotDivider),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }
