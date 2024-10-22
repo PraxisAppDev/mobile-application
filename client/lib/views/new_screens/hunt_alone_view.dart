@@ -176,7 +176,7 @@ class HuntAloneView extends StatefulWidget {
       ),
     );
   }
-}
+
 
 
 class _HuntAloneViewState extends State<HuntAloneView> {
