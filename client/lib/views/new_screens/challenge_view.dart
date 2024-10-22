@@ -12,7 +12,7 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
+         appBar: AppBar(
           title: const Text('Challenge Screen'),
         ),
         body: const DecoratedBox(
@@ -24,15 +24,10 @@ class ChallengeView extends StatelessWidget {
           ),
           child: Column(
             children: [
+              // Header container taking up 1/5th of the screen height
               HeaderWidget(),
+              // Push the content up by an additional 15%
               Spacer(flex: 1),
-        appBar: AppStyles.appBarStyle("Challenge Screen", context),
-        body: DecoratedBox(
-          decoration: AppStyles.backgroundStyle,
-          child: Column(
-            children: [
-              HeaderWidget(),
-              SizedBox(height: 20),
               Expanded(
                 flex: 5,
                 child: QuestionSection(),
