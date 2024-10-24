@@ -16,7 +16,7 @@ class MyTeamView extends StatelessWidget {
   Future<void> leaveTeamAndUpdateView(BuildContext context) async {
     try {
       // Call the leaveTeam API
-      await leaveTeam(huntID, teamID);
+      await leaveTeam(huntID, teamID, "placeholder"); // TODO: Fix
       // Show a success message or refresh the view
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully left the team')),

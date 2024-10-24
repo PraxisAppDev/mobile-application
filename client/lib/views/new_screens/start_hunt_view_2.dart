@@ -58,7 +58,7 @@ class _StartHuntView2State extends State<StartHuntView2> {
   }
 
   Future<void> joinTeamData() async {
-    var data = await joinTeam("1", "Eagles"); // Call the imported fetchChallenges function
+    var data = await joinTeam("1", "Eagles", "Andy"); // Call the imported fetchChallenges function
     setState(() {
       joinData = data;
       isLoading = false;  // Update loading state
@@ -74,7 +74,7 @@ class _StartHuntView2State extends State<StartHuntView2> {
   }
 
   Future<void> leaveTeamData() async {
-    var data = await leaveTeam("1", "23453");
+    var data = await leaveTeam("1", "23453", "Andy");
     setState(() {
       leaveData = data;
       isLoading = false;  // Update loading state
