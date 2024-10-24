@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class HuntModeView extends StatelessWidget {
   //const HuntModeView({super.key});
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
-  const HuntModeView({super.key, required this.huntName, required this.venue, required this.huntDate});
-
+  const HuntModeView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
+  
   //@override
   //_HuntModeViewState createState() => _HuntModeViewState();
 
@@ -83,7 +85,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntAloneTeamNameView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntAloneTeamNameView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -102,7 +104,7 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntWithTeamView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntWithTeamView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

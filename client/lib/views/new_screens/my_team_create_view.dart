@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
-import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
+import 'package:praxis_afterhours/apis/delete_team.dart';
+import 'package:praxis_afterhours/apis/patch_update_team.dart';
 
 class MyTeamCreateView extends StatefulWidget {
+  final String huntId;
+  final String teamId;
   final String teamName;
-  final String individualName;
+  final String playerName;
 
   const MyTeamCreateView({
     Key? key,
+    required this.huntId,
+    required this.teamId,
     required this.teamName,
-    required this.individualName,
+    required this.playerName,
   }) : super(key: key);
 
   @override
@@ -47,6 +54,45 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _unfocusTextField() {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
+    }
+  }
+
+  void _startHunt() async {
+    try {
+      await startHunt(widget.huntId, widget.teamId);
+      ShowGameStartDialog(context).then((_) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ChallengeView(),
+          ),
+        );
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start hunt: $e')),
+      );
+    }
+  }
+
+   Future<void> _updateTeamName() async {
+    String newTeamName = _teamNameController.text.trim();
+    if (newTeamName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Team name cannot be empty')),
+      );
+      return;
+    }
+
+    try {
+      await updateTeam(widget.huntId, widget.teamId, newTeamName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Team name updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update team: $e')),
+      );
     }
   }
 
@@ -87,7 +133,10 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                           controller: _teamNameController,
                           focusNode: _focusNode,
                           decoration: InputDecoration(
-                            suffixIcon: Icon(Icons.edit, color: Colors.white),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.check, color: Colors.white),
+                              onPressed: _updateTeamName,
+                            ),
                             border: UnderlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: Colors.white),
@@ -98,6 +147,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                             filled: true,
                             fillColor: Colors.grey,
                           ),
+                          onSubmitted: (value) {
+                            _updateTeamName();
+                          },
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -118,7 +170,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       const SizedBox(width: 5),
                       SizedBox(
                         child: Text(
-                          widget.individualName,
+                          widget.playerName,
                           style: AppStyles.logisticsStyle,
                         ),
                       ),
@@ -137,14 +189,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ShowGameStartDialog(context).then((_) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChallengeView(),
-                          ),
-                        );
-                      });
+                      _startHunt();
+                      _updateTeamName();
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -160,7 +206,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ShowDeleteConfirmationDialog(context);
+                      ShowDeleteConfirmationDialog(context, widget.huntId, widget.teamId);
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -323,7 +369,8 @@ final DotDivider = Row(
   ],
 );
 
-Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, String teamId) async {
+  print(context.widget);
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap a button!
@@ -391,13 +438,11 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
+                          deleteTeam(huntId, teamId);
                           Navigator.of(context).pop(); // Close dialog
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const JoinHuntView(),
-                            ),
-                          ); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         },
                         style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(

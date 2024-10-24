@@ -58,7 +58,8 @@ Stream<List<Team>> watchListTeams(String huntId) async* {
   ).send(client);
 }
 
-Future<Team> createTeam(String huntId, String teamName, {bool isLocked = false}) async {
+Future<Team> createTeam(String huntId, String teamName,
+    {bool isLocked = false}) async {
   Response response;
   String? token = await getToken();
   if (token == null) throw Exception("User is not logged in.");
@@ -141,13 +142,13 @@ Stream<List<String>> watchListJoinRequestsForTeam(
   String? token = await getToken();
   if (token == null) throw Exception("User is not logged in.");
   yield* RetryStreamRequest(
-      () => StreamRequest.get(
-        Uri.parse("$apiUrl/game/$huntId/teams/$teamId/listen_join_requests"),
-        headers: {"authorization": "Bearer $token"},
-        converter: (json) => (json as List<Object?>).cast<String>().toList(),
-      ),
-      maxRetries: 5,
-      retryDelay: const Duration(seconds: 5),
+    () => StreamRequest.get(
+      Uri.parse("$apiUrl/game/$huntId/teams/$teamId/listen_join_requests"),
+      headers: {"authorization": "Bearer $token"},
+      converter: (json) => (json as List<Object?>).cast<String>().toList(),
+    ),
+    maxRetries: 5,
+    retryDelay: const Duration(seconds: 5),
   ).send(client);
 }
 
@@ -177,11 +178,11 @@ enum JoinRequestStatus {
   teamDeleted;
 
   static JoinRequestStatus fromJson(String json) {
-    if(!_$JoinRequestStatusEnumMap.values.contains(json)){
+    if (!_$JoinRequestStatusEnumMap.values.contains(json)) {
       throw Exception("Invalid JoinRequestStatus: $json");
     }
-    return JoinRequestStatus.values.firstWhere(
-        (element) => _$JoinRequestStatusEnumMap[element] == json);
+    return JoinRequestStatus.values
+        .firstWhere((element) => _$JoinRequestStatusEnumMap[element] == json);
   }
 
   String toJson() {
@@ -189,33 +190,30 @@ enum JoinRequestStatus {
   }
 }
 
-Stream<JoinRequestStatus> requestJoinTeam(
-    String huntId, String teamId) async* {
+Stream<JoinRequestStatus> requestJoinTeam(String huntId, String teamId) async* {
   String? token = await getToken();
   if (token == null) throw Exception("User is not logged in.");
   try {
     yield* StreamRequest.post(
-        Uri.parse("$apiUrl/game/$huntId/teams/$teamId/request_join"),
-        headers: {
-          "authorization": "Bearer $token",
-          "Content-Type": "application/json"
-        },
-        body: null,
-        converter: (json) => JoinRequestStatus.fromJson(json as String)
-    ).send(client);
+            Uri.parse("$apiUrl/game/$huntId/teams/$teamId/request_join"),
+            headers: {
+              "authorization": "Bearer $token",
+              "Content-Type": "application/json"
+            },
+            body: null,
+            converter: (json) => JoinRequestStatus.fromJson(json as String))
+        .send(client);
   } catch (e1) {
     if (kDebugMode) {
       print("join request stream disconnected with error: $e1");
     }
     try {
       newRequestBuilder() => StreamRequest.post(
-        Uri.parse("$apiUrl/game/$huntId/teams/$teamId/join_requests/currentUser/listenStatus"),
-        headers: {
-          "authorization": "Bearer $token"
-        },
-        body: null,
-        converter: (json) => JoinRequestStatus.fromJson(json as String)
-      );
+          Uri.parse(
+              "$apiUrl/game/$huntId/teams/$teamId/join_requests/currentUser/listenStatus"),
+          headers: {"authorization": "Bearer $token"},
+          body: null,
+          converter: (json) => JoinRequestStatus.fromJson(json as String));
       yield* RetryStreamRequest<JoinRequestStatus>(
         newRequestBuilder,
         maxRetries: 5,
@@ -305,7 +303,8 @@ Future<TeamOperationSuccessMessage> rejectRequestJoinTeam(
   }
 }
 
-Future<TeamOperationSuccessMessage> removePlayerFromTeam(String huntId, String teamId, String memberId) async {
+Future<TeamOperationSuccessMessage> removePlayerFromTeam(
+    String huntId, String teamId, String memberId) async {
   Response response;
   String? token = await getToken();
   if (token == null) throw Exception("User is not logged in.");
@@ -322,5 +321,6 @@ Future<TeamOperationSuccessMessage> removePlayerFromTeam(String huntId, String t
     throw Exception(
         "Error: Failed to remove member from team: ${response.statusCode}");
   }
-  return TeamOperationSuccessMessage.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  return TeamOperationSuccessMessage.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>);
 }
