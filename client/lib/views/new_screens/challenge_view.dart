@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:async';
-import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class ChallengeView extends StatelessWidget {
   const ChallengeView({super.key});
@@ -10,18 +9,26 @@ class ChallengeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppStyles.appBarStyle("Challenge Screen", context),
-        body: DecoratedBox(
-          decoration: AppStyles.backgroundStyle,
+        appBar: AppBar(
+          title: const Text('Challenge Screen'),
+        ),
+        body: const DecoratedBox(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/cracked_background.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
           child: Column(
             children: [
               HeaderWidget(),
-              SizedBox(height: 20),
+
+              Spacer(flex: 1),
               Expanded(
                 flex: 5,
                 child: QuestionSection(),
               ),
-              Spacer(), // Adjust positioning below the main content
+              Spacer(flex: 1), // Adjust positioning below the main content
             ],
           ),
         ),
@@ -76,9 +83,9 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Image.asset(
-            'images/huntLogo.png',
-            height: 60,
-            width: 60,
+            'images/huntlogo.png',
+            height: 120,
+            width: 120,
           ),
           Text(
             _texts[_currentTextIndex],
@@ -89,9 +96,9 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             ),
           ),
           Image.asset(
-            'images/huntLogo.png',
-            height: 60,
-            width: 60,
+            'images/huntlogo.png',
+            height: 120,
+            width: 120,
           ),
         ],
       ),
@@ -120,12 +127,24 @@ class _QuestionSectionState extends State<QuestionSection> {
   ];
 
   final List<Widget> _hints = [
-    Image.asset("images/President.png"), // Image hint for question 1
-    const Text("2000 and what?", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 2
-    Image.asset("images/location.png"), // Image hint for question 3
-    const Text("CS...", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 4
-    Image.asset("images/Continent.png"), // Image hint for question 5
-    const Text("Duh ofc he is🤦‍♂️", style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold)), // Text hint for question 6
+    Image.asset('images/President.png'), // Image hint for question 1
+    const Text("2000 and what?",
+        style: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.bold)), // Text hint for question 2
+    Image.asset('images/location.png'), // Image hint for question 3
+    const Text("CS...",
+        style: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.bold)), // Text hint for question 4
+    Image.asset('images/Cont.png'), // Image hint for question 5
+    const Text("Duh ofc he is🤦‍♂️",
+        style: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.bold)), // Text hint for question 6
   ];
 
   void _nextQuestion() {
@@ -146,7 +165,8 @@ class _QuestionSectionState extends State<QuestionSection> {
           // Display the question number
           Text(
             "Question ${_currentQuestionIndex + 1}/${_questions.length}",
-            style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
           // Display the current question
@@ -164,11 +184,16 @@ class _QuestionSectionState extends State<QuestionSection> {
             ),
           ),
           const SizedBox(height: 20),
+
           const Text(
             "Hint",
-            style: TextStyle(fontSize: 18, color: Colors.white70, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 18,
+                color: Colors.white70,
+                fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 10),
+
           Container(
             height: 120,
             width: MediaQuery.of(context).size.width * 0.7,
@@ -203,29 +228,31 @@ class _QuestionSectionState extends State<QuestionSection> {
             ),
           ),
           const SizedBox(height: 30),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                height: 50,
-                width: 175,
-                decoration: AppStyles.confirmButtonStyle,
-                child: ElevatedButton(
-                  onPressed: _nextQuestion,
-                  style: AppStyles.elevatedButtonStyle,
-                  child: const Text('Submit',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+              ElevatedButton(
+                onPressed: _nextQuestion,
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+                child: const Text(
+                  "Submit",
+                  style: TextStyle(color: Colors.black),
                 ),
               ),
-              Container(
-                height: 50,
-                width: 175,
-                decoration: AppStyles.cancelButtonStyle,
-                child: ElevatedButton(
-                  onPressed: _nextQuestion,
-                  style: AppStyles.elevatedButtonStyle,
-                  child: const Text('Skip',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(width: 20),
+              ElevatedButton(
+                onPressed: _nextQuestion,
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+                child: const Text(
+                  "Skip",
+                  style: TextStyle(color: Colors.red),
                 ),
               ),
             ],
