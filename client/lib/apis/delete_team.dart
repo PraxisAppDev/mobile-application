@@ -3,7 +3,7 @@ import 'dart:convert';
 
 Future<Map<String, dynamic>> deleteTeam(String huntId, String teamId) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId";
-
+  print(apiUrl);
   try {
     final response = await http.delete(
       Uri.parse(apiUrl),

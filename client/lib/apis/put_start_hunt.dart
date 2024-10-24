@@ -3,7 +3,7 @@ import 'dart:convert';
 
 Future<Map<String, dynamic>> startHunt(String huntId, String teamId) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/start";
-
+  print(apiUrl);
   try {
     final response = await http.put(
       Uri.parse(apiUrl),
@@ -12,7 +12,7 @@ Future<Map<String, dynamic>> startHunt(String huntId, String teamId) async {
         "Content-Type": "application/json"
       },
       // body: jsonEncode({
-      //   "teamName": newTeamName,
+      //   "teamName": teamName,
       // }),
     );
 

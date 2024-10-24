@@ -3,10 +3,12 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 import 'package:praxis_afterhours/apis/post_create_teams.dart';
+import 'package:praxis_afterhours/apis/patch_update_team.dart';
 
 class CreateATeamView extends StatefulWidget {
   final String huntId;
-  const CreateATeamView({super.key, required this.huntId});
+  String? teamId;
+  CreateATeamView({super.key, required this.huntId, this.teamId});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -49,7 +51,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
         throw Exception("Team name cannot be empty");
       }
       final postResponse =
-          await createTeam(widget.huntId, teamName, playerName, true);
+          await createTeam(widget.huntId, teamName, playerName, false);
       return postResponse['teamId'];
     } catch (e) {
       throw e;
@@ -58,14 +60,13 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
   void _createTeam() async {
     try {
-      final String teamId = await makeTeam();
-      
+      widget.teamId = await makeTeam();
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => MyTeamCreateView(
                 huntId: widget.huntId,
-                teamId: teamId,
+                teamId: widget.teamId!,
                 teamName: _teamNameController.text,
                 playerName: _playerNameController.text)),
       );
@@ -153,7 +154,9 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   width: 175,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
-                    onPressed: _createTeam,
+                    onPressed: () {
+                      _createTeam();
+                    },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text('Create',
                         style: TextStyle(fontWeight: FontWeight.bold)),
