@@ -1,21 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:praxis_afterhours/apis/fetch_team.dart';
+import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class MyTeamView extends StatelessWidget {
-  MyTeamView({super.key});
+  MyTeamView({super.key, required this.huntID, required this.teamID});
 
-  final Map<String, dynamic> teamData = {
-    'teamName': 'Bob\'s Team',
-    'members': ['Bob', 'Alice', 'Jane', 'Isa'],
-    'isLocked': false,
-  };
+  final String teamID;
+  final String huntID;
+  late String teamName;
+
+
+  // Auxiliary function to handle leave team POST API call and handle view updates
+  Future<void> leaveTeamAndUpdateView(BuildContext context) async {
+    try {
+      // Call the leaveTeam API
+      await leaveTeam(huntID, teamID);
+      // Show a success message or refresh the view
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Successfully left the team')),
+      );
+      // Navigate back after leaving the team
+      Navigator.pop(context);
+    } catch (error) {
+      // Handle any errors from the leaveTeam call
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error leaving the team: $error')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // print("current huntID: $huntID");
+    // print("current teamID: $teamID");
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
-    Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
-    Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
+    //Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
+    //Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
     return MaterialApp(
       home: Scaffold(
           appBar: AppStyles.appBarStyle("My Team", context),
@@ -23,10 +45,26 @@ class MyTeamView extends StatelessWidget {
               decoration: AppStyles.backgroundStyle,
               child: Column(
                 children: [
-                  TeamTile(
-                    isLocked: teamData['isLocked'],
-                    teamName: teamData['teamName'],
-                    members: teamData['members'],
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: fetchTeam(huntID, teamID),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (snapshot.hasData) {
+                        // If the data was successfully retrieved, display it
+
+                        print(snapshot.data);
+                        teamName = snapshot.data!['name'];
+                        return TeamTile(
+                            isLocked: snapshot.data!['lockStatus'],
+                            teamName: snapshot.data!['name'],
+                            members: snapshot.data!['players']);
+                      } else {
+                        return const Center(child: Text('No data available.'));
+                      }
+                    },
                   ),
                   Padding(
                       padding: const EdgeInsets.only(top: 30.0),
@@ -36,8 +74,8 @@ class MyTeamView extends StatelessWidget {
                         decoration: AppStyles.cancelButtonStyle,
                         child: ElevatedButton(
                           onPressed: () {
-                            //TODO: Implement Leaving Team API Call
-                            Navigator.pop(context);
+                            // aux function to handle leave_team api call
+                            leaveTeamAndUpdateView(context);
                           },
                           style: AppStyles.elevatedButtonStyle,
                           child: const Text('Leave Team'),
@@ -45,12 +83,6 @@ class MyTeamView extends StatelessWidget {
                       )),
                 ],
               ))),
-      // body: const Center(
-      //   child: Text(
-      //     'Join A Team Screen, waiting for team leader to start hunt...',
-      //     style: TextStyle(fontSize: 24), // Set font size
-      //   ),
-      // ),
     );
   }
 }
@@ -59,7 +91,7 @@ class MyTeamView extends StatelessWidget {
 // individual team widget
 class TeamTile extends StatefulWidget {
   final String teamName;
-  final List<String> members;
+  final List<dynamic> members;
   final bool isLocked;
   final colors = const [Colors.blue, Colors.green, Colors.purple, Colors.red];
   const TeamTile({
@@ -93,12 +125,13 @@ class _TeamTileState extends State<TeamTile> {
                           Text(
                             widget.teamName,
                             style:
-                            AppStyles.logisticsStyle.copyWith(fontSize: 24),
+                                AppStyles.logisticsStyle.copyWith(fontSize: 24),
                           ),
+                          //TODO: Should length be hard coded at 4?
                           Text(
                             "(${widget.members.length}/4)",
                             style:
-                            AppStyles.logisticsStyle.copyWith(fontSize: 24),
+                                AppStyles.logisticsStyle.copyWith(fontSize: 24),
                           ),
                         ],
                       ),
@@ -117,7 +150,9 @@ class _TeamTileState extends State<TeamTile> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: widget.members.asMap().entries.map((entry) {
                         int index = entry.key;
-                        String member = entry.value;
+                        String member = entry.value['name'];
+                        bool teamLeader = entry.value['teamLeader'];
+
                         return Column(children: [
                           Divider(
                               color: Colors.grey,
@@ -126,10 +161,10 @@ class _TeamTileState extends State<TeamTile> {
                               height: 1),
                           ListTile(
                             leading:
-                            Icon(Icons.person, color: widget.colors[index]),
+                                Icon(Icons.person, color: widget.colors[index]),
                             title: Row(
                               children: [
-                                if (index == 3)
+                                /*if (index == 3)
                                   Container(
                                     decoration: BoxDecoration(
                                         color: Color(0xff363737),
@@ -137,17 +172,17 @@ class _TeamTileState extends State<TeamTile> {
                                     child: Row(children: [
                                       SizedBox(
                                         width:
-                                        MediaQuery.of(context).size.width *
-                                            0.5,
+                                            MediaQuery.of(context).size.width *
+                                                0.5,
                                         child: TextFormField(
                                             cursorColor: Colors.white,
                                             decoration: InputDecoration(
                                                 contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 10),
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 10),
                                                 border: InputBorder.none,
                                                 focusedBorder:
-                                                InputBorder.none),
+                                                    InputBorder.none),
                                             initialValue: "Isa",
                                             style: AppStyles.logisticsStyle),
                                       ),
@@ -158,17 +193,16 @@ class _TeamTileState extends State<TeamTile> {
                                             //TODO: Push name change
                                           })
                                     ]),
-                                  ),
-                                if (index != 3)
-                                  Text(
-                                    member,
-                                    style: AppStyles.logisticsStyle,
-                                  ),
-                                if (index == 0) // Add crown to the first member
+                                  ),*/
+                                Text(
+                                  member,
+                                  style: AppStyles.logisticsStyle,
+                                ),
+                                if (teamLeader) // Add crown to the first member
                                   const Padding(
                                     padding: EdgeInsets.only(left: 8.0),
                                     child:
-                                    Icon(Icons.star, color: Colors.amber),
+                                        Icon(Icons.star, color: Colors.amber),
                                   ),
                               ],
                             ),

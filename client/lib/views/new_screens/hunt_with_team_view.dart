@@ -4,11 +4,11 @@ import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
 class HuntWithTeamView extends StatelessWidget {
+  final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
-  final String huntID;
-  const HuntWithTeamView({super.key, required this.huntName, required this.venue, required this.huntDate, required this.huntID});
+  const HuntWithTeamView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,8 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => JoinATeamView(huntID: huntID)),
+                            builder: (context) =>
+                                const JoinATeamView(huntID: "1")),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -87,7 +88,7 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreateATeamView(huntID: huntID)),
+                            builder: (context) => CreateATeamView(huntId: huntId)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

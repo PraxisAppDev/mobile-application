@@ -359,7 +359,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
-                                                      builder: (context) => HuntModeView(huntName: huntResponse[index].name, venue: huntResponse[index].venue, huntDate: truncatedDate(huntResponse[index].startDate), huntID: huntResponse[index].id)),
+                                                      builder: (context) => HuntModeView(huntId: huntResponse[index].id, huntName: huntResponse[index].name, venue: huntResponse[index].venue, huntDate: truncatedDate(huntResponse[index].startDate))),
                                                 );
                                               },
                                               style: AppStyles
