@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class AppStyles {
@@ -66,7 +68,21 @@ class AppStyles {
       stops: [0.0, 0.5, 1.0],
     ),
     borderRadius: BorderRadius.circular(10)
-);
+  );
+
+  static BoxDecoration challengeButtonStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF534D5F),
+          Color(0xFF745C6C),
+          Color(0xFF514859)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10)
+  );
 
   static ButtonStyle elevatedButtonStyle = ElevatedButton.styleFrom(
     backgroundColor: Colors.transparent,
@@ -129,6 +145,20 @@ class AppStyles {
         ));
   }
 
+  static AppBar noBackArrowAppBarStyle(String screenName, dynamic context) {
+    return AppBar(
+        title: Text(screenName, style: AppStyles.appBarTextStyle),
+        centerTitle: true,
+        flexibleSpace: Align(
+          alignment: Alignment.center,
+          child: Image(
+            image: const AssetImage("images/small_boomerang.jpg"),
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+        ));
+  }
+
   static BoxDecoration popupStyle() {
     return BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -144,4 +174,51 @@ class AppStyles {
       ),
     );
   }
+
+  static BoxDecoration challengeBoxStyle(int index, int currentChallenge) {
+    if (index < currentChallenge) {
+      return BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              Color(0xFF155B3E),
+              Color(0xFF246927),
+              Color(0xFF26551A)
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(10)
+      );
+    } else if (index == currentChallenge) {
+      return BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              Color(0xFF6A553D),
+              Color(0xFF9D7E5A),
+              Color(0xFF6A553D)
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(10)
+      );
+    } else {
+      return BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: <Color>[
+              Color(0xFF494444),
+              Color(0xFF9A9797),
+              Color(0xFF534D4D)
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+          borderRadius: BorderRadius.circular(10)
+      );
+    }
+  }
+
 }

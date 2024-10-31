@@ -1,22 +1,28 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
 class ChallengeView extends StatelessWidget {
-  const ChallengeView({super.key});
+  final String huntName;
+  final int previousSeconds;
+  final int previousPoints;
+  final int challengeNum;
+
+  const ChallengeView({super.key, required this.huntName, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Challenge Screen'),
-        ),
-        body: const DecoratedBox(
-          decoration: BoxDecoration(
+        appBar: AppStyles.noBackArrowAppBarStyle("Challenge Screen", context),
+        body: DecoratedBox(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("images/cracked_background.jpg"),
               fit: BoxFit.cover,
@@ -25,12 +31,12 @@ class ChallengeView extends StatelessWidget {
           child: Column(
             children: [
               HeaderWidget(),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Expanded(
                 flex: 5,
-                child: QuestionSection(),
+                child: QuestionSection(huntName: huntName, previousSeconds: previousSeconds, previousPoints: previousPoints, challengeNum: challengeNum),
               ),
-              Spacer(flex: 1),
+              const Spacer(flex: 1),
             ],
           ),
         ),
@@ -85,7 +91,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Image.asset(
-            'images/huntlogo.png',
+            'images/huntLogo.png',
             height: 120,
             width: 120,
           ),
@@ -98,7 +104,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             ),
           ),
           Image.asset(
-            'images/huntlogo.png',
+            'images/huntLogo.png',
             height: 120,
             width: 120,
           ),
@@ -109,7 +115,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 }
 
 class QuestionSection extends StatefulWidget {
-  const QuestionSection({super.key});
+  final String huntName;
+  final int previousSeconds;
+  final int previousPoints;
+  final int challengeNum;
+  const QuestionSection({super.key, required this.huntName, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
 
   @override
   _QuestionSectionState createState() => _QuestionSectionState();
@@ -183,16 +193,28 @@ class _QuestionSectionState extends State<QuestionSection> {
     }
   }
 
-  void _nextQuestion() {
-    setState(() {
-      _currentQuestionIndex = (_currentQuestionIndex + 1) % _questions.length;
-      _answerController.clear();
-    });
+  // void _nextQuestion() {
+  //   setState(() {
+  //     _currentQuestionIndex = (_currentQuestionIndex + 1) % _questions.length;
+  //     _answerController.clear();
+  //   });
+  // }
+
+  int randomSeconds() {
+    Random random = Random();
+    int randomSeconds = 25 * (random.nextInt(4) + 1);
+    return randomSeconds;
+  }
+
+  int randomPoints() {
+    Random random = Random();
+    int randomPoints = 50 * (random.nextInt(6) + 1);
+    return randomPoints;
   }
 
   void _submitAnswer(int huntId, int teamId) async {
     // Construct the URL dynamically using huntId, teamId, and challengeId
-    String apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/${_currentQuestionIndex}/solve";
+    String apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/$_currentQuestionIndex/solve";
 
     String userAnswer = _answerController.text;
     String solutionType = _solutionTypes[_currentQuestionIndex];
@@ -356,7 +378,16 @@ class _QuestionSectionState extends State<QuestionSection> {
               ),
               const SizedBox(width: 20),
               ElevatedButton(
-                onPressed: _nextQuestion,
+                //onPressed: _nextQuestion,
+                onPressed: () {
+                  int points = randomPoints();
+                  int seconds = randomSeconds();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HuntProgressView(huntName: widget.huntName, totalSeconds: widget.previousSeconds + seconds, totalPoints: widget.previousPoints + points, secondsSpentThisRound: seconds, pointsEarnedThisRound: points, currentChallenge: widget.challengeNum + 1)),
+                    );
+                  },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),

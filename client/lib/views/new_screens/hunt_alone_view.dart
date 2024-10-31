@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
@@ -19,7 +20,7 @@ class HuntAloneView extends StatefulWidget {
   const HuntAloneView({
     super.key,
     required this.teamName,
-    required this.huntId, 
+    required this.huntId,
     required this.huntName,
     required this.venue,
     required this.huntDate
@@ -27,9 +28,6 @@ class HuntAloneView extends StatefulWidget {
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
-}
- @override
- _HuntAloneViewState createState() => _HuntAloneViewState();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,7 @@ class HuntAloneView extends StatefulWidget {
       home: Scaffold(
         appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
         body: DecoratedBox(
-            decoration: AppStyles.backgroundStyle,
+          decoration: AppStyles.backgroundStyle,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -71,7 +69,8 @@ class HuntAloneView extends StatefulWidget {
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_month, color: Colors.white),
+                            const Icon(Icons.calendar_month, color: Colors
+                                .white),
                             Text(
                               "01/30/2024 at 8:30pm",
                               style: AppStyles.logisticsStyle,
@@ -99,13 +98,16 @@ class HuntAloneView extends StatefulWidget {
                         width: 205,
                         child: TextField(
                           decoration: InputDecoration(
-                              suffixIcon: const Icon(Icons.edit, color: Colors.white),
+                              suffixIcon: const Icon(
+                                  Icons.edit, color: Colors.white),
                               border: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(color: Colors.white)),
+                                  borderSide: const BorderSide(
+                                      color: Colors.white)),
                               labelText: 'Enter name here...',
                               labelStyle:
-                                  const TextStyle(color: Colors.white, fontSize: 14),
+                              const TextStyle(
+                                  color: Colors.white, fontSize: 14),
                               filled: true,
                               fillColor: Colors.grey),
                           style: const TextStyle(color: Colors.white),
@@ -149,7 +151,8 @@ class HuntAloneView extends StatefulWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Start Hunt',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 50), // Add space between buttons
@@ -166,7 +169,8 @@ class HuntAloneView extends StatefulWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Delete Team', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Delete Team',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -176,8 +180,7 @@ class HuntAloneView extends StatefulWidget {
       ),
     );
   }
-
-
+}
 
 class _HuntAloneViewState extends State<HuntAloneView> {
   late TextEditingController _playerNameController;
@@ -257,7 +260,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const ChallengeView()),
+                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: huntName, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
                       );
                     });
                   }
@@ -465,40 +468,6 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  // if (_showPopup)
-                  //   Container(
-                  //     color: Colors.black.withOpacity(0.5),
-                  //     child: Center(
-                  //       child: Container(
-                  //         padding: EdgeInsets.all(20),
-                  //         decoration: AppStyles.infoBoxStyle,
-                  //         child: Column(
-                  //           mainAxisSize: MainAxisSize.min,
-                  //           children: [
-                  //             Text(
-                  //               'You have started the hunt,',
-                  //               style: AppStyles.titleStyle,
-                  //               textAlign: TextAlign.center,
-                  //             ),
-                  //             Text(
-                  //               'game will begin in',
-                  //               style: AppStyles.titleStyle,
-                  //               textAlign: TextAlign.center,
-                  //             ),
-                  //             SizedBox(height: 20),
-                  //             Text(
-                  //               '$_countdown',
-                  //               style: AppStyles.titleStyle.copyWith(fontSize: 48),
-                  //             ),
-                  //             Text(
-                  //               'seconds',
-                  //               style: AppStyles.titleStyle,
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
                 ],
               ),
             ),

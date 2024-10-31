@@ -70,7 +70,7 @@ class HuntWithTeamView extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                const JoinATeamView(huntID: "1")),
+                                JoinATeamView(huntID: huntId)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -88,7 +88,7 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CreateATeamView(huntId: huntId)),
+                            builder: (context) => CreateATeamView(huntId: huntId, huntName: huntName)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

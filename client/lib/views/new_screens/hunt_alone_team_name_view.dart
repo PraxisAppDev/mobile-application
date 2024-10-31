@@ -32,13 +32,13 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
    });
  }
 
-
  @override
  void dispose() {
    _focusNode.dispose();
    _teamNameController.dispose();
    super.dispose();
  }
+
  @override
  Widget build(BuildContext context) {
    return MaterialApp(

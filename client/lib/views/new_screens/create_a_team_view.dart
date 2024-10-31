@@ -6,7 +6,8 @@ import 'package:praxis_afterhours/apis/post_create_teams.dart';
 
 class CreateATeamView extends StatefulWidget {
   final String huntId;
-  const CreateATeamView({super.key, required this.huntId});
+  final String huntName;
+  const CreateATeamView({super.key, required this.huntId, required this.huntName});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -65,6 +66,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
         MaterialPageRoute(
             builder: (context) => MyTeamCreateView(
                 huntId: widget.huntId,
+                huntName: widget.huntName,
                 teamId: teamId,
                 teamName: _teamNameController.text,
                 playerName: _playerNameController.text)),

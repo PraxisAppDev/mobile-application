@@ -1,25 +1,32 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 
+import '../../apis/post_create_teams.dart';
+
 class MyTeamCreateView extends StatefulWidget {
   final String huntId;
+  final String huntName;
   final String teamId;
   final String teamName;
   final String playerName;
 
   const MyTeamCreateView({
-    Key? key,
+    super.key,
     required this.huntId,
+    required this.huntName,
     required this.teamId,
     required this.teamName,
     required this.playerName,
-  }) : super(key: key);
+  });
 
   @override
   _MyTeamCreateViewState createState() => _MyTeamCreateViewState();
@@ -29,6 +36,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   late TextEditingController _teamNameController;
   late FocusNode _focusNode;
   bool _isEditing = false;
+  bool _showPopup = false;
+  int _countdown = 3;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -55,17 +65,108 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
+  Future<void> makeTeam() async {
+    String teamName = _teamNameController.text.trim();
+    if (teamName.isEmpty) {
+      throw Exception("Team name cannot be empty");
+    }
+
+    try {
+      final postResponse = await createTeam(widget.huntId, widget.teamName, widget.playerName, true);
+      await startHunt(widget.huntId, postResponse['teamId']);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   void _startHunt() async {
     try {
-      await startHunt(widget.huntId, widget.teamId);
-      ShowGameStartDialog(context).then((_) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ChallengeView(),
-          ),
-        );
+      await makeTeam();
+
+      setState(() {
+        _showPopup = true;
       });
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                setState(() {
+                  if (_countdown > 1) {
+                    _countdown--;
+                  } else {
+                    timer.cancel();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      _showPopup = false;
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: widget.huntName, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
+                      );
+                    });
+                  }
+                });
+              });
+
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'You have started the hunt!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Game will begin in',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          '$_countdown',
+                          style: const TextStyle(
+                            fontSize: 48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'seconds',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to start hunt: $e')),
