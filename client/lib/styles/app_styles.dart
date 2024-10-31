@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/new_screens/leaderboard.dart' as leaderboard;
 
 class AppStyles {
   static TextStyle appBarTextStyle = const TextStyle(
@@ -98,37 +99,51 @@ class AppStyles {
       borderRadius: BorderRadius.circular(20));
 
   static BoxDecoration buttonStyleVariation2 = BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: <Color>[
-          Color(0xFF836A6B),
-          Color(0xFF3A3947),
-          Color(0xFF876D6D),
-        ],
-        stops: [0.0, 0.5, 1.0],
-      ),
-      borderRadius: BorderRadius.circular(20));
-
-  static AppBar appBarStyle(String screenName, dynamic context) {
+    gradient: const LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: <Color>[
+        Color(0xFF836A6B),
+        Color(0xFF3A3947),
+        Color(0xFF876D6D),
+      ],
+      stops: [0.0, 0.5, 1.0],
+    ),
+    borderRadius: BorderRadius.circular(20)
+  );
+  static AppBar appBarStyle(String screenName, BuildContext context) {
     return AppBar(
-        title: Text(screenName, style: AppStyles.appBarTextStyle),
-        leading: IconButton(
-          icon: const Icon(Icons.keyboard_double_arrow_left,
-              color: Colors.white, size: 40),
+      title: Text(screenName, style: AppStyles.appBarTextStyle),
+      leading: IconButton(
+        icon: const Icon(Icons.keyboard_double_arrow_left,
+            color: Colors.white, size: 40),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.leaderboard),
+            color: Colors.white,  // Uses the leaderboard icon
           onPressed: () {
-            Navigator.pop(context);
+            // Define the action for when the icon is tapped
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const leaderboard.Leaderboard()),
+            );
           },
         ),
-        centerTitle: true,
-        flexibleSpace: Align(
-          alignment: Alignment.center,
-          child: Image(
-            image: const AssetImage("images/small_boomerang.jpg"),
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
-          ),
-        ));
+      ],
+      centerTitle: true,
+      flexibleSpace: Align(
+        alignment: Alignment.center,
+        child: Image(
+          image: const AssetImage("images/small_boomerang.jpg"),
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 
   static AppBar appBarStyleWithActions(

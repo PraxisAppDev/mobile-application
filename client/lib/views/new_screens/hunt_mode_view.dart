@@ -122,11 +122,3 @@ class HuntModeView extends StatelessWidget {
   }
 }
 
-// class _HuntModeViewState extends State<HuntModeView>{
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-//
-// }
