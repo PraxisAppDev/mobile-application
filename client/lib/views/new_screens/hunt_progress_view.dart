@@ -121,10 +121,18 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                           margin: const EdgeInsets.only(right: 8.0),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: index < widget.currentChallenge ? Colors.green : Colors.grey, // Change color based on condition
+                                            color: index < widget.currentChallenge
+                                                ? Colors.green
+                                                : index > widget.currentChallenge
+                                                ? Colors.grey
+                                                : Colors.amber,
                                             border: Border.all(
-                                              color: index < widget.currentChallenge ? Colors.greenAccent : Colors.grey, // Border color to match
-                                              width: 2.0,
+                                              color: index < widget.currentChallenge
+                                                  ? Colors.greenAccent
+                                                  : index > widget.currentChallenge
+                                                  ? Colors.grey
+                                                  : Colors.amberAccent,
+                                              //width: 2.0,
                                             ),
                                           ),
                                           child: Center(
@@ -144,7 +152,11 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                           height: 150,
                                           margin: const EdgeInsets.only(right: 8.0),
                                           decoration: BoxDecoration(
-                                            color: index < widget.currentChallenge ? Colors.green : Colors.grey,
+                                            color: index < widget.currentChallenge
+                                                ? Colors.green
+                                                : index > widget.currentChallenge
+                                                ? Colors.grey
+                                                : Colors.amber,
                                             borderRadius: BorderRadius.circular(8.0), // Rounded corners
                                           ),
                                         ),
