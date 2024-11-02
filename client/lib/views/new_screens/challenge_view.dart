@@ -11,7 +11,7 @@ import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
-class ChallengeView extends StatelessWidget {
+class ChallengeView extends StatefulWidget {
   final String huntName;
   final String huntID;
   final String teamID;
@@ -30,6 +30,25 @@ class ChallengeView extends StatelessWidget {
     required this.challengeID,
     required this.challengeNum,
   });
+  @override
+  _ChallengeViewState createState() => _ChallengeViewState();
+}
+
+class _ChallengeViewState extends State<ChallengeView> {
+  int _totalSeconds = 0; // cumulative state var to track total seconds spent on current challenge + all previous challanges
+  
+  @override
+  void initState() {
+    super.initState();
+    _totalSeconds = widget.previousSeconds;
+  }
+
+  // Callback func to update total seconds, will be called from HeaderWidget
+  void _updateTotalSeconds(int seconds) {
+    setState(() {
+      _totalSeconds = seconds;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +63,23 @@ class ChallengeView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: HeaderWidget(
-                  huntID: huntID,
-                  challengeID: challengeID,
-                  challengeNum: challengeNum,
-                  previousSeconds: previousSeconds,
+                  huntID: widget.huntID,
+                  challengeID: widget.challengeID,
+                  challengeNum: widget.challengeNum,
+                  previousSeconds: widget.previousSeconds,
+                  onTimeUpdated: _updateTotalSeconds, // pass the callback to update total seconds
                 ),
               ),
               const SizedBox(height: 20),
               Expanded(
                 child: ChallengeContent(
-                  huntID: huntID,
-                  challengeID: challengeID,
-                  teamID: teamID,
-                  previousSeconds: previousSeconds,
-                  previousPoints: previousPoints,
-                  challengeNum: challengeNum,
+                  huntID: widget.huntID,
+                  challengeID: widget.challengeID,
+                  teamID: widget.teamID,
+                  previousSeconds: widget.previousSeconds,
+                  previousPoints: widget.previousPoints,
+                  challengeNum: widget.challengeNum,
+                  totalSeconds: _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
                 ),
               ),
             ],
@@ -74,6 +95,7 @@ class HeaderWidget extends StatefulWidget {
   final String challengeID;
   final int challengeNum;
   final int previousSeconds;
+  final Function(int) onTimeUpdated; // Callback to send total seconds elasped on this challenge
 
   const HeaderWidget({
     super.key,
@@ -81,6 +103,7 @@ class HeaderWidget extends StatefulWidget {
     required this.challengeID,
     required this.challengeNum,
     required this.previousSeconds,
+    required this.onTimeUpdated, // Pass the callback function
   });
 
   @override
@@ -98,15 +121,18 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     _startTimer();
     _fetchChallenge();
   }
-
+  
+  // starts timer to count seconds spent on challenge
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _secondsSpent++;
+        widget.onTimeUpdated(totalSeconds); // Calls the callback function with updated total seconds
       });
     });
   }
 
+  // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
       final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
@@ -169,6 +195,7 @@ class ChallengeContent extends StatefulWidget {
   final int previousSeconds;
   final int previousPoints;
   final int challengeNum;
+  final int totalSeconds;
 
   const ChallengeContent({
     super.key,
@@ -178,6 +205,7 @@ class ChallengeContent extends StatefulWidget {
     required this.previousSeconds,
     required this.previousPoints,
     required this.challengeNum,
+    required this.totalSeconds,
   });
 
   @override
@@ -189,8 +217,10 @@ class _ChallengeContentState extends State<ChallengeContent> {
   bool _isLoading = true;
   Map<String, dynamic> _challengeData = {};
   late final List<dynamic> _hints; // Load hints from the challenge data
+
   int _hintIndex = -1; //Tracks the number of hints revealed
   int guessesLeft = 3; // initially starts out with 3 guesses
+
 
   @override
   void initState() {
@@ -198,6 +228,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
     _fetchChallenge();
   }
 
+  // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
       final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
@@ -215,8 +246,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   }
 
   void _submitAnswer() async {
-    // Decrement the guesses left and store the current time spent
-    int totalSeconds = widget.previousSeconds; // assuming `_secondsSpent` tracks the current challenge time
+    // Decrement the guesses left 
     guessesLeft--;
 
     try {
@@ -231,9 +261,9 @@ class _ChallengeContentState extends State<ChallengeContent> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
-            Future.delayed(const Duration(seconds: 5), () {
+            Future.delayed(const Duration(seconds: 2), () {
               Navigator.pop(context); // Close the dialog
-              _navigateToHuntProgress(totalSeconds); // end that challenge and return to hunt progress screen
+              _navigateToHuntProgress(widget.totalSeconds); // end that challenge and return to hunt progress screen
             });
 
             return _buildResultDialog('The question was answered correctly! Your team is moving on to the next question.');
@@ -245,7 +275,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
-            Future.delayed(const Duration(seconds: 3), () {
+            Future.delayed(const Duration(seconds: 1), () {
               Navigator.pop(context); // Close the dialog
             });
 
@@ -258,9 +288,9 @@ class _ChallengeContentState extends State<ChallengeContent> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
-            Future.delayed(const Duration(seconds: 3), () {
+            Future.delayed(const Duration(seconds: 1), () {
               Navigator.pop(context); // Close the dialog
-              _navigateToHuntProgress(totalSeconds);
+              _navigateToHuntProgress(widget.totalSeconds);
             });
 
             return _buildResultDialog('Incorrect! You ran out of guesses!');
@@ -286,7 +316,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
           teamID: widget.teamID,
           totalSeconds: totalSec,
           totalPoints: widget.previousPoints,
-          secondsSpentThisRound: _challengeData['secondsSpent'] ?? 0,
+          secondsSpentThisRound: totalSec - widget.previousSeconds,
           pointsEarnedThisRound: 0,
           currentChallenge: widget.challengeNum + 1,
         ),

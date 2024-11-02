@@ -32,6 +32,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     super.initState();
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
     // Add the current round's data to the model
+    // print("CHECKKK ${widget.secondsSpentThisRound}");
     huntProgressModel.addSecondsSpent(widget.secondsSpentThisRound);
     huntProgressModel.addPointsEarned(widget.pointsEarnedThisRound);
     fetchChallengesData(); // Fetch challenges when the widget is initialized
@@ -215,14 +216,22 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                 children: [
                                                   Icon(Icons.timer, color: Colors.white),
                                                   const SizedBox(width: 5),
-                                                  if (index >= widget.currentChallenge) ...[
+                                                  if (index < widget.currentChallenge) ...[
+                                                    // Display timer from the HuntProgressModel for completed challenges
+                                                    Text(
+                                                      secondsToMinutes(Provider.of<HuntProgressModel>(context).secondsSpentList[index+1]),
+                                                      style: AppStyles.logisticsStyle,
+                                                    ),
+                                                  ] else if (index == widget.currentChallenge) ...[
+                                                    // Display "Not yet started" for the current challenge
                                                     Text(
                                                       "Not yet started",
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ] else ...[
+                                                    // Placeholder for upcoming challenges
                                                     Text(
-                                                      secondsToMinutes(Provider.of<HuntProgressModel>(context).secondsSpentList[index + 1]),
+                                                      secondsToMinutes(widget.totalSeconds),
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ],
@@ -243,14 +252,12 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                                 teamID: widget.teamID,
                                                                 previousSeconds: widget.totalSeconds,
                                                                 previousPoints: widget.totalPoints,
-                                                                // challengeNum: index, // Use index if necessary
                                                                 challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
                                                                 challengeNum: index,
                                                               ),
                                                             ),
                                                           );
                                                         },
-
                                                         style: AppStyles.elevatedButtonStyle,
                                                         child: const Text(
                                                           'GO',
@@ -262,7 +269,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                     SizedBox(
                                                       height: 50,
                                                       width: 75,
-                                                    )
+                                                    ),
                                                   ]
                                                 ],
                                               ),
@@ -270,14 +277,16 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                 children: [
                                                   Icon(Icons.two_mp_outlined, color: Colors.white),
                                                   const SizedBox(width: 5),
-                                                  if (index >= widget.currentChallenge) ...[
+                                                  if (index < widget.currentChallenge) ...[
+                                                    // Display points from the HuntProgressModel for completed challenges
                                                     Text(
-                                                      "300 points possible",
+                                                      "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index+1]}/300 points",
                                                       style: AppStyles.logisticsStyle,
                                                     ),
-                                                  ] else ...[
+                                                  ] else if (index == widget.currentChallenge) ...[
+                                                    // Display "Not yet started" for the current challenge
                                                     Text(
-                                                      "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index + 1]}/300 points",
+                                                      "300 points possible",
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ],
@@ -297,6 +306,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                         ),
                                       ),
                                     ),
+
                                   ],
                                 ),
                               ],
