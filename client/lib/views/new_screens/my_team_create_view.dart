@@ -103,7 +103,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: widget.huntName, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
+                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: widget.huntName, huntID: widget.huntId, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
                       );
                     });
                   }

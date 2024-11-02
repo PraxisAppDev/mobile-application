@@ -9,7 +9,9 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view_2.dart';
 
 class StartHuntView extends StatefulWidget {
-  const StartHuntView({super.key});
+  final String huntID;
+  
+  const StartHuntView({super.key, required this.huntID});
 
   @override
   _StartHuntViewState createState() => _StartHuntViewState();
@@ -30,7 +32,7 @@ class _StartHuntViewState extends State<StartHuntView> {
   }
 
   Future<void> fetchChallengesData() async {
-    var data = await fetchChallenges(); // Call the imported fetchChallenges function
+    var data = await fetchChallenges(widget.huntID); // Call the imported fetchChallenges function
     setState(() {
       challenges = data;  // Update the challenges list
       isLoading = false;  // Update loading state

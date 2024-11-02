@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:praxis_afterhours/apis/fetch_challenge.dart';
+
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'dart:async';
@@ -10,11 +12,26 @@ import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
 class ChallengeView extends StatelessWidget {
   final String huntName;
+  final String huntID;
   final int previousSeconds;
   final int previousPoints;
   final int challengeNum;
 
-  const ChallengeView({super.key, required this.huntName, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
+  const ChallengeView({super.key, required this.huntName, required this.huntID, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
+
+
+  // Future<void> loadChallengeData() async {
+  //   int huntId = 1; // or get this from the context/state as needed
+  //   int challengeId = widget.challengeNum; // assuming challengeNum corresponds to the specific ID
+
+  //   var challengeData = await fetchChallenge(huntId, challengeId);
+
+  //   if (challengeData.isNotEmpty) {
+  //     // Use challengeData to update the UI or populate fields
+  //   } else {
+  //     // Handle the case where data is not available
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +51,7 @@ class ChallengeView extends StatelessWidget {
               const SizedBox(height: 20),
               Expanded(
                 flex: 5,
-                child: QuestionSection(huntName: huntName, previousSeconds: previousSeconds, previousPoints: previousPoints, challengeNum: challengeNum),
+                child: QuestionSection(huntName: huntName, huntID: huntID, previousSeconds: previousSeconds, previousPoints: previousPoints, challengeNum: challengeNum),
               ),
               const Spacer(flex: 1),
             ],
@@ -116,10 +133,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
 class QuestionSection extends StatefulWidget {
   final String huntName;
+  final String huntID;
   final int previousSeconds;
   final int previousPoints;
   final int challengeNum;
-  const QuestionSection({super.key, required this.huntName, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
+  const QuestionSection({super.key, required this.huntName, required this.huntID, required this.previousSeconds, required this.previousPoints, required this.challengeNum});
 
   @override
   _QuestionSectionState createState() => _QuestionSectionState();
@@ -385,7 +403,7 @@ class _QuestionSectionState extends State<QuestionSection> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => HuntProgressView(huntName: widget.huntName, totalSeconds: widget.previousSeconds + seconds, totalPoints: widget.previousPoints + points, secondsSpentThisRound: seconds, pointsEarnedThisRound: points, currentChallenge: widget.challengeNum + 1)),
+                      builder: (context) => HuntProgressView(huntName: widget.huntName, huntID: widget.huntID, totalSeconds: widget.previousSeconds + seconds, totalPoints: widget.previousPoints + points, secondsSpentThisRound: seconds, pointsEarnedThisRound: points, currentChallenge: widget.challengeNum + 1)),
                     );
                   },
                 style: ElevatedButton.styleFrom(

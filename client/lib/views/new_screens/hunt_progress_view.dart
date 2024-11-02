@@ -8,6 +8,7 @@ import '../../provider/game_model.dart';
 
 class HuntProgressView extends StatefulWidget {
   final String huntName;
+  final String huntID;
   final int totalSeconds;
   final int totalPoints;
   final int secondsSpentThisRound;
@@ -15,7 +16,7 @@ class HuntProgressView extends StatefulWidget {
   final int currentChallenge;
 
   const HuntProgressView(
-      {super.key, required this.huntName, required this.totalSeconds, required this.totalPoints, required this.secondsSpentThisRound, required this.pointsEarnedThisRound, required this.currentChallenge});
+      {super.key, required this.huntName, required this.huntID, required this.totalSeconds, required this.totalPoints, required this.secondsSpentThisRound, required this.pointsEarnedThisRound, required this.currentChallenge});
 
   @override
   _HuntProgressViewState createState() => _HuntProgressViewState();
@@ -36,7 +37,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
   }
 
   Future<void> fetchChallengesData() async {
-    var data = await fetchChallenges(); // Call the imported fetchChallenges function
+    var data = await fetchChallenges(widget.huntID); // Call the imported fetchChallenges function
     setState(() {
       challenges = data;  // Update the challenges list
       isLoading = false;  // Update loading state
@@ -96,7 +97,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                 const SizedBox(height: 20),
                 Expanded(
                   child: FutureBuilder<List<dynamic>>(
-                    future: fetchChallenges(),
+                    future: fetchChallenges(widget.huntID),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -234,7 +235,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                         onPressed: () {
                                                           Navigator.push(
                                                             context,
-                                                            MaterialPageRoute(builder: (context) => ChallengeView(huntName: widget.huntName, previousSeconds: widget.totalSeconds, previousPoints: widget.totalPoints, challengeNum: widget.currentChallenge)),
+                                                            MaterialPageRoute(builder: (context) => ChallengeView(huntName: widget.huntName, huntID: widget.huntID, previousSeconds: widget.totalSeconds, previousPoints: widget.totalPoints, challengeNum: widget.currentChallenge)),
                                                           );
                                                         },
                                                         style: AppStyles.elevatedButtonStyle,

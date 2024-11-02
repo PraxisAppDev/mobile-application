@@ -170,7 +170,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => StartHuntView()),
+                            builder: (context) => StartHuntView(huntID: widget.huntId)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

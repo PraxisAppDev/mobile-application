@@ -147,7 +147,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          Navigator.push(
                            context,
                            MaterialPageRoute(
-                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntId: widget.huntId, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the huntID
+                             builder: (context) => HuntAloneView(teamName: _teamNameController.text, huntID: widget.huntId, huntName: widget.huntName, venue: widget.venue, huntDate: widget.huntDate),  // Pass the huntID
                            ),
                          );
                        },
