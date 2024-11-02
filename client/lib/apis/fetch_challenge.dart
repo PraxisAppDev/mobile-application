@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Map<String, dynamic>> fetchChallenge(int huntId, int challengeId) async {
+Future<Map<String, dynamic>> fetchChallenge(String huntId, String challengeId) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/challenges/$challengeId";
 
   try {

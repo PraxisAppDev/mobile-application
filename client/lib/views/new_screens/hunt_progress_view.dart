@@ -9,6 +9,7 @@ import '../../provider/game_model.dart';
 class HuntProgressView extends StatefulWidget {
   final String huntName;
   final String huntID;
+  final String teamID;
   final int totalSeconds;
   final int totalPoints;
   final int secondsSpentThisRound;
@@ -16,7 +17,7 @@ class HuntProgressView extends StatefulWidget {
   final int currentChallenge;
 
   const HuntProgressView(
-      {super.key, required this.huntName, required this.huntID, required this.totalSeconds, required this.totalPoints, required this.secondsSpentThisRound, required this.pointsEarnedThisRound, required this.currentChallenge});
+      {super.key, required this.huntName, required this.huntID, required this.teamID, required this.totalSeconds, required this.totalPoints, required this.secondsSpentThisRound, required this.pointsEarnedThisRound, required this.currentChallenge});
 
   @override
   _HuntProgressViewState createState() => _HuntProgressViewState();
@@ -235,9 +236,21 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                         onPressed: () {
                                                           Navigator.push(
                                                             context,
-                                                            MaterialPageRoute(builder: (context) => ChallengeView(huntName: widget.huntName, huntID: widget.huntID, previousSeconds: widget.totalSeconds, previousPoints: widget.totalPoints, challengeNum: widget.currentChallenge)),
+                                                            MaterialPageRoute(
+                                                              builder: (context) => ChallengeView(
+                                                                huntName: widget.huntName,
+                                                                huntID: widget.huntID,
+                                                                teamID: widget.teamID,
+                                                                previousSeconds: widget.totalSeconds,
+                                                                previousPoints: widget.totalPoints,
+                                                                // challengeNum: index, // Use index if necessary
+                                                                challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
+                                                                challengeNum: index,
+                                                              ),
+                                                            ),
                                                           );
                                                         },
+
                                                         style: AppStyles.elevatedButtonStyle,
                                                         child: const Text(
                                                           'GO',
