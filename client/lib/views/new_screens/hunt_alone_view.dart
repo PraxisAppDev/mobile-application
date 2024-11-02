@@ -34,9 +34,6 @@ class HuntAloneView extends StatefulWidget {
 }
 
 @override
-_HuntAloneViewState createState() => _HuntAloneViewState();
-
-@override
 Widget build(BuildContext context) {
   return MaterialApp(
     home: Scaffold(
