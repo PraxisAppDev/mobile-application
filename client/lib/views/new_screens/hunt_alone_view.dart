@@ -9,25 +9,32 @@ import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
+import 'package:praxis_afterhours/apis/delete_team.dart';
+import 'package:praxis_afterhours/apis/post_join_team.dart';
 
 class HuntAloneView extends StatefulWidget {
-  final String teamName;
+  String teamName;
   final String huntId;
   final String huntName;
   final String venue;
   final String huntDate;
+  String? teamId;
 
-  const HuntAloneView({
+  HuntAloneView({
     super.key,
     required this.teamName,
     required this.huntId,
     required this.huntName,
     required this.venue,
-    required this.huntDate
+    required this.huntDate,
+    this.teamId,
   });
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
+}
+ @override
+ _HuntAloneViewState createState() => _HuntAloneViewState();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,7 @@ class HuntAloneView extends StatefulWidget {
       home: Scaffold(
         appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
         body: DecoratedBox(
-          decoration: AppStyles.backgroundStyle,
+            decoration: AppStyles.backgroundStyle,
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -69,8 +76,7 @@ class HuntAloneView extends StatefulWidget {
                         const SizedBox(height: 20),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_month, color: Colors
-                                .white),
+                            const Icon(Icons.calendar_month, color: Colors.white),
                             Text(
                               "01/30/2024 at 8:30pm",
                               style: AppStyles.logisticsStyle,
@@ -98,16 +104,13 @@ class HuntAloneView extends StatefulWidget {
                         width: 205,
                         child: TextField(
                           decoration: InputDecoration(
-                              suffixIcon: const Icon(
-                                  Icons.edit, color: Colors.white),
+                              suffixIcon: const Icon(Icons.edit, color: Colors.white),
                               border: UnderlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(
-                                      color: Colors.white)),
+                                  borderSide: const BorderSide(color: Colors.white)),
                               labelText: 'Enter name here...',
                               labelStyle:
-                              const TextStyle(
-                                  color: Colors.white, fontSize: 14),
+                                  const TextStyle(color: Colors.white, fontSize: 14),
                               filled: true,
                               fillColor: Colors.grey),
                           style: const TextStyle(color: Colors.white),
@@ -151,8 +154,7 @@ class HuntAloneView extends StatefulWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Start Hunt', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 50), // Add space between buttons
@@ -169,8 +171,7 @@ class HuntAloneView extends StatefulWidget {
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Delete Team',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Delete Team', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -180,7 +181,8 @@ class HuntAloneView extends StatefulWidget {
       ),
     );
   }
-}
+
+
 
 class _HuntAloneViewState extends State<HuntAloneView> {
   late TextEditingController _playerNameController;
@@ -189,7 +191,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
-  
+
   late String huntName;
   late String venue;
 
@@ -212,7 +214,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   void dispose() {
     _playerNameController.dispose();
     _focusNode.dispose();
-    _timer?.cancel(); 
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -229,8 +231,13 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
 
     try {
-      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
-      await startHunt(widget.huntId, postResponse['teamId']);
+      final postResponse =
+          await createTeam(widget.huntId, widget.teamName, playerName, true);
+      setState(() {
+        widget.teamId = postResponse['teamId'];
+      });
+      await joinTeam(widget.huntId, widget.teamName, playerName);
+      await startHunt(widget.huntId, widget.teamId!);
     } catch (e) {
       throw e;
     }
@@ -239,7 +246,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   void _startHunt() async {
     try {
       await makeTeam();
-      
+
       setState(() {
         _showPopup = true;
       });
@@ -260,7 +267,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: huntName, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
+                        MaterialPageRoute(builder: (context) => const ChallengeView()),
                       );
                     });
                   }
@@ -404,7 +411,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                             controller: _playerNameController,
                             focusNode: _focusNode,
                             decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.edit, color: Colors.white),
+                              suffixIcon: Icon(Icons.check, color: Colors.white),
                               border: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.white),
@@ -461,7 +468,15 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     decoration: AppStyles.cancelButtonStyle,
                     child: ElevatedButton(
                       onPressed: () {
-                        ShowDeleteConfirmationDialog(context);
+                        if (widget.teamId != null) {
+                          ShowDeleteConfirmationDialog(
+                              context, widget.huntId, widget.teamId!);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Team ID not available.')),
+                          );
+                        }
                       },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Delete Team',
@@ -505,7 +520,8 @@ final DotDivider = Row(
   ],
 );
 
-Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+Future<void> ShowDeleteConfirmationDialog(
+    BuildContext context, String huntId, String teamId) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap a button!
@@ -561,7 +577,8 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                         onPressed: () {
                           Navigator.of(context).pop(); // Close dialog
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'No',
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -573,11 +590,14 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
+                          deleteTeam(huntId, teamId);
                           Navigator.of(context).pop(); // Close dialog
-                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context)
+                              .pop(); // Navigate back to hunt mode screen
                           Navigator.of(context).pop();
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'Yes',
                           style: TextStyle(fontWeight: FontWeight.bold),

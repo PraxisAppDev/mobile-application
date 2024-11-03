@@ -78,7 +78,7 @@ class _TeamTileState extends State<TeamTile> {
   // Function to handle the join_team API call and navigate to MyTeamView after successful joining
   void _handleJoinTeam(BuildContext context) async {
     try {
-      await joinTeam(widget.huntID, widget.teamName);
+      await joinTeam(widget.huntID, widget.teamName, "placeholder"); // TODO: Fix
 
       /* FOR TESTING PURPOSES */
       // ScaffoldMessenger.of(context).showSnackBar(

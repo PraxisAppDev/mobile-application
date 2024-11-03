@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Map<String, dynamic>> joinTeam(String huntId, String teamName) async {
+Future<Map<String, dynamic>> joinTeam(String huntId, String teamName, String playerName) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamName/join";
 
   try {
@@ -12,7 +12,7 @@ Future<Map<String, dynamic>> joinTeam(String huntId, String teamName) async {
         "Content-Type": "application/json"
       },
       body: jsonEncode({
-          "playerName": "player name"
+          "playerName": playerName
       }),
     );
 
@@ -29,5 +29,5 @@ Future<Map<String, dynamic>> joinTeam(String huntId, String teamName) async {
 }
 
 void main() {
-  joinTeam("1", "Eagles");
+  joinTeam("1", "Eagles", "Andy");
 }

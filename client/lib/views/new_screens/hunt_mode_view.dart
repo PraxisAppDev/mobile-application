@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/hunt_alone.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
