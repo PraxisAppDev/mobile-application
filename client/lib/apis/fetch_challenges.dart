@@ -1,8 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<List<dynamic>> fetchChallenges() async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/1/challenges";
+Future<List<dynamic>> fetchChallenges(String huntID) async {
+  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID/challenges";
 
   try {
     final response = await http.get(Uri.parse(apiUrl));

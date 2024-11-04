@@ -42,6 +42,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   int _countdown = 3;
   Timer? _timer;
 
+  String? _updatedTeamId; //new variable to store team id returned from create team api call
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +77,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
     try {
       final postResponse = await createTeam(widget.huntId, widget.teamName, widget.playerName, true);
-      await startHunt(widget.huntId, postResponse['teamId']);
+      _updatedTeamId = postResponse['teamId']; // new team ID returned when team was created
+      await startHunt(widget.huntId, _updatedTeamId!);
     } catch (e) {
       throw e;
     }
@@ -105,7 +108,16 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(huntName: widget.huntName, totalSeconds: 0, totalPoints: 0, secondsSpentThisRound: 0, pointsEarnedThisRound: 0, currentChallenge: 0)),
+                        MaterialPageRoute(builder: (context) => HuntProgressView(
+                          huntName: widget.huntName, 
+                          huntID: widget.huntId, 
+                          teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
+                          totalSeconds: 0, 
+                          totalPoints: 0, 
+                          secondsSpentThisRound: 0, 
+                          pointsEarnedThisRound: 0, 
+                          currentChallenge: 0
+                        )),
                       );
                     });
                   }

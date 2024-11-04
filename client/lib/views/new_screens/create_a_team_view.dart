@@ -7,8 +7,9 @@ import 'package:praxis_afterhours/apis/patch_update_team.dart';
 
 class CreateATeamView extends StatefulWidget {
   final String huntId;
+  final String huntName;
   String? teamId;
-  CreateATeamView({super.key, required this.huntId, this.teamId});
+  CreateATeamView({super.key, required this.huntId, this.teamId, required this.huntName});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -66,6 +67,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
         MaterialPageRoute(
             builder: (context) => MyTeamCreateView(
                 huntId: widget.huntId,
+                huntName: widget.huntName,
                 teamId: widget.teamId!,
                 teamName: _teamNameController.text,
                 playerName: _playerNameController.text)),
@@ -171,7 +173,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => StartHuntView()),
+                            builder: (context) => StartHuntView(huntID: widget.huntId)),
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,

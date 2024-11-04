@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String challengeId) async {
+Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String challengeId, String answerText) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/$challengeId/solve";
 
   try {
@@ -15,7 +15,7 @@ Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String
         "attemptNumber": 3,
         "timeSinceChallengeStarted": 10000,
         "numberOfHintsUsed": 0,
-        "answer": "answer text"
+        "answer": answerText
       }),
     );
 
@@ -29,8 +29,4 @@ Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String
   } catch (e) {
     throw Exception("Error occurred during the solve challenge request: $e");
   }
-}
-
-void main() {
-  solveChallenge("1", "23453", "123");
 }

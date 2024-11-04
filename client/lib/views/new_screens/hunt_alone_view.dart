@@ -36,152 +36,157 @@ class HuntAloneView extends StatefulWidget {
  @override
  _HuntAloneViewState createState() => _HuntAloneViewState();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
-        body: DecoratedBox(
-            decoration: AppStyles.backgroundStyle,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                    height: 150,
-                    width: 350,
-                    padding: const EdgeInsets.all(16),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Explore Praxis",
-                              textAlign: TextAlign.left,
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_pin, color: Colors.white),
-                            Text(
-                              "The Greene Turtle (in-person only)",
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_month, color: Colors.white),
-                            Text(
-                              "01/30/2024 at 8:30pm",
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                      ],
-                    )),
-                const SizedBox(height: 20),
-                Text(
-                  "You are currently hunting alone as...",
-                  style: AppStyles.logisticsStyle,
-                ),
-                const SizedBox(width: 350, child: Divider(thickness: 2)),
-                Container(
-                  height: 75,
-                  width: 350,
-                  padding: const EdgeInsets.all(16),
-                  decoration: AppStyles.infoBoxStyle,
-                  child: Row(
-                    children: [
-                      const Icon(Icons.person, color: Colors.white),
-                      const SizedBox(width: 5),
-                      SizedBox(
-                        width: 205,
-                        child: TextField(
-                          decoration: InputDecoration(
-                              suffixIcon: const Icon(Icons.edit, color: Colors.white),
-                              border: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: const BorderSide(color: Colors.white)),
-                              labelText: 'Enter name here...',
-                              labelStyle:
-                                  const TextStyle(color: Colors.white, fontSize: 14),
-                              filled: true,
-                              fillColor: Colors.grey),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      const Icon(Icons.lock, color: Colors.white),
-                      const SizedBox(width: 5),
-                      Text(
-                        "(Solo)",
-                        style: AppStyles.logisticsStyle,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const SizedBox(width: 350, child: Divider(thickness: 2)),
-                Container(
-                  width: 350,
-                  padding: const EdgeInsets.all(16),
-                  decoration: AppStyles.infoBoxStyle,
-                  child: const Text(
-                    "There are 3 teams and one solo team currently hunting. Select \"Start Hunt\" when you are ready to begin.",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontFamily: 'InriaSerif'),
-                  ),
-                ),
-                const SizedBox(height: 50), // Add space between buttons
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.confirmButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const StartHuntView()),
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                const SizedBox(height: 50), // Add space between buttons
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.cancelButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const StartHuntView()),
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Delete Team', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //       appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
+  //       body: DecoratedBox(
+  //         decoration: AppStyles.backgroundStyle,
+  //         child: Center(
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Container(
+  //                   height: 150,
+  //                   width: 350,
+  //                   padding: const EdgeInsets.all(16),
+  //                   decoration: AppStyles.infoBoxStyle,
+  //                   child: Column(
+  //                     children: [
+  //                       Row(
+  //                         children: [
+  //                           Text(
+  //                             "Explore Praxis",
+  //                             textAlign: TextAlign.left,
+  //                             style: AppStyles.logisticsStyle,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       const SizedBox(height: 20),
+  //                       Row(
+  //                         children: [
+  //                           const Icon(Icons.location_pin, color: Colors.white),
+  //                           Text(
+  //                             "The Greene Turtle (in-person only)",
+  //                             style: AppStyles.logisticsStyle,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       const SizedBox(height: 20),
+  //                       Row(
+  //                         children: [
+  //                           const Icon(Icons.calendar_month, color: Colors
+  //                               .white),
+  //                           Text(
+  //                             "01/30/2024 at 8:30pm",
+  //                             style: AppStyles.logisticsStyle,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ],
+  //                   )),
+  //               const SizedBox(height: 20),
+  //               Text(
+  //                 "You are currently hunting alone as...",
+  //                 style: AppStyles.logisticsStyle,
+  //               ),
+  //               const SizedBox(width: 350, child: Divider(thickness: 2)),
+  //               Container(
+  //                 height: 75,
+  //                 width: 350,
+  //                 padding: const EdgeInsets.all(16),
+  //                 decoration: AppStyles.infoBoxStyle,
+  //                 child: Row(
+  //                   children: [
+  //                     const Icon(Icons.person, color: Colors.white),
+  //                     const SizedBox(width: 5),
+  //                     SizedBox(
+  //                       width: 205,
+  //                       child: TextField(
+  //                         decoration: InputDecoration(
+  //                             suffixIcon: const Icon(
+  //                                 Icons.edit, color: Colors.white),
+  //                             border: UnderlineInputBorder(
+  //                                 borderRadius: BorderRadius.circular(10),
+  //                                 borderSide: const BorderSide(
+  //                                     color: Colors.white)),
+  //                             labelText: 'Enter name here...',
+  //                             labelStyle:
+  //                             const TextStyle(
+  //                                 color: Colors.white, fontSize: 14),
+  //                             filled: true,
+  //                             fillColor: Colors.grey),
+  //                         style: const TextStyle(color: Colors.white),
+  //                       ),
+  //                     ),
+  //                     const SizedBox(width: 5),
+  //                     const Icon(Icons.lock, color: Colors.white),
+  //                     const SizedBox(width: 5),
+  //                     Text(
+  //                       "(Solo)",
+  //                       style: AppStyles.logisticsStyle,
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 20),
+  //               const SizedBox(width: 350, child: Divider(thickness: 2)),
+  //               Container(
+  //                 width: 350,
+  //                 padding: const EdgeInsets.all(16),
+  //                 decoration: AppStyles.infoBoxStyle,
+  //                 child: const Text(
+  //                   "There are 3 teams and one solo team currently hunting. Select \"Start Hunt\" when you are ready to begin.",
+  //                   style: TextStyle(
+  //                       fontSize: 20,
+  //                       color: Colors.white,
+  //                       fontFamily: 'InriaSerif'),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 50), // Add space between buttons
+  //               Container(
+  //                 height: 50,
+  //                 width: 175,
+  //                 decoration: AppStyles.confirmButtonStyle,
+  //                 child: ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
+  //                     );
+  //                   },
+  //                   style: AppStyles.elevatedButtonStyle,
+  //                   child: const Text('Start Hunt',
+  //                       style: TextStyle(fontWeight: FontWeight.bold)),
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 50), // Add space between buttons
+  //               Container(
+  //                 height: 50,
+  //                 width: 175,
+  //                 decoration: AppStyles.cancelButtonStyle,
+  //                 child: ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.push(
+  //                       context,
+  //                       MaterialPageRoute(
+  //                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
+  //                     );
+  //                   },
+  //                   style: AppStyles.elevatedButtonStyle,
+  //                   child: const Text('Delete Team',
+  //                       style: TextStyle(fontWeight: FontWeight.bold)),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
 class _HuntAloneViewState extends State<HuntAloneView> {
@@ -191,7 +196,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
-
+  
+  String? _updatedTeamId; // will hold new Team ID when team is created
+  
   late String huntName;
   late String venue;
 
@@ -231,13 +238,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
 
     try {
-      final postResponse =
-          await createTeam(widget.huntId, widget.teamName, playerName, true);
-      setState(() {
-        widget.teamId = postResponse['teamId'];
-      });
-      await joinTeam(widget.huntId, widget.teamName, playerName);
-      await startHunt(widget.huntId, widget.teamId!);
+      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
+      _updatedTeamId = postResponse['teamId']; // new team ID returned when team was created
+      await startHunt(widget.huntId, _updatedTeamId!);
     } catch (e) {
       throw e;
     }
@@ -267,7 +270,16 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => const ChallengeView()),
+                        MaterialPageRoute(builder: (context) => HuntProgressView(
+                          huntName: huntName, 
+                          huntID: widget.huntId, 
+                          teamID: _updatedTeamId!, // team id is id returned from create team api call
+                          totalSeconds: 0, 
+                          totalPoints: 0, 
+                          secondsSpentThisRound: 0, 
+                          pointsEarnedThisRound: 0, 
+                          currentChallenge: 0
+                        )),
                       );
                     });
                   }
