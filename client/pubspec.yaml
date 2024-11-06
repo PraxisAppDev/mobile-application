@@ -50,6 +50,7 @@ dependencies:
   fetch_client: ^1.0.2
   win32: ^5.5.4
   provider: ^6.1.2
+  web_socket_channel: ^3.0.1
 
 
 dev_dependencies:

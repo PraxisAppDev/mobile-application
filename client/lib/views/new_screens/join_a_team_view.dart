@@ -7,6 +7,8 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import '../../apis/new_teams_api.dart';
 import 'my_team_view.dart';
 import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
+import 'package:provider/provider.dart';
+import 'package:praxis_afterhours/provider/websocket_model.dart';
 
 class JoinATeamView extends StatelessWidget {
   const JoinATeamView({super.key, required this.huntID});
@@ -78,7 +80,7 @@ class _TeamTileState extends State<TeamTile> {
   // Function to handle the join_team API call and navigate to MyTeamView after successful joining
   void _handleJoinTeam(BuildContext context) async {
     try {
-      await joinTeam(widget.huntID, widget.teamName, "placeholder"); // TODO: Fix
+      await joinTeam(widget.huntID, widget.teamName, "placeholder");
 
       /* FOR TESTING PURPOSES */
       // ScaffoldMessenger.of(context).showSnackBar(
@@ -103,6 +105,8 @@ class _TeamTileState extends State<TeamTile> {
 
   @override
   Widget build(BuildContext context) {
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+    
     return Card(
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: DecoratedBox(
