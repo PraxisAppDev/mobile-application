@@ -32,7 +32,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
     super.initState();
   }
 
-  final sampleHuntsResponse = [
+  /*final sampleHuntsResponse = [
     {
       'id': 1,
       'name': 'Explore Praxis',
@@ -72,7 +72,8 @@ class _JoinHuntViewState extends State<JoinHuntView> {
       'endDate': '2024-11-07T02:51:02.027885208Z[UTC]',
       'teamLimit': 4
     }
-  ];
+  ];*/
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +81,8 @@ class _JoinHuntViewState extends State<JoinHuntView> {
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
             child: FutureBuilder<List<dynamic>>(
-                future: fetchHunts(),
+                future: hunts_api.getHunts(
+                    startdate: '2024-10-01', enddate: '2024-10-31', limit: 4),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -114,7 +116,7 @@ class HuntWidget extends StatelessWidget {
     required this.hunt,
   });
 
-  final dynamic hunt;
+  final hunts_api.HuntResponseModel hunt;
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +138,7 @@ class HuntWidget extends StatelessWidget {
                     SizedBox(
                       width: 225,
                       child: Text(
-                        hunt['name'],
+                        hunt.name,
                         style: AppStyles.titleStyle.copyWith(fontSize: 18),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -152,11 +154,11 @@ class HuntWidget extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => HuntModeView(
-                                  huntId: hunt['id'],
-                                  huntName: hunt['name'],
-                                  venue: hunt['venue'],
+                                  huntId: hunt.id,
+                                  huntName: hunt.name,
+                                  venue: hunt.venue,
                                   huntDate:
-                                      '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
+                                      '${DateFormat.yMd().format(parseToLocal(hunt.startDate))} at ${DateFormat.jm().format(parseToLocal((hunt.endDate)))}',
                                 ),
                               ),
                             );
@@ -178,7 +180,7 @@ class HuntWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                        "${hunt['venue']}\n${hunt['address']}\n${hunt['city']}, ${hunt['stateAbbr']} ${hunt['zipcode']}",
+                        "${hunt.venue}\n${hunt.address}\n${hunt.city}, ${hunt.stateAbbr} ${hunt.zipcode}",
                         style: AppStyles.logisticsStyle.copyWith(
                             height: 1.2,
                             fontSize: 14,
@@ -202,7 +204,7 @@ class HuntWidget extends StatelessWidget {
                           height: 1.2,
                           fontSize: 14,
                           fontWeight: FontWeight.bold),
-                      '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
+                      '${DateFormat.yMd().format(parseToLocal(hunt.startDate))} at ${DateFormat.jm().format(parseToLocal((hunt.endDate)))}',
                     ),
                   ],
                 ),
