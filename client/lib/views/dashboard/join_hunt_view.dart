@@ -80,6 +80,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
         appBar: AppStyles.noIconsAppBarStyle("Hunt", context),
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
+            //TODO: Non hard coded dates
             child: FutureBuilder<List<dynamic>>(
                 future: hunts_api.getHunts(
                     startdate: '2024-10-01', enddate: '2024-10-31', limit: 4),
