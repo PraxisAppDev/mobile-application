@@ -9,7 +9,8 @@ class CreateATeamView extends StatefulWidget {
   final String huntId;
   final String huntName;
   String? teamId;
-  CreateATeamView({super.key, required this.huntId, this.teamId, required this.huntName});
+  CreateATeamView(
+      {super.key, required this.huntId, this.teamId, required this.huntName});
 
   @override
   _CreateATeamViewState createState() => _CreateATeamViewState();
@@ -161,23 +162,6 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text('Create',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.cancelButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => StartHuntView(huntID: widget.huntId)),
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt',
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),

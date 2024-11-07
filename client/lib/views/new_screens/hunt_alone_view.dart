@@ -33,161 +33,161 @@ class HuntAloneView extends StatefulWidget {
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
 }
- @override
- _HuntAloneViewState createState() => _HuntAloneViewState();
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     home: Scaffold(
-  //       appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
-  //       body: DecoratedBox(
-  //         decoration: AppStyles.backgroundStyle,
-  //         child: Center(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               Container(
-  //                   height: 150,
-  //                   width: 350,
-  //                   padding: const EdgeInsets.all(16),
-  //                   decoration: AppStyles.infoBoxStyle,
-  //                   child: Column(
-  //                     children: [
-  //                       Row(
-  //                         children: [
-  //                           Text(
-  //                             "Explore Praxis",
-  //                             textAlign: TextAlign.left,
-  //                             style: AppStyles.logisticsStyle,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       const SizedBox(height: 20),
-  //                       Row(
-  //                         children: [
-  //                           const Icon(Icons.location_pin, color: Colors.white),
-  //                           Text(
-  //                             "The Greene Turtle (in-person only)",
-  //                             style: AppStyles.logisticsStyle,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                       const SizedBox(height: 20),
-  //                       Row(
-  //                         children: [
-  //                           const Icon(Icons.calendar_month, color: Colors
-  //                               .white),
-  //                           Text(
-  //                             "01/30/2024 at 8:30pm",
-  //                             style: AppStyles.logisticsStyle,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   )),
-  //               const SizedBox(height: 20),
-  //               Text(
-  //                 "You are currently hunting alone as...",
-  //                 style: AppStyles.logisticsStyle,
-  //               ),
-  //               const SizedBox(width: 350, child: Divider(thickness: 2)),
-  //               Container(
-  //                 height: 75,
-  //                 width: 350,
-  //                 padding: const EdgeInsets.all(16),
-  //                 decoration: AppStyles.infoBoxStyle,
-  //                 child: Row(
-  //                   children: [
-  //                     const Icon(Icons.person, color: Colors.white),
-  //                     const SizedBox(width: 5),
-  //                     SizedBox(
-  //                       width: 205,
-  //                       child: TextField(
-  //                         decoration: InputDecoration(
-  //                             suffixIcon: const Icon(
-  //                                 Icons.edit, color: Colors.white),
-  //                             border: UnderlineInputBorder(
-  //                                 borderRadius: BorderRadius.circular(10),
-  //                                 borderSide: const BorderSide(
-  //                                     color: Colors.white)),
-  //                             labelText: 'Enter name here...',
-  //                             labelStyle:
-  //                             const TextStyle(
-  //                                 color: Colors.white, fontSize: 14),
-  //                             filled: true,
-  //                             fillColor: Colors.grey),
-  //                         style: const TextStyle(color: Colors.white),
-  //                       ),
-  //                     ),
-  //                     const SizedBox(width: 5),
-  //                     const Icon(Icons.lock, color: Colors.white),
-  //                     const SizedBox(width: 5),
-  //                     Text(
-  //                       "(Solo)",
-  //                       style: AppStyles.logisticsStyle,
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 20),
-  //               const SizedBox(width: 350, child: Divider(thickness: 2)),
-  //               Container(
-  //                 width: 350,
-  //                 padding: const EdgeInsets.all(16),
-  //                 decoration: AppStyles.infoBoxStyle,
-  //                 child: const Text(
-  //                   "There are 3 teams and one solo team currently hunting. Select \"Start Hunt\" when you are ready to begin.",
-  //                   style: TextStyle(
-  //                       fontSize: 20,
-  //                       color: Colors.white,
-  //                       fontFamily: 'InriaSerif'),
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 50), // Add space between buttons
-  //               Container(
-  //                 height: 50,
-  //                 width: 175,
-  //                 decoration: AppStyles.confirmButtonStyle,
-  //                 child: ElevatedButton(
-  //                   onPressed: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(
-  //                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
-  //                     );
-  //                   },
-  //                   style: AppStyles.elevatedButtonStyle,
-  //                   child: const Text('Start Hunt',
-  //                       style: TextStyle(fontWeight: FontWeight.bold)),
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 50), // Add space between buttons
-  //               Container(
-  //                 height: 50,
-  //                 width: 175,
-  //                 decoration: AppStyles.cancelButtonStyle,
-  //                 child: ElevatedButton(
-  //                   onPressed: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       MaterialPageRoute(
-  //                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
-  //                     );
-  //                   },
-  //                   style: AppStyles.elevatedButtonStyle,
-  //                   child: const Text('Delete Team',
-  //                       style: TextStyle(fontWeight: FontWeight.bold)),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+@override
+_HuntAloneViewState createState() => _HuntAloneViewState();
 
+// @override
+// Widget build(BuildContext context) {
+//   return MaterialApp(
+//     home: Scaffold(
+//       appBar: AppStyles.appBarStyle("Hunt Alone Screen", context),
+//       body: DecoratedBox(
+//         decoration: AppStyles.backgroundStyle,
+//         child: Center(
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Container(
+//                   height: 150,
+//                   width: 350,
+//                   padding: const EdgeInsets.all(16),
+//                   decoration: AppStyles.infoBoxStyle,
+//                   child: Column(
+//                     children: [
+//                       Row(
+//                         children: [
+//                           Text(
+//                             "Explore Praxis",
+//                             textAlign: TextAlign.left,
+//                             style: AppStyles.logisticsStyle,
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 20),
+//                       Row(
+//                         children: [
+//                           const Icon(Icons.location_pin, color: Colors.white),
+//                           Text(
+//                             "The Greene Turtle (in-person only)",
+//                             style: AppStyles.logisticsStyle,
+//                           ),
+//                         ],
+//                       ),
+//                       const SizedBox(height: 20),
+//                       Row(
+//                         children: [
+//                           const Icon(Icons.calendar_month, color: Colors
+//                               .white),
+//                           Text(
+//                             "01/30/2024 at 8:30pm",
+//                             style: AppStyles.logisticsStyle,
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   )),
+//               const SizedBox(height: 20),
+//               Text(
+//                 "You are currently hunting alone as...",
+//                 style: AppStyles.logisticsStyle,
+//               ),
+//               const SizedBox(width: 350, child: Divider(thickness: 2)),
+//               Container(
+//                 height: 75,
+//                 width: 350,
+//                 padding: const EdgeInsets.all(16),
+//                 decoration: AppStyles.infoBoxStyle,
+//                 child: Row(
+//                   children: [
+//                     const Icon(Icons.person, color: Colors.white),
+//                     const SizedBox(width: 5),
+//                     SizedBox(
+//                       width: 205,
+//                       child: TextField(
+//                         decoration: InputDecoration(
+//                             suffixIcon: const Icon(
+//                                 Icons.edit, color: Colors.white),
+//                             border: UnderlineInputBorder(
+//                                 borderRadius: BorderRadius.circular(10),
+//                                 borderSide: const BorderSide(
+//                                     color: Colors.white)),
+//                             labelText: 'Enter name here...',
+//                             labelStyle:
+//                             const TextStyle(
+//                                 color: Colors.white, fontSize: 14),
+//                             filled: true,
+//                             fillColor: Colors.grey),
+//                         style: const TextStyle(color: Colors.white),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 5),
+//                     const Icon(Icons.lock, color: Colors.white),
+//                     const SizedBox(width: 5),
+//                     Text(
+//                       "(Solo)",
+//                       style: AppStyles.logisticsStyle,
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(height: 20),
+//               const SizedBox(width: 350, child: Divider(thickness: 2)),
+//               Container(
+//                 width: 350,
+//                 padding: const EdgeInsets.all(16),
+//                 decoration: AppStyles.infoBoxStyle,
+//                 child: const Text(
+//                   "There are 3 teams and one solo team currently hunting. Select \"Start Hunt\" when you are ready to begin.",
+//                   style: TextStyle(
+//                       fontSize: 20,
+//                       color: Colors.white,
+//                       fontFamily: 'InriaSerif'),
+//                 ),
+//               ),
+//               const SizedBox(height: 50), // Add space between buttons
+//               Container(
+//                 height: 50,
+//                 width: 175,
+//                 decoration: AppStyles.confirmButtonStyle,
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
+//                     );
+//                   },
+//                   style: AppStyles.elevatedButtonStyle,
+//                   child: const Text('Start Hunt',
+//                       style: TextStyle(fontWeight: FontWeight.bold)),
+//                 ),
+//               ),
+//               const SizedBox(height: 50), // Add space between buttons
+//               Container(
+//                 height: 50,
+//                 width: 175,
+//                 decoration: AppStyles.cancelButtonStyle,
+//                 child: ElevatedButton(
+//                   onPressed: () {
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                           builder: (context) => const StartHuntView(huntID: widget.huntID)),
+//                     );
+//                   },
+//                   style: AppStyles.elevatedButtonStyle,
+//                   child: const Text('Delete Team',
+//                       style: TextStyle(fontWeight: FontWeight.bold)),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }
 
 class _HuntAloneViewState extends State<HuntAloneView> {
   late TextEditingController _playerNameController;
@@ -196,9 +196,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
-  
+
   String? _updatedTeamId; // will hold new Team ID when team is created
-  
+
   late String huntName;
   late String venue;
 
@@ -234,12 +234,15 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   Future<void> makeTeam() async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
+      showNoPlayerNameDialog(context);
       throw Exception("Player name cannot be empty");
     }
 
     try {
-      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
-      _updatedTeamId = postResponse['teamId']; // new team ID returned when team was created
+      final postResponse =
+          await createTeam(widget.huntId, widget.teamName, playerName, true);
+      _updatedTeamId =
+          postResponse['teamId']; // new team ID returned when team was created
       await startHunt(widget.huntId, _updatedTeamId!);
     } catch (e) {
       throw e;
@@ -247,6 +250,11 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   }
 
   void _startHunt() async {
+    String playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      showNoPlayerNameDialog(context);
+      return;
+    }
     try {
       await makeTeam();
 
@@ -270,16 +278,17 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(
-                          huntName: huntName, 
-                          huntID: widget.huntId, 
-                          teamID: _updatedTeamId!, // team id is id returned from create team api call
-                          totalSeconds: 0, 
-                          totalPoints: 0, 
-                          secondsSpentThisRound: 0, 
-                          pointsEarnedThisRound: 0, 
-                          currentChallenge: 0
-                        )),
+                        MaterialPageRoute(
+                            builder: (context) => HuntProgressView(
+                                huntName: huntName,
+                                huntID: widget.huntId,
+                                teamID:
+                                    _updatedTeamId!, // team id is id returned from create team api call
+                                totalSeconds: 0,
+                                totalPoints: 0,
+                                secondsSpentThisRound: 0,
+                                pointsEarnedThisRound: 0,
+                                currentChallenge: 0)),
                       );
                     });
                   }
@@ -358,146 +367,167 @@ class _HuntAloneViewState extends State<HuntAloneView> {
         appBar: AppStyles.appBarStyle("Hunt Alone", context),
         body: DecoratedBox(
           decoration: AppStyles.backgroundStyle,
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 150,
-                    width: 350,
-                    padding: const EdgeInsets.all(16),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              widget.huntName,
-                              textAlign: TextAlign.left,
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.location_pin, color: Colors.white),
-                            Text(
-                              widget.venue,
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_month, color: Colors.white),
-                            Text(
-                              widget.huntDate,
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "You are currently hunting in team: ${widget.teamName}",
-                    style: AppStyles.logisticsStyle,
-                  ),
-                  const SizedBox(width: 350, child: Divider(thickness: 2)),
-                  Container(
-                    height: 75,
-                    width: 350,
-                    padding: const EdgeInsets.all(16),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Row(
-                      children: [
-                        Icon(Icons.person, color: Colors.white),
-                        const SizedBox(width: 5),
-                        SizedBox(
-                          width: 205,
-                          child: TextField(
-                            controller: _playerNameController,
-                            focusNode: _focusNode,
-                            decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.check, color: Colors.white),
-                              border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              hintText: _isEditing ? null : "Enter Player Name",
-                              labelStyle: const TextStyle(
-                                  color: Colors.white, fontSize: 14),
-                              filled: true,
-                              fillColor: Colors.grey,
-                            ),
-                            style: const TextStyle(color: Colors.white),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            widget.huntName,
+                            textAlign: TextAlign.left,
+                            style: AppStyles.titleStyle.copyWith(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        Icon(Icons.lock, color: Colors.white),
-                        const SizedBox(width: 5),
-                        Text(
-                          "(Solo)",
-                          style: AppStyles.logisticsStyle,
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.location_pin, color: Colors.white),
+                          Text(
+                            widget.venue,
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_month, color: Colors.white),
+                          Text(
+                            widget.huntDate,
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  const SizedBox(width: 350, child: Divider(thickness: 2)),
-                  Container(
-                    width: 350,
-                    padding: const EdgeInsets.all(16),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  "You are currently hunting in team: ${widget.teamName}",
+                  style: AppStyles.logisticsStyle,
+                ),
+              ),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Divider(thickness: 2)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.white),
+                      const SizedBox(width: 5),
+                      SizedBox(
+                        width: 205,
+                        child: TextField(
+                          controller: _playerNameController,
+                          focusNode: _focusNode,
+                          decoration: InputDecoration(
+                            suffixIcon: Icon(Icons.check, color: Colors.white),
+                            border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            hintText: _isEditing ? null : "Enter Player Name",
+                            labelStyle: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                            filled: true,
+                            fillColor: Colors.grey,
+                          ),
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(Icons.lock, color: Colors.white),
+                      const SizedBox(width: 5),
+                      Text(
+                        "(Solo)",
+                        style: AppStyles.logisticsStyle,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Divider(thickness: 2)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                    padding: const EdgeInsets.all(8),
                     decoration: AppStyles.infoBoxStyle,
-                    child: const Text(
-                      "There are 3 teams and one solo team currently hunting. Select \"Start Hunt\" when you are ready to begin.",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontFamily: 'InriaSerif'),
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.confirmButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: _startHunt,
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Start Hunt',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  const SizedBox(height: 50),
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.cancelButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (widget.teamId != null) {
-                          ShowDeleteConfirmationDialog(
-                              context, widget.huntId, widget.teamId!);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Team ID not available.')),
+                    child: FutureBuilder<Map<String, dynamic>>(
+                      future: fetchTeamsFromHunt(widget.huntId),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (snapshot.hasData) {
+                          // If the data was successfully retrieved, display it
+                          List<dynamic> teams = snapshot.data!['teams'];
+                          print(snapshot.data);
+                          return Text(
+                            "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",
+                            style: AppStyles.logisticsStyle,
                           );
+                        } else {
+                          return const Center(
+                              child: Text('No data available.'));
                         }
                       },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Delete Team',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
+                    )),
               ),
-            ),
+              SizedBox(height: 30),
+              Container(
+                height: 50,
+                width: 175,
+                decoration: AppStyles.confirmButtonStyle,
+                child: ElevatedButton(
+                  onPressed: _startHunt,
+                  style: AppStyles.elevatedButtonStyle,
+                  child: const Text('Start Hunt',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                height: 50,
+                width: 175,
+                decoration: AppStyles.cancelButtonStyle,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (widget.teamId != null) {
+                      ShowDeleteConfirmationDialog(
+                          context, widget.huntId, widget.teamId!);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Team ID not available.')),
+                      );
+                    }
+                  },
+                  style: AppStyles.elevatedButtonStyle,
+                  child: const Text('Delete Team',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -625,6 +655,136 @@ Future<void> ShowDeleteConfirmationDialog(
           ),
         ),
       );
+    },
+  );
+}
+
+//Tells players the game is starting, dissappears after 3 seconds
+Future<void> ShowGameStartDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      Future.delayed(Duration(seconds: 3), () => Navigator.of(context).pop());
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                            width: 32,
+                          )
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Your team leader has started the game, beginning play',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
+    },
+  );
+}
+
+Future<void> showNoPlayerNameDialog(context) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10))),
+          backgroundColor: Colors.black,
+          contentPadding: EdgeInsets.all(0),
+          content: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[
+                    Color(0xff261919),
+                    Color(0xff332323),
+                    Color(0xff261919),
+                  ],
+                  stops: [0.0, 0.5, 1.0],
+                ),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 45,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 32,
+                          ),
+                          Expanded(
+                            child: DotDivider,
+                          ),
+                          SizedBox(
+                              width: 32,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Icon(Icons.close, color: Colors.white)))
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        'Your player name cannot be empty',
+                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: 45, child: DotDivider)
+                  ],
+                ),
+              )));
     },
   );
 }

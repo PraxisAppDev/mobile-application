@@ -79,7 +79,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
         appBar: AppStyles.noIconsAppBarStyle("Hunt", context),
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
-            child: /*FutureBuilder<List<dynamic>>(
+            child: FutureBuilder<List<dynamic>>(
                 future: fetchHunts(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -95,16 +95,9 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                       },
                     );
                   } else {
-                    
                     return Center(child: Text('No data available.'));
                   }
-                })*/
-                ListView.builder(
-              itemCount: sampleHuntsResponse.length,
-              itemBuilder: (context, index) {
-                return HuntWidget(hunt: sampleHuntsResponse[index]);
-              },
-            )));
+                })));
   }
 }
 
@@ -159,7 +152,18 @@ class HuntWidget extends StatelessWidget {
                           child: ElevatedButton(
                             style: AppStyles.elevatedButtonStyle,
                             onPressed: () {
-                              joinHuntOptionsDialog(context, hunt);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HuntModeView(
+                                    huntId: hunt['id'],
+                                    huntName: hunt['name'],
+                                    venue: hunt['venue'],
+                                    huntDate:
+                                        '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
+                                  ),
+                                ),
+                              );
                             },
                             child: Text(
                               'GO',
