@@ -118,106 +118,101 @@ class HuntWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        joinHuntOptionsDialog(context, hunt);
-      },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        decoration: AppStyles.infoBoxStyle
-            .copyWith(border: Border.all(color: Colors.black, width: 2)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 225,
-                        child: Text(
-                          hunt['name'],
-                          style: AppStyles.titleStyle.copyWith(fontSize: 18),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: AppStyles.infoBoxStyle
+          .copyWith(border: Border.all(color: Colors.black, width: 2)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: 225,
+                      child: Text(
+                        hunt['name'],
+                        style: AppStyles.titleStyle.copyWith(fontSize: 18),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      Container(
-                          height: 33,
-                          width: 100,
-                          decoration: AppStyles.confirmButtonStyle,
-                          child: ElevatedButton(
-                            style: AppStyles.elevatedButtonStyle,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => HuntModeView(
-                                    huntId: hunt['id'],
-                                    huntName: hunt['name'],
-                                    venue: hunt['venue'],
-                                    huntDate:
-                                        '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
-                                  ),
+                    ),
+                    Container(
+                        height: 33,
+                        width: 100,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          style: AppStyles.elevatedButtonStyle,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HuntModeView(
+                                  huntId: hunt['id'],
+                                  huntName: hunt['name'],
+                                  venue: hunt['venue'],
+                                  huntDate:
+                                      '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
                                 ),
-                              );
-                            },
-                            child: Text(
-                              'GO',
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          )),
-                    ],
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                          "${hunt['venue']}\n${hunt['address']}\n${hunt['city']}, ${hunt['stateAbbr']} ${hunt['zipcode']}",
-                          style: AppStyles.logisticsStyle.copyWith(
-                              height: 1.2,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'GO',
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        )),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                        "${hunt['venue']}\n${hunt['address']}\n${hunt['city']}, ${hunt['stateAbbr']} ${hunt['zipcode']}",
                         style: AppStyles.logisticsStyle.copyWith(
                             height: 1.2,
                             fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                        '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                ],
-              ),
+                            fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.calendar_today,
+                      size: 16,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      style: AppStyles.logisticsStyle.copyWith(
+                          height: 1.2,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                      '${DateFormat.yMd().format(parseToLocal(hunt['startDate']))} at ${DateFormat.jm().format(parseToLocal((hunt['endDate'])))}',
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
