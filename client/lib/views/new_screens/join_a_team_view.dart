@@ -4,9 +4,8 @@ import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
 import 'package:praxis_afterhours/apis/hunts_api.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
-import '../../apis/new_teams_api.dart';
+
 import 'my_team_view.dart';
-import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
 class JoinATeamView extends StatelessWidget {
   const JoinATeamView({super.key, required this.huntID});
@@ -74,11 +73,11 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
-
   // Function to handle the join_team API call and navigate to MyTeamView after successful joining
   void _handleJoinTeam(BuildContext context) async {
     try {
-      await joinTeam(widget.huntID, widget.teamName, "placeholder"); // TODO: Fix
+      await joinTeam(
+          widget.huntID, widget.teamName, "placeholder"); // TODO: Fix
 
       /* FOR TESTING PURPOSES */
       // ScaffoldMessenger.of(context).showSnackBar(
@@ -99,7 +98,6 @@ class _TeamTileState extends State<TeamTile> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -183,8 +181,7 @@ class _TeamTileState extends State<TeamTile> {
                                 //             teamID: widget.teamID,
                                 //           )),
                                 // );
-                                
-                                
+
                                 // Join team functionality
                                 /*
                                 /*
@@ -200,7 +197,7 @@ class _TeamTileState extends State<TeamTile> {
                                       builder: (context) => MyTeamView()),
                                 );
                                 */
-                                
+
                                 // *****************
                                 // setState(() {
                                 //   widget.members.add("CURRENT USER NAME");
