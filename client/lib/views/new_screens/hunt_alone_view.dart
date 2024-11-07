@@ -410,7 +410,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
@@ -461,9 +461,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                 ),
               ),
-              const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(thickness: 2)),
+              const SizedBox(height: 30),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
@@ -485,7 +483,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           print(snapshot.data);
                           return Text(
                             "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",
-                            style: AppStyles.logisticsStyle,
+                            style:
+                                AppStyles.logisticsStyle.copyWith(fontSize: 16),
                           );
                         } else {
                           return const Center(
@@ -494,39 +493,46 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       },
                     )),
               ),
-              SizedBox(height: 30),
-              Container(
-                height: 50,
-                width: 175,
-                decoration: AppStyles.confirmButtonStyle,
-                child: ElevatedButton(
-                  onPressed: _startHunt,
-                  style: AppStyles.elevatedButtonStyle,
-                  child: const Text('Start Hunt',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 175,
+                      decoration: AppStyles.confirmButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: _startHunt,
+                        style: AppStyles.elevatedButtonStyle,
+                        child: const Text('Start Hunt',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Container(
+                      height: 50,
+                      width: 175,
+                      decoration: AppStyles.cancelButtonStyle,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (widget.teamId != null) {
+                            ShowDeleteConfirmationDialog(
+                                context, widget.huntId, widget.teamId!);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Team ID not available.')),
+                            );
+                          }
+                        },
+                        style: AppStyles.elevatedButtonStyle,
+                        child: const Text('Delete Team',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                height: 50,
-                width: 175,
-                decoration: AppStyles.cancelButtonStyle,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (widget.teamId != null) {
-                      ShowDeleteConfirmationDialog(
-                          context, widget.huntId, widget.teamId!);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Team ID not available.')),
-                      );
-                    }
-                  },
-                  style: AppStyles.elevatedButtonStyle,
-                  child: const Text('Delete Team',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                ),
-              ),
+              )
             ],
           ),
         ),
