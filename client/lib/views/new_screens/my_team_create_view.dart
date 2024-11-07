@@ -11,8 +11,10 @@ import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/patch_update_team.dart';
+import 'package:praxis_afterhours/apis/post_join_team.dart';
 
 import '../../apis/post_create_teams.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MyTeamCreateView extends StatefulWidget {
   final String huntId;
@@ -42,7 +44,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   int _countdown = 3;
   Timer? _timer;
 
-  String? _updatedTeamId; //new variable to store team id returned from create team api call
+  String?
+      _updatedTeamId; //new variable to store team id returned from create team api call
 
   @override
   void initState() {
@@ -69,6 +72,31 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
+  void connectWebSocket() async {
+    final wsUrl = Uri.parse(
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamId}&playerName=${widget.playerName}&huntAlone=false');
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      var channel = WebSocketChannel.connect(wsUrl);
+      print('Connected to WebSocket. Awaiting messages...');
+      channel.stream.listen(
+        (message) {
+          print('Received message: $message');
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+        },
+        onDone: () {
+          print('WebSocket closed');
+        },
+        cancelOnError:
+            true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+    }
+  }
+
   Future<void> makeTeam() async {
     String teamName = _teamNameController.text.trim();
     if (teamName.isEmpty) {
@@ -76,8 +104,10 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
 
     try {
-      final postResponse = await createTeam(widget.huntId, widget.teamName, widget.playerName, true);
-      _updatedTeamId = postResponse['teamId']; // new team ID returned when team was created
+      final postResponse = await createTeam(
+          widget.huntId, widget.teamName, widget.playerName, true);
+      _updatedTeamId =
+          postResponse['teamId']; // new team ID returned when team was created
       await startHunt(widget.huntId, _updatedTeamId!);
     } catch (e) {
       throw e;
@@ -108,16 +138,18 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       _showPopup = false;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(
-                          huntName: widget.huntName, 
-                          huntID: widget.huntId, 
-                          teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
-                          totalSeconds: 0, 
-                          totalPoints: 0, 
-                          secondsSpentThisRound: 0, 
-                          pointsEarnedThisRound: 0, 
-                          currentChallenge: 0
-                        )),
+                        MaterialPageRoute(
+                            builder: (context) => HuntProgressView(
+                                huntName: widget.huntName,
+                                huntID: widget.huntId,
+                                teamID: _updatedTeamId ??
+                                    widget
+                                        .teamId, // use updated team id from api call
+                                totalSeconds: 0,
+                                totalPoints: 0,
+                                secondsSpentThisRound: 0,
+                                pointsEarnedThisRound: 0,
+                                currentChallenge: 0)),
                       );
                     });
                   }
@@ -188,7 +220,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
-   Future<void> _updateTeamName() async {
+  Future<void> _updateTeamName() async {
     String newTeamName = _teamNameController.text.trim();
     if (newTeamName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -212,7 +244,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _unfocusTextField,  // Unfocus when tapping outside the TextField
+      onTap: _unfocusTextField, // Unfocus when tapping outside the TextField
       child: Scaffold(
         appBar: AppStyles.appBarStyle("My Team", context),
         body: DecoratedBox(
@@ -304,6 +336,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                     onPressed: () {
                       _startHunt();
                       _updateTeamName();
+                      connectWebSocket();
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -319,7 +352,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ShowDeleteConfirmationDialog(context, widget.huntId, widget.teamId);
+                      ShowDeleteConfirmationDialog(
+                          context, widget.huntId, widget.teamId);
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -482,7 +516,8 @@ final DotDivider = Row(
   ],
 );
 
-Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, String teamId) async {
+Future<void> ShowDeleteConfirmationDialog(
+    BuildContext context, String huntId, String teamId) async {
   print(context.widget);
   return showDialog<void>(
     context: context,
@@ -539,7 +574,8 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, S
                         onPressed: () {
                           Navigator.of(context).pop(); // Close dialog
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'No',
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -553,11 +589,13 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, S
                         onPressed: () {
                           deleteTeam(huntId, teamId);
                           Navigator.of(context).pop(); // Close dialog
-                          Navigator.of(context).pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context)
+                              .pop(); // Navigate back to hunt mode screen
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'Yes',
                           style: TextStyle(fontWeight: FontWeight.bold),

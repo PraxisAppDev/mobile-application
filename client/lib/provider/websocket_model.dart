@@ -13,7 +13,6 @@ class WebSocketService {
     _listenToMessages();
   }
 
-  // Listen for incoming messages and pass them to the callback
   void _listenToMessages() {
     channel.stream.listen((message) {
       final Map<String, dynamic> data = json.decode(message);
@@ -34,7 +33,7 @@ class WebSocketService {
 
 class WebSocketModel with ChangeNotifier {
   final Map<String, WebSocketService> _sockets = {};
-  final Map<String, Map<String, dynamic>> _data = {}; // Store JSON data per connection
+  final Map<String, Map<String, dynamic>> _data = {};
 
   // Connect to a WebSocket and set up data storage
   WebSocketService connect(String identifier, String url) {
