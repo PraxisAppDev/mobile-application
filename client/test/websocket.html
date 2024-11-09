@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script>        
+        // http://localhost:5500/client/test/websocket.html
         function connect() {
             let socket;
 
-            const wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=1&teamId=rays&playerName=Jim&huntAlone=true';
+            const wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=1&teamId=rays&playerName=Jim&huntAlone=false';
             socket = new WebSocket(wsUrl);
 
             socket.onopen = () => {
@@ -43,6 +44,14 @@
     <input type="button" value="Connect to WebSocket" onclick="connect()">
     <p id="status">Status: Not Connected</p>
     <p id="data"></p>
+    <strong>API endpoints to try</strong>
+    <ul>
+        <li>player_joined_team: http://afterhours.praxiseng.com/afterhours/v1/hunts/{huntId}/teams/{teamName}/join</li>
+        <li>player_left_team: http://afterhours.praxiseng.com/afterhours/v1/hunts/{huntId}/teams/{teamName}/leave</li>
+        <li>hunt_started: http://afterhours.praxiseng.com/afterhours/v1/hunts/{huntId}/teams/{teamId}/start </li>
+        <li>hunt_ended: </li>
+        <li>challenge_response: http://afterhours.praxiseng.com/afterhours/v1/hunts/hunts/{huntId}/teams/{teamId}/challenges/{challengeId}/solve</li>
+    </ul>
 </body>
 
 </html>

@@ -74,7 +74,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   void connectWebSocket() async {
     final wsUrl = Uri.parse(
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamId}&playerName=${widget.playerName}&huntAlone=false');
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamName}&playerName=${widget.playerName}&huntAlone=false');
     try {
       print('Connecting to WebSocket at: $wsUrl');
       var channel = WebSocketChannel.connect(wsUrl);
@@ -82,12 +82,21 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       channel.stream.listen(
         (message) {
           print('Received message: $message');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Received message: $message')),
+          );
         },
         onError: (error) {
           print('WebSocket error: $error');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('WebSocket error: $error')),
+          );
         },
         onDone: () {
           print('WebSocket closed');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('WebSocket closed')),
+          );
         },
         cancelOnError:
             true,
@@ -142,9 +151,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                             builder: (context) => HuntProgressView(
                                 huntName: widget.huntName,
                                 huntID: widget.huntId,
-                                teamID: _updatedTeamId ??
-                                    widget
-                                        .teamId, // use updated team id from api call
+                                teamID: _updatedTeamId ?? widget.teamId,
                                 totalSeconds: 0,
                                 totalPoints: 0,
                                 secondsSpentThisRound: 0,
@@ -334,9 +341,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
+                      connectWebSocket();
                       _startHunt();
                       _updateTeamName();
-                      connectWebSocket();
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
