@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
 
 class MyTeamView extends StatelessWidget {
   MyTeamView({super.key, required this.huntID, required this.teamID});
@@ -11,16 +12,102 @@ class MyTeamView extends StatelessWidget {
   late String teamName;
 
 
-  // Auxiliary function to handle leave team POST API call and handle view updates
+  // Function to show the confirmation dialog for leaving a team
+  Future<void> _showLeaveTeamConfirmation(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user can dismiss the dialog by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.black.withOpacity(0.8),
+          contentPadding: EdgeInsets.zero,
+          content: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color(0xff261919),
+                  Color(0xff332323),
+                  Color(0xff261919),
+                ],
+                stops: [0.0, 0.5, 1.0],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'Are you sure you would like to leave this team?',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          Navigator.of(context).pop(); // Close the dialog
+                          await leaveTeamAndUpdateView(context); // Call the leave team function, handling the API calls 
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                        ),
+                        child: const Text(
+                          'Confirm',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Updated leaveTeam function to handle the API calls and leave the team
   Future<void> leaveTeamAndUpdateView(BuildContext context) async {
     try {
       // Call the leaveTeam API
-      await leaveTeam(huntID, teamID, "placeholder"); // TODO: Fix
-      // Show a success message or refresh the view
+      await leaveTeam(huntID, teamID, "placeholder"); // Add any required parameters here
+      // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully left the team')),
       );
-      // Navigate back after leaving the team
+      // Navigate back to join_a_team_view after leaving the team
       Navigator.pop(context);
     } catch (error) {
       // Handle any errors from the leaveTeam call
@@ -29,6 +116,26 @@ class MyTeamView extends StatelessWidget {
       );
     }
   }
+
+
+  // // Auxiliary function to handle leave team POST API call and handle view updates
+  // Future<void> leaveTeamAndUpdateView(BuildContext context) async {
+  //   try {
+  //     // Call the leaveTeam API
+  //     await leaveTeam(huntID, teamID, "placeholder"); // TODO: Fix
+  //     // Show a success message or refresh the view
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Successfully left the team')),
+  //     );
+  //     // Navigate back after leaving the team
+  //     Navigator.pop(context);
+  //   } catch (error) {
+  //     // Handle any errors from the leaveTeam call
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error leaving the team: $error')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -73,8 +180,8 @@ class MyTeamView extends StatelessWidget {
                         decoration: AppStyles.cancelButtonStyle,
                         child: ElevatedButton(
                           onPressed: () {
-                            // aux function to handle leave_team api call
-                            leaveTeamAndUpdateView(context);
+                            // opens dialog box asking for confirmation to leave team
+                            _showLeaveTeamConfirmation(context);
                           },
                           style: AppStyles.elevatedButtonStyle,
                           child: const Text('Leave Team'),
@@ -105,6 +212,11 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
+
+  // Text controller for the new member input
+  final TextEditingController _newMemberController = TextEditingController();
+  bool hasAddedMember = false; //Track if a member has already been added to team
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -209,6 +321,34 @@ class _TeamTileState extends State<TeamTile> {
                         ]);
                       }).toList(),
                     ),
+                    if (widget.members.length < 4 && !hasAddedMember) ...[
+                      const Divider(color: Colors.grey, indent: 15, endIndent: 15, height: 1),
+                      ListTile(
+                        leading: Icon(Icons.person_add, color: Colors.grey),
+                        title: TextField(
+                          controller: _newMemberController,
+                          decoration: InputDecoration(
+                            hintText: "Enter new member name",
+                            hintStyle: AppStyles.logisticsStyle.copyWith(color: Colors.grey),
+                            border: InputBorder.none,
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.check, color: Colors.green),
+                              onPressed: () {
+                                setState(() {
+                                  widget.members.add({
+                                    'name': _newMemberController.text,
+                                    'teamLeader': false,
+                                  });
+                                  _newMemberController.clear();
+                                  hasAddedMember = true; //Set flag prevent furthur additions to team
+                                });
+                              },
+                            ),
+                          ),
+                          style: AppStyles.logisticsStyle,
+                        ),
+                      ),
+                    ],
                     SizedBox(height: 20),
                   ])),
         ));
