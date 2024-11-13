@@ -4,6 +4,7 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:provider/provider.dart';
+import 'package:confetti/confetti.dart';
 
 import '../../provider/game_model.dart';
 
@@ -18,7 +19,15 @@ class HuntProgressView extends StatefulWidget {
   final int currentChallenge;
 
   const HuntProgressView(
-      {super.key, required this.huntName, required this.huntID, required this.teamID, required this.totalSeconds, required this.totalPoints, required this.secondsSpentThisRound, required this.pointsEarnedThisRound, required this.currentChallenge});
+      {super.key,
+      required this.huntName,
+      required this.huntID,
+      required this.teamID,
+      required this.totalSeconds,
+      required this.totalPoints,
+      required this.secondsSpentThisRound,
+      required this.pointsEarnedThisRound,
+      required this.currentChallenge});
 
   @override
   _HuntProgressViewState createState() => _HuntProgressViewState();
@@ -27,13 +36,15 @@ class HuntProgressView extends StatefulWidget {
 class _HuntProgressViewState extends State<HuntProgressView> {
   List<dynamic> challenges = [];
   bool isLoading = true; // Loading state
+  bool isHuntCompleted = false;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 5));
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
     // Add the current round's data to the model
-    // print("CHECKKK ${widget.secondsSpentThisRound}");
     huntProgressModel.addSecondsSpent(widget.secondsSpentThisRound);
     huntProgressModel.addPointsEarned(widget.pointsEarnedThisRound);
     fetchChallengesData(); // Fetch challenges when the widget is initialized
@@ -44,7 +55,17 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     setState(() {
       challenges = data;  // Update the challenges list
       isLoading = false;  // Update loading state
+      if (widget.currentChallenge >= data.length) {
+        isHuntCompleted = true;
+        _confettiController.play(); // Play confetti animation when hunt is completed
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
   }
 
   @override
@@ -108,14 +129,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         final List<dynamic> challengeResponse = snapshot.data!;
-
-                        // Check if all challenges are completed
-                        if (widget.currentChallenge >= challengeResponse.length) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _showCompletionDialog(context);
-                          });
-                        }
-
                         return ListView.builder(
                           itemCount: challengeResponse.length,
                           itemBuilder: (context, index) {
@@ -332,8 +345,8 @@ class _HuntProgressViewState extends State<HuntProgressView> {
             ),
           ),
         ),
-      ),
-    );
+      ]),
+    ));
   }
 
   void _showCompletionDialog(BuildContext context) {
