@@ -38,8 +38,23 @@ class AppStyles {
     borderRadius: BorderRadius.circular(10)
   );
 
+  static BoxDecoration redInfoBoxStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF3C2424),
+          Color(0xFF932828),
+          Color(0xFF3A1E1E)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10)
+  );
+
   static BoxDecoration textFieldStyle = BoxDecoration(
-      color: Colors.white, borderRadius: BorderRadius.circular(10));
+      color: Colors.white, borderRadius: BorderRadius.circular(10)
+  );
 
   static BoxDecoration confirmButtonStyle = BoxDecoration(
     gradient: const LinearGradient(
@@ -136,12 +151,14 @@ class AppStyles {
       actions: [
         IconButton(
           icon: const Icon(Icons.leaderboard),
-            color: Colors.white,  // Uses the leaderboard icon
+          color: Colors.white,  // Uses the leaderboard icon
           onPressed: () {
             // Define the action for when the icon is tapped
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const leaderboard.Leaderboard()),
+              MaterialPageRoute(
+                  builder: (context) => const leaderboard.Leaderboard()
+              ),
             );
           },
         ),
@@ -164,12 +181,14 @@ class AppStyles {
         actions: [
           IconButton(
             icon: const Icon(Icons.leaderboard),
-              color: Colors.white,  // Uses the leaderboard icon
+            color: Colors.white,  // Uses the leaderboard icon
             onPressed: () {
               // Define the action for when the icon is tapped
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const leaderboard.Leaderboard()),
+                MaterialPageRoute(
+                    builder: (context) => const leaderboard.Leaderboard()
+                ),
               );
             },
           ),
@@ -182,7 +201,8 @@ class AppStyles {
             width: MediaQuery.of(context).size.width,
             fit: BoxFit.cover,
           ),
-        ));
+        )
+    );
   }
 
   static AppBar noLeaderboardAppBarStyle(String screenName, BuildContext context) {
@@ -205,6 +225,20 @@ class AppStyles {
         ),
       ),
     );
+  }
+
+  static AppBar noIconsAppBarStyle(String screenName, dynamic context) {
+    return AppBar(
+        title: Text(screenName, style: AppStyles.appBarTextStyle),
+        centerTitle: true,
+        flexibleSpace: Align(
+          alignment: Alignment.center,
+          child: Image(
+            image: const AssetImage("images/small_boomerang.jpg"),
+            width: MediaQuery.of(context).size.width,
+            fit: BoxFit.cover,
+          ),
+        ));
   }
 
   static BoxDecoration popupStyle() {
@@ -268,5 +302,19 @@ class AppStyles {
       );
     }
   }
+
+  static BoxDecoration hintBoxStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF6A553D),
+          Color(0xFF9D7E5A),
+          Color(0xFF6A553D)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10)
+  );
 
 }
