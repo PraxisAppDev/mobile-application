@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/provider/game_model.dart';
 import 'package:praxis_afterhours/views/splash.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() {
+  tz.initializeTimeZones();
   runApp(
     ChangeNotifierProvider(
         create: (context) => HuntProgressModel(),

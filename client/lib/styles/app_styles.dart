@@ -124,6 +124,7 @@ class AppStyles {
     ),
     borderRadius: BorderRadius.circular(20)
   );
+
   static AppBar appBarStyle(String screenName, BuildContext context) {
     return AppBar(
       title: Text(screenName, style: AppStyles.appBarTextStyle),

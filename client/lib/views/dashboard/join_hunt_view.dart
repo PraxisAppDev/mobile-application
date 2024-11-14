@@ -14,6 +14,7 @@ import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 
 import '../team/create_team_view.dart';
@@ -363,21 +364,10 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                                                         context,
                                                         MaterialPageRoute(
                                                             builder: (context) => HuntModeView(
-                                                                huntId: huntResponse[
-                                                                        index]
-                                                                    .id,
-                                                                huntName:
-                                                                    huntResponse[
-                                                                            index]
-                                                                        .name,
-                                                                venue:
-                                                                    huntResponse[
-                                                                            index]
-                                                                        .venue,
-                                                                huntDate: truncatedDate(
-                                                                    huntResponse[
-                                                                            index]
-                                                                        .startDate))),
+                                                                huntId: huntResponse[index].id,
+                                                                huntName: huntResponse[index].name,
+                                                                venue: huntResponse[index].venue,
+                                                                huntDate: truncatedDate(huntResponse[index].startDate))),
                                                       );
                                                     },
                                                     style: AppStyles
@@ -397,9 +387,7 @@ class _JoinHuntViewState extends State<JoinHuntView> {
                                                 Icon(Icons.calendar_month,
                                                     color: Colors.white),
                                                 Text(
-                                                  truncatedDate(
-                                                      huntResponse[index]
-                                                          .startDate),
+                                                  truncatedDate(huntResponse[index].startDate),
                                                   style:
                                                       AppStyles.logisticsStyle,
                                                 ),
@@ -449,13 +437,17 @@ class _JoinHuntViewState extends State<JoinHuntView> {
   }
 
   String truncatedDate(String startDate) {
-    int tIndex = startDate.indexOf("T");
-    String date = startDate.substring(0, tIndex);
-    String time = startDate.substring(tIndex + 1, tIndex + 9);
-    String timeZone =
-        startDate.substring(startDate.length - 5, startDate.length);
+    String cleanedUtcString = startDate.replaceAll('[UTC]', '');
 
-    return "$date $time $timeZone";
+    DateTime utcDateTime = DateTime.parse(cleanedUtcString);
+
+    final estLocation = tz.getLocation('America/New_York');
+
+    tz.TZDateTime estDateTime = tz.TZDateTime.from(utcDateTime, estLocation);
+
+    String formattedEst = DateFormat('yyyy-MM-dd HH:mm:ss').format(estDateTime);
+
+    return "$formattedEst [EST]";
   }
 }
 
