@@ -58,6 +58,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
       if (widget.currentChallenge >= data.length) {
         isHuntCompleted = true;
         _confettiController.play(); // Play confetti animation when hunt is completed
+        _showCompletionDialog(context);
       }
     });
   }
@@ -75,49 +76,49 @@ class _HuntProgressViewState extends State<HuntProgressView> {
         appBar: AppStyles.noBackArrowAppBarStyle("Hunt Progress", context),
         body: DecoratedBox(
           decoration: AppStyles.backgroundStyle,
-          // child:
           child: Center(
-             child: Column(
-               children: [
+            child: Column(
+              children: [
                 const SizedBox(height: 25),
                 Container(
-                    width: 350,
-                    height: 150,
-                    padding: const EdgeInsets.all(16),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              widget.huntName,
-                              textAlign: TextAlign.left,
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.timer, color: Colors.white, size: 25),
-                            Text(
-                              secondsToMinutes(widget.totalSeconds),
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.two_mp_outlined, color: Colors.white, size: 25),
-                            Text(
-                              widget.totalPoints.toString(),
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
-                        ),
-                      ],
-                    )),
+                  width: 350,
+                  height: 150,
+                  padding: const EdgeInsets.all(16),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            widget.huntName,
+                            textAlign: TextAlign.left,
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Icon(Icons.timer, color: Colors.white, size: 25),
+                          Text(
+                            secondsToMinutes(widget.totalSeconds),
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Icon(Icons.two_mp_outlined, color: Colors.white, size: 25),
+                          Text(
+                            widget.totalPoints.toString(),
+                            style: AppStyles.logisticsStyle,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Expanded(
                   child: FutureBuilder<List<dynamic>>(
@@ -135,39 +136,37 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                             return Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center, // Center items in the row
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Column(
-                                      // Circle container
                                       children: [
                                         Container(
-                                          width: 20.0, // Increased size
-                                          height: 20.0, // Increased size
+                                          width: 20.0,
+                                          height: 20.0,
                                           margin: const EdgeInsets.only(right: 8.0),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: index < widget.currentChallenge
                                                 ? Colors.green
                                                 : index > widget.currentChallenge
-                                                ? Colors.grey
-                                                : Colors.amber,
+                                                    ? Colors.grey
+                                                    : Colors.amber,
                                             border: Border.all(
                                               color: index < widget.currentChallenge
                                                   ? Colors.greenAccent
                                                   : index > widget.currentChallenge
-                                                  ? Colors.grey
-                                                  : Colors.amberAccent,
-                                              //width: 2.0,
+                                                      ? Colors.grey
+                                                      : Colors.amberAccent,
                                             ),
                                           ),
                                           child: Center(
                                             child: Text(
-                                              '${index + 1}', // Displaying the index as a number (1-based)
+                                              '${index + 1}',
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
-                                                color: Colors.white, // Text color
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                fontSize: 12, // Text size
+                                                fontSize: 12,
                                               ),
                                             ),
                                           ),
@@ -180,19 +179,19 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                             color: index < widget.currentChallenge
                                                 ? Colors.green
                                                 : index > widget.currentChallenge
-                                                ? Colors.grey
-                                                : Colors.amber,
-                                            borderRadius: BorderRadius.circular(8.0), // Rounded corners
+                                                    ? Colors.grey
+                                                    : Colors.amber,
+                                            borderRadius: BorderRadius.circular(8.0),
                                           ),
                                         ),
                                         if (index == challengeResponse.length - 1)
                                           Container(
-                                            width: 20.0, // Increased size
-                                            height: 20.0, // Increased size
+                                            width: 20.0,
+                                            height: 20.0,
                                             margin: const EdgeInsets.only(right: 8.0),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: Colors.red, // Background color
+                                              color: Colors.red,
                                               border: Border.all(
                                                 color: Colors.redAccent,
                                                 width: 2.0,
@@ -200,9 +199,9 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                             ),
                                             child: Center(
                                               child: Icon(
-                                                Icons.outlined_flag, // Replace with the desired icon
-                                                color: Colors.white, // Icon color
-                                                size: 12, // Adjust size as needed
+                                                Icons.outlined_flag,
+                                                color: Colors.white,
+                                                size: 12,
                                               ),
                                             ),
                                           ),
@@ -214,12 +213,11 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                       width: 300,
                                       padding: const EdgeInsets.all(16),
                                       decoration: AppStyles.challengeBoxStyle(index, widget.currentChallenge),
-                                      child: Center( // Center content inside the challenge container
+                                      child: Center(
                                         child: Column(
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
                                           children: [
-                                            // Check if the index is less than or equal to currentChallenge
                                             if (index <= widget.currentChallenge) ...[
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -239,19 +237,16 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                   Icon(Icons.timer, color: Colors.white),
                                                   const SizedBox(width: 5),
                                                   if (index < widget.currentChallenge) ...[
-                                                    // Display timer from the HuntProgressModel for completed challenges
                                                     Text(
-                                                      secondsToMinutes(Provider.of<HuntProgressModel>(context).secondsSpentList[index+1]),
+                                                      secondsToMinutes(Provider.of<HuntProgressModel>(context).secondsSpentList[index + 1]),
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ] else if (index == widget.currentChallenge) ...[
-                                                    // Display "Not yet started" for the current challenge
                                                     Text(
                                                       "Not yet started",
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ] else ...[
-                                                    // Placeholder for upcoming challenges
                                                     Text(
                                                       secondsToMinutes(widget.totalSeconds),
                                                       style: AppStyles.logisticsStyle,
@@ -274,7 +269,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                                 teamID: widget.teamID,
                                                                 previousSeconds: widget.totalSeconds,
                                                                 previousPoints: widget.totalPoints,
-                                                                challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
+                                                                challengeID: challengeResponse[index]['id'],
                                                                 challengeNum: index,
                                                               ),
                                                             ),
@@ -300,13 +295,11 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                   Icon(Icons.two_mp_outlined, color: Colors.white),
                                                   const SizedBox(width: 5),
                                                   if (index < widget.currentChallenge) ...[
-                                                    // Display points from the HuntProgressModel for completed challenges
                                                     Text(
-                                                      "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index+1]}/300 points",
+                                                      "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index + 1]}/300 points",
                                                       style: AppStyles.logisticsStyle,
                                                     ),
                                                   ] else if (index == widget.currentChallenge) ...[
-                                                    // Display "Not yet started" for the current challenge
                                                     Text(
                                                       "300 points possible",
                                                       style: AppStyles.logisticsStyle,
@@ -320,7 +313,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                 children: [
                                                   Center(
                                                     child: Icon(Icons.lock, color: Colors.black, size: 50),
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                             ],
@@ -328,7 +321,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                         ),
                                       ),
                                     ),
-
                                   ],
                                 ),
                               ],
@@ -340,15 +332,16 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                       }
                     },
                   ),
-                )
-               ],
+                ),
+              ],
             ),
           ),
         ),
-      ]),
-    ));
+      ),
+    );
   }
 
+    
   void _showCompletionDialog(BuildContext context) {
     showDialog(
       context: context,
