@@ -6,26 +6,28 @@ import '../../styles/app_styles.dart';
 import 'challenge_view.dart';
 
 class HuntProgressView extends StatefulWidget {
-  final String huntName;
-  final String huntID;
-  final String teamID;
-  final int totalSeconds;
-  final int totalPoints;
-  final int secondsSpentThisRound;
-  final int pointsEarnedThisRound;
-  final int currentChallenge;
+  // final String huntName;
+  // final String huntID;
+  // final String teamID;
+  // final int totalSeconds;
+  // final int totalPoints;
+  // final int secondsSpentThisRound;
+  // final int pointsEarnedThisRound;
+  // final int currentChallenge;
+  //
+  // const HuntProgressView({
+  //   super.key,
+  //   required this.huntName,
+  //   required this.huntID,
+  //   required this.teamID,
+  //   required this.totalSeconds,
+  //   required this.totalPoints,
+  //   required this.secondsSpentThisRound,
+  //   required this.pointsEarnedThisRound,
+  //   required this.currentChallenge,
+  // });
 
-  const HuntProgressView({
-    super.key,
-    required this.huntName,
-    required this.huntID,
-    required this.teamID,
-    required this.totalSeconds,
-    required this.totalPoints,
-    required this.secondsSpentThisRound,
-    required this.pointsEarnedThisRound,
-    required this.currentChallenge,
-  });
+  const HuntProgressView({super.key});
 
   @override
   _HuntProgressViewState createState() => _HuntProgressViewState();
@@ -39,16 +41,16 @@ class _HuntProgressViewState extends State<HuntProgressView> {
   void initState() {
     super.initState();
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-
     // Initialize the round's data and start the timer
-    huntProgressModel.addSecondsSpent(widget.secondsSpentThisRound);
-    huntProgressModel.addPointsEarned(widget.pointsEarnedThisRound);
+    huntProgressModel.addSecondsSpent(huntProgressModel.secondsSpentThisRound);
+    huntProgressModel.addPointsEarned(huntProgressModel.pointsEarnedThisRound);
     huntProgressModel.startTimer();
     fetchChallengesData();
   }
 
   Future<void> fetchChallengesData() async {
-    var data = await fetchChallenges(widget.huntID);
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    var data = await fetchChallenges(huntProgressModel.huntId);
     setState(() {
       challenges = data;
       isLoading = false;
@@ -63,6 +65,8 @@ class _HuntProgressViewState extends State<HuntProgressView> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     return MaterialApp(
         home: Scaffold(
           appBar: AppStyles.noBackArrowAppBarStyle("Hunt Progress", context),
@@ -82,7 +86,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                           Row(
                             children: [
                               Text(
-                                widget.huntName,
+                                huntProgressModel.huntName,
                                 textAlign: TextAlign.left,
                                 style: AppStyles.logisticsStyle,
                               ),
@@ -115,7 +119,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                               Icon(Icons.two_mp_outlined,
                                   color: Colors.white, size: 25),
                               Text(
-                                "${widget.totalPoints} points",
+                                "${huntProgressModel.totalPoints} points",
                                 style: AppStyles.logisticsStyle,
                               ),
                             ],
@@ -126,7 +130,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                     const SizedBox(height: 20),
                     Expanded(
                       child: FutureBuilder<List<dynamic>>(
-                        future: fetchChallenges(widget.huntID),
+                        future: fetchChallenges(huntProgressModel.huntId),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
                             return const Center(child: CircularProgressIndicator());
@@ -151,15 +155,15 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                               margin: const EdgeInsets.only(right: 8.0),
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: index < widget.currentChallenge
+                                                color: index < huntProgressModel.currentChallenge
                                                     ? Colors.green
-                                                    : index > widget.currentChallenge
+                                                    : index > huntProgressModel.currentChallenge
                                                     ? Colors.grey
                                                     : Colors.amber,
                                                 border: Border.all(
-                                                  color: index < widget.currentChallenge
+                                                  color: index < huntProgressModel.currentChallenge
                                                       ? Colors.greenAccent
-                                                      : index > widget.currentChallenge
+                                                      : index > huntProgressModel.currentChallenge
                                                       ? Colors.grey
                                                       : Colors.amberAccent,
                                                   //width: 2.0,
@@ -182,9 +186,9 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                               height: 150,
                                               margin: const EdgeInsets.only(right: 8.0),
                                               decoration: BoxDecoration(
-                                                color: index < widget.currentChallenge
+                                                color: index < huntProgressModel.currentChallenge
                                                     ? Colors.green
-                                                    : index > widget.currentChallenge
+                                                    : index > huntProgressModel.currentChallenge
                                                     ? Colors.grey
                                                     : Colors.amber,
                                                 borderRadius: BorderRadius.circular(8.0), // Rounded corners
@@ -218,14 +222,14 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                           height: 135,
                                           width: 300,
                                           padding: const EdgeInsets.all(16),
-                                          decoration: AppStyles.challengeBoxStyle(index, widget.currentChallenge),
+                                          decoration: AppStyles.challengeBoxStyle(index, huntProgressModel.currentChallenge),
                                           child: Center( // Center content inside the challenge container
                                             child: Column(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
                                                 // Check if the index is less than or equal to currentChallenge
-                                                if (index <= widget.currentChallenge) ...[
+                                                if (index <= huntProgressModel.currentChallenge) ...[
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
@@ -243,13 +247,13 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                     children: [
                                                       Icon(Icons.timer, color: Colors.white),
                                                       const SizedBox(width: 5),
-                                                      if (index < widget.currentChallenge) ...[
+                                                      if (index < huntProgressModel.currentChallenge) ...[
                                                         // Display timer from the HuntProgressModel for completed challenges
                                                         Text(
                                                           secondsToMinutes(Provider.of<HuntProgressModel>(context).secondsSpentList[index+1]),
                                                           style: AppStyles.logisticsStyle,
                                                         ),
-                                                      ] else if (index == widget.currentChallenge) ...[
+                                                      ] else if (index == huntProgressModel.currentChallenge) ...[
                                                         // Display "Not yet started" for the current challenge
                                                         Text(
                                                           "Not yet started",
@@ -258,30 +262,36 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                       ] else ...[
                                                         // Placeholder for upcoming challenges
                                                         Text(
-                                                          secondsToMinutes(widget.totalSeconds),
+                                                          secondsToMinutes(huntProgressModel.totalSeconds),
                                                           style: AppStyles.logisticsStyle,
                                                         ),
                                                       ],
                                                       Spacer(),
-                                                      if (index == widget.currentChallenge) ...[
+                                                      if (index == huntProgressModel.currentChallenge) ...[
                                                         Container(
                                                           height: 50,
                                                           width: 75,
                                                           decoration: AppStyles.challengeButtonStyle,
                                                           child: ElevatedButton(
                                                             onPressed: () {
+                                                              huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
+                                                              huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+                                                              huntProgressModel.challengeId = challengeResponse[index]['id'];
+                                                              huntProgressModel.challengeNum = index;
+
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  builder: (context) => ChallengeView(
-                                                                    huntName: widget.huntName,
-                                                                    huntID: widget.huntID,
-                                                                    teamID: widget.teamID,
-                                                                    previousSeconds: widget.totalSeconds,
-                                                                    previousPoints: widget.totalPoints,
-                                                                    challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
-                                                                    challengeNum: index,
-                                                                  ),
+                                                                  // builder: (context) => ChallengeView(
+                                                                  //   huntName: widget.huntName,
+                                                                  //   huntID: widget.huntID,
+                                                                  //   teamID: widget.teamID,
+                                                                  //   previousSeconds: widget.totalSeconds,
+                                                                  //   previousPoints: widget.totalPoints,
+                                                                  //   challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
+                                                                  //   challengeNum: index,
+                                                                  // ),
+                                                                  builder: (context) => ChallengeView()
                                                                 ),
                                                               );
                                                             },
@@ -304,13 +314,13 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                     children: [
                                                       Icon(Icons.two_mp_outlined, color: Colors.white),
                                                       const SizedBox(width: 5),
-                                                      if (index < widget.currentChallenge) ...[
+                                                      if (index < huntProgressModel.currentChallenge) ...[
                                                         // Display points from the HuntProgressModel for completed challenges
                                                         Text(
                                                           "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index+1]}/300 points",
                                                           style: AppStyles.logisticsStyle,
                                                         ),
-                                                      ] else if (index == widget.currentChallenge) ...[
+                                                      ] else if (index == huntProgressModel.currentChallenge) ...[
                                                         // Display "Not yet started" for the current challenge
                                                         Text(
                                                           "300 points possible",
@@ -319,7 +329,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                       ],
                                                     ],
                                                   ),
-                                                ] else if (index > widget.currentChallenge) ...[
+                                                ] else if (index > huntProgressModel.currentChallenge) ...[
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [

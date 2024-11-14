@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/game_model.dart';
 
 class MyTeamView extends StatelessWidget {
-  MyTeamView({super.key, required this.huntID, required this.teamID});
+  // final String teamID;
+  // final String huntID;
+  // late String teamName;
+  //
+  // MyTeamView({super.key, required this.huntID, required this.teamID});
 
-  final String teamID;
-  final String huntID;
-  late String teamName;
-
+  MyTeamView({super.key});
 
   // Auxiliary function to handle leave team POST API call and handle view updates
   Future<void> leaveTeamAndUpdateView(BuildContext context) async {
     try {
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
       // Call the leaveTeam API
-      await leaveTeam(huntID, teamID, "placeholder"); // TODO: Fix
+      await leaveTeam(huntProgressModel.huntId, huntProgressModel.teamId, "placeholder"); // TODO: Fix
       // Show a success message or refresh the view
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully left the team')),
@@ -32,6 +37,8 @@ class MyTeamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     // print("current huntID: $huntID");
     // print("current teamID: $teamID");
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
@@ -45,7 +52,7 @@ class MyTeamView extends StatelessWidget {
               child: Column(
                 children: [
                   FutureBuilder<Map<String, dynamic>>(
-                    future: fetchTeam(huntID, teamID),
+                    future: fetchTeam(huntProgressModel.huntId, huntProgressModel.teamId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -53,9 +60,8 @@ class MyTeamView extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         // If the data was successfully retrieved, display it
-
                         print(snapshot.data);
-                        teamName = snapshot.data!['name'];
+                        huntProgressModel.teamName = snapshot.data!['name'];
                         return TeamTile(
                             isLocked: snapshot.data!['lockStatus'],
                             teamName: snapshot.data!['name'],

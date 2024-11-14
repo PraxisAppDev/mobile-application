@@ -11,24 +11,29 @@ import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/game_model.dart';
 
 class HuntAloneView extends StatefulWidget {
-  String teamName;
-  final String huntId;
-  final String huntName;
-  final String venue;
-  final String huntDate;
-  String? teamId;
+  // String teamName;
+  // final String huntId;
+  // final String huntName;
+  // final String venue;
+  // final String huntDate;
+  // String? teamId;
+  //
+  // HuntAloneView({
+  //   super.key,
+  //   required this.teamName,
+  //   required this.huntId,
+  //   required this.huntName,
+  //   required this.venue,
+  //   required this.huntDate,
+  //   this.teamId,
+  // });
 
-  HuntAloneView({
-    super.key,
-    required this.teamName,
-    required this.huntId,
-    required this.huntName,
-    required this.venue,
-    required this.huntDate,
-    this.teamId,
-  });
+  const HuntAloneView({super.key});
 
   @override
   _HuntAloneViewState createState() => _HuntAloneViewState();
@@ -207,8 +212,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     super.initState();
     _playerNameController = TextEditingController();
     _focusNode = FocusNode();
-    huntName = widget.huntName;
-    venue = widget.venue;
+    // huntName = widget.huntName;
+    // venue = widget.venue;
 
     _focusNode.addListener(() {
       setState(() {
@@ -231,16 +236,16 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  Future<void> makeTeam() async {
+  Future<void> makeTeam(HuntProgressModel model) async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
       throw Exception("Player name cannot be empty");
     }
 
     try {
-      final postResponse = await createTeam(widget.huntId, widget.teamName, playerName, true);
+      final postResponse = await createTeam(model.huntId, model.teamName, playerName, true);
       _updatedTeamId = postResponse['teamId']; // new team ID returned when team was created
-      await startHunt(widget.huntId, _updatedTeamId!);
+      await startHunt(model.huntId, _updatedTeamId!);
     } catch (e) {
       throw e;
     }
@@ -248,7 +253,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
 
   void _startHunt() async {
     try {
-      await makeTeam();
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+      await makeTeam(huntProgressModel);
 
       setState(() {
         _showPopup = true;
@@ -268,18 +274,25 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     timer.cancel();
                     Future.delayed(const Duration(seconds: 1), () {
                       _showPopup = false;
+
+                      huntProgressModel.totalSeconds = 0;
+                      huntProgressModel.totalPoints = 0;
+                      huntProgressModel.secondsSpentThisRound = 0;
+                      huntProgressModel.pointsEarnedThisRound = 0;
+                      huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(
-                          huntName: huntName, 
-                          huntID: widget.huntId, 
-                          teamID: _updatedTeamId!, // team id is id returned from create team api call
-                          totalSeconds: 0, 
-                          totalPoints: 0, 
-                          secondsSpentThisRound: 0, 
-                          pointsEarnedThisRound: 0, 
-                          currentChallenge: 0
-                        )),
+                        // MaterialPageRoute(builder: (context) => HuntProgressView(
+                        //   huntName: huntName,
+                        //   huntID: huntProgressModel.huntId,
+                        //   teamID: _updatedTeamId!, // team id is id returned from create team api call
+                        //   totalSeconds: 0,
+                        //   totalPoints: 0,
+                        //   secondsSpentThisRound: 0,
+                        //   pointsEarnedThisRound: 0,
+                        //   currentChallenge: 0
+                        // )),
+                        MaterialPageRoute(builder: (context) => HuntProgressView())
                       );
                     });
                   }
@@ -352,6 +365,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     return GestureDetector(
       onTap: _unfocusTextField,
       child: Scaffold(
@@ -373,7 +388,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                         Row(
                           children: [
                             Text(
-                              widget.huntName,
+                              huntProgressModel.huntName,
                               textAlign: TextAlign.left,
                               style: AppStyles.logisticsStyle,
                             ),
@@ -384,7 +399,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           children: [
                             Icon(Icons.location_pin, color: Colors.white),
                             Text(
-                              widget.venue,
+                              huntProgressModel.venue,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -394,7 +409,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           children: [
                             Icon(Icons.calendar_month, color: Colors.white),
                             Text(
-                              widget.huntDate,
+                              huntProgressModel.huntDate,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -404,7 +419,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "You are currently hunting in team: ${widget.teamName}",
+                    "You are currently hunting in team: ${huntProgressModel.teamName}",
                     style: AppStyles.logisticsStyle,
                   ),
                   const SizedBox(width: 350, child: Divider(thickness: 2)),
@@ -480,16 +495,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     decoration: AppStyles.cancelButtonStyle,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (widget.teamId != null) {
-                          ShowDeleteConfirmationDialog(
-                              context, widget.huntId, widget.teamId!);
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Team ID not available.')),
-                          );
-                        }
-                      },
+                        ShowDeleteConfirmationDialog(
+                            context, huntProgressModel.huntId, huntProgressModel.teamId);
+                                            },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Delete Team',
                           style: TextStyle(fontWeight: FontWeight.bold)),

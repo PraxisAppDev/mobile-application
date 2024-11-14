@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/game_model.dart';
 
 
 class HuntAloneTeamNameView extends StatefulWidget {
-  final String huntId;
-  final String huntName;
-  final String venue;
-  final String huntDate;
-  const HuntAloneTeamNameView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
-
+  // final String huntId;
+  // final String huntName;
+  // final String venue;
+  // final String huntDate;
+  // const HuntAloneTeamNameView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
+  const HuntAloneTeamNameView({super.key});
 
  @override
  _HuntAloneViewState createState() => _HuntAloneViewState();
@@ -41,6 +44,9 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
 
  @override
  Widget build(BuildContext context) {
+   final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+   huntProgressModel.teamName = _teamNameController.text;
+
    return MaterialApp(
      home: Scaffold(
        appBar: AppStyles.appBarStyle("Hunt Alone", context),
@@ -60,7 +66,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                        Row(
                          children: [
                            Text(
-                             widget.huntName,
+                             huntProgressModel.huntName,
                              textAlign: TextAlign.left,
                              style: AppStyles.logisticsStyle,
                            ),
@@ -71,7 +77,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          children: [
                            Icon(Icons.location_pin, color: Colors.white),
                            Text(
-                             widget.venue,
+                             huntProgressModel.venue,
                              style: AppStyles.logisticsStyle,
                            ),
                          ],
@@ -81,7 +87,7 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          children: [
                            Icon(Icons.calendar_month, color: Colors.white),
                            Text(
-                             widget.huntDate,
+                             huntProgressModel.huntDate,
                              style: AppStyles.logisticsStyle,
                            ),
                          ],
@@ -147,12 +153,13 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
                          Navigator.push(
                            context,
                            MaterialPageRoute(
-                             builder: (context) => HuntAloneView(
-                              teamName: _teamNameController.text, 
-                              huntId: widget.huntId, 
-                              huntName: widget.huntName, 
-                              venue: widget.venue, 
-                              huntDate: widget.huntDate),  // Pass the huntID
+                             // builder: (context) => HuntAloneView(
+                             //  teamName: _teamNameController.text,
+                             //  huntId: huntProgressModel.huntId,
+                             //  huntName: huntProgressModel.huntName,
+                             //  venue: huntProgressModel.venue,
+                             //  huntDate: huntProgressModel.huntDate),
+                             builder: (context) => HuntAloneView()
                            ),
                          );
                        },

@@ -2,20 +2,42 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class HuntProgressModel extends ChangeNotifier {
+  // Variables that were passed from screen to screen, may need to be used in
+  // API calls
+  late String huntName;
+  late String venue;
+  late String huntDate;
+  late String huntId;
+  late String city;
+  late String stateAbbr;
+  late String zipCode;
+  late String teamId;
+  late String teamName;
+
+  // Hunt Progress Screen variables
+  late int totalSeconds;
+  late int totalPoints;
+  late int secondsSpentThisRound;
+  late int pointsEarnedThisRound;
+  late int currentChallenge;
+
+  // Challenge Screen variables
+  late int previousSeconds;
+  late int previousPoints;
+  late String challengeId;
+  late int challengeNum;
+
   List<int> secondsSpentList = [];
   List<int> pointsEarnedList = [];
-  int _secondsSpent = 0;
+  int secondsSpent = 0;
   Timer? _timer;
-  bool _timerStarted = false; // Track if the timer has already started
-
-  // Getter for accessing the timer's seconds spent
-  int get secondsSpent => _secondsSpent;
+  bool _timerStarted = false;
 
   void startTimer() {
     if (_timerStarted) return; // Start the timer only once
     _timerStarted = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _secondsSpent++;
+      secondsSpent++;
       notifyListeners(); // Notify listeners to update only relevant widgets
     });
   }
@@ -25,7 +47,7 @@ class HuntProgressModel extends ChangeNotifier {
   }
 
   void resetTimer() {
-    _secondsSpent = 0;
+    secondsSpent = 0;
     _timerStarted = false;
     notifyListeners();
   }

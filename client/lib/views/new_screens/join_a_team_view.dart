@@ -4,23 +4,28 @@ import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
 import 'package:praxis_afterhours/apis/hunts_api.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:provider/provider.dart';
 import '../../apis/new_teams_api.dart';
+import '../../provider/game_model.dart';
 import 'my_team_view.dart';
 import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
 class JoinATeamView extends StatelessWidget {
-  const JoinATeamView({super.key, required this.huntID});
-  final String huntID;
+  // final String huntID;
+  // const JoinATeamView({super.key, required this.huntID});
+  const JoinATeamView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppStyles.appBarStyle("Join A Team", context),
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
             child: FutureBuilder<Map<String, dynamic>>(
-              future: fetchTeamsFromHunt(huntID!),
+              future: fetchTeamsFromHunt(huntProgressModel.huntId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -35,7 +40,7 @@ class JoinATeamView extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return TeamTile(
                           teamID: teams[index]['id'],
-                          huntID: huntID,
+                          huntID: huntProgressModel.huntId,
                           isLocked: teams[index]['lockStatus'],
                           teamName: teams[index]['name'],
                           members: teams[index]['players']);
@@ -87,10 +92,11 @@ class _TeamTileState extends State<TeamTile> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MyTeamView(
-            huntID: widget.huntID,
-            teamID: widget.teamID,
-          ),
+          // builder: (context) => MyTeamView(
+          //   huntID: widget.huntID,
+          //   teamID: widget.teamID,
+          // ),
+          builder: (context) => MyTeamView()
         ),
       );
     } catch (e) {
