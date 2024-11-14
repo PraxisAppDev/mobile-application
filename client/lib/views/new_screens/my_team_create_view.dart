@@ -15,6 +15,7 @@ import 'package:praxis_afterhours/apis/post_join_team.dart';
 
 import '../../apis/post_create_teams.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MyTeamCreateView extends StatefulWidget {
   final String huntId;
@@ -72,6 +73,26 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
+  void showSnackbarMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
   void connectWebSocket() async {
     final wsUrl = Uri.parse(
         'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamName}&playerName=${widget.playerName}&huntAlone=false');
@@ -82,24 +103,20 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       channel.stream.listen(
         (message) {
           print('Received message: $message');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Received message: $message')),
-          );
+          // showSnackbarMessage("Received message: $message");
+          showToast("Received message: $message");
         },
         onError: (error) {
           print('WebSocket error: $error');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('WebSocket error: $error')),
-          );
+          // showSnackbarMessage('WebSocket error: $error');
+          showToast("WebSocket error: $error");
         },
         onDone: () {
           print('WebSocket closed');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('WebSocket closed')),
-          );
+          // showSnackbarMessage('WebSocket closed');
+          showToast("Websocket closed");
         },
-        cancelOnError:
-            true,
+        cancelOnError: true,
       );
     } catch (e) {
       print('Failed to connect to WebSocket: $e');

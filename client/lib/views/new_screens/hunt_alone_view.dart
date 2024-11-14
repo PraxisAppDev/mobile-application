@@ -12,6 +12,9 @@ import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
 
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 class HuntAloneView extends StatefulWidget {
   String teamName;
   final String huntId;
@@ -228,6 +231,64 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   void _unfocusTextField() {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
+    }
+  }
+
+  void showSnackbarMessage(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void connectWebSocket() async {
+    final playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Player name cannot be empty')),
+      );
+      return;
+    }
+
+    final wsUrl = Uri.parse(
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamName}&playerName=${playerName}&huntAlone=true');
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      var channel = WebSocketChannel.connect(wsUrl);
+      print('Connected to WebSocket. Awaiting messages...');
+      channel.stream.listen(
+        (message) {
+          print('Received message: $message');
+          // showSnackbarMessage("Received message: $message");
+          showToast("Received message: $message");
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+          // showSnackbarMessage('WebSocket error: $error');
+          showToast("WebSocket error: $error");
+        },
+        onDone: () {
+          print('WebSocket closed');
+          // showSnackbarMessage('WebSocket closed');
+          showToast("Websocket closed");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
     }
   }
 
@@ -467,7 +528,10 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     width: 175,
                     decoration: AppStyles.confirmButtonStyle,
                     child: ElevatedButton(
-                      onPressed: _startHunt,
+                      onPressed: () {
+                        connectWebSocket();
+                        _startHunt();
+                      },
                       style: AppStyles.elevatedButtonStyle,
                       child: const Text('Start Hunt',
                           style: TextStyle(fontWeight: FontWeight.bold)),
