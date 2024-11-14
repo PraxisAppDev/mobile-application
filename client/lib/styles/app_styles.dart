@@ -34,6 +34,18 @@ class AppStyles {
         stops: [0.0, 0.5, 1.0],
       ),
       borderRadius: BorderRadius.circular(10));
+  static BoxDecoration redInfoBoxStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF3C2424),
+          Color(0xFF932828),
+          Color(0xFF3A1E1E)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10));
 
   static BoxDecoration textFieldStyle = BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(10));
