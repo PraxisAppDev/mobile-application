@@ -576,7 +576,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
             const SizedBox(height: 20),
 
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex >= 0)
+            if (_hintIndex > -1)
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,

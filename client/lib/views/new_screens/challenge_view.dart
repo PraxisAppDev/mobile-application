@@ -84,8 +84,8 @@ class _ChallengeViewState extends State<ChallengeView> {
                   previousSeconds: widget.previousSeconds,
                   previousPoints: widget.previousPoints,
                   challengeNum: widget.challengeNum,
-                  totalSeconds:
-                      _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
+                  totalSeconds: _totalSeconds,
+                  // pass totalSeconds to ChallengeContent to be used in submit algorithm
                 ),
               ),
             ],
@@ -573,12 +573,11 @@ class _ChallengeContentState extends State<ChallengeContent> {
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
-
-            const SizedBox(height: 20),
-
+            const SizedBox(height: 10),
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex >= 0)
+            if (_hintIndex > -1)
               Container(
+                height: MediaQuery.of(context).size.height * 0.15,
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
                 child: ListView(
@@ -589,7 +588,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Hint 1.... \n Hint 2.....",
+                      "Hint 1....\nHint 2.....",
                       style: AppStyles.logisticsStyle
                           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
