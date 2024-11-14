@@ -98,7 +98,7 @@ class HeaderWidget extends StatefulWidget {
   final String challengeID;
   final int challengeNum;
   final int previousSeconds;
-  final Function(int) onTimeUpdated; // Callback to send total seconds elasped on this challenge
+  final Function(int) onTimeUpdated; // Callback to send total seconds elapsed on this challenge
 
   const HeaderWidget({
     super.key,
@@ -154,7 +154,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     super.dispose();
   }
 
-  // helper function to get total seconds ellipsed when submit is clicked
+  // helper function to get total seconds elapsed when submit is clicked
   int get totalSeconds => widget.previousSeconds + _secondsSpent;
 
   @override

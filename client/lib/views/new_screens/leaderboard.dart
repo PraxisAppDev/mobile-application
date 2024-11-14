@@ -21,7 +21,7 @@ class _LeaderboardState extends State<Leaderboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppStyles.appBarStyle("Leaderboard", context),
+      appBar: AppStyles.noLeaderboardAppBarStyle("Leaderboard", context),
       body: DecoratedBox(
         decoration: AppStyles.backgroundStyle,
         child: Center(

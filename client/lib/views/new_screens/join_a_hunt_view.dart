@@ -47,7 +47,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                               SizedBox(height: 20),
                             Container(
                               height: 150,
-                              width: 450,
+                              width: 375,
                               padding: const EdgeInsets.all(16),
                               decoration: AppStyles.infoBoxStyle,
                               child: Column(

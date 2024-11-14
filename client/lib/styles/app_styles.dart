@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/leaderboard.dart' as leaderboard;
 
@@ -185,6 +183,28 @@ class AppStyles {
             fit: BoxFit.cover,
           ),
         ));
+  }
+
+  static AppBar noLeaderboardAppBarStyle(String screenName, BuildContext context) {
+    return AppBar(
+      title: Text(screenName, style: AppStyles.appBarTextStyle),
+      leading: IconButton(
+        icon: const Icon(Icons.keyboard_double_arrow_left,
+            color: Colors.white, size: 40),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      centerTitle: true,
+      flexibleSpace: Align(
+        alignment: Alignment.center,
+        child: Image(
+          image: const AssetImage("images/small_boomerang.jpg"),
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 
   static BoxDecoration popupStyle() {

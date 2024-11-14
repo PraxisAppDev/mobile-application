@@ -1,36 +1,58 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class HuntProgressModel extends ChangeNotifier {
   List<int> secondsSpentList = [];
   List<int> pointsEarnedList = [];
+  int _secondsSpent = 0;
+  Timer? _timer;
+  bool _timerStarted = false; // Track if the timer has already started
+
+  // Getter for accessing the timer's seconds spent
+  int get secondsSpent => _secondsSpent;
+
+  void startTimer() {
+    if (_timerStarted) return; // Start the timer only once
+    _timerStarted = true;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _secondsSpent++;
+      notifyListeners(); // Notify listeners to update only relevant widgets
+    });
+  }
+
+  void stopTimer() {
+    _timer?.cancel();
+  }
+
+  void resetTimer() {
+    _secondsSpent = 0;
+    _timerStarted = false;
+    notifyListeners();
+  }
 
   void addSecondsSpent(int seconds) {
     secondsSpentList.add(seconds);
-    print("SecondsSpentList: $secondsSpentList");
-    notifyListeners();  // Notify listeners to rebuild
+    notifyListeners();
   }
 
   void addPointsEarned(int points) {
     pointsEarnedList.add(points);
-    print("pointsEarnedList: $pointsEarnedList");
-    notifyListeners();  // Notify listeners to rebuild
+    notifyListeners();
   }
 
-  // returns a specific challenges seconds spent
   int getSecondsSpent(int index) {
-    if(index >= 0 && index < secondsSpentList.length) {
-      return secondsSpentList[index];
-    } else {
-      return 0;
-    }
+    return index >= 0 && index < secondsSpentList.length ? secondsSpentList[index] : 0;
   }
 
-  // returns a specific challenge's points earned
   int getPointsEarned(int index) {
-    if(index >= 0 && index < pointsEarnedList.length) {
-      return pointsEarnedList[index];
-    } else{
-      return 0;
-    }
+    return index >= 0 && index < pointsEarnedList.length ? pointsEarnedList[index] : 0;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
+
+
