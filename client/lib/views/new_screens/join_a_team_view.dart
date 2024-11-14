@@ -89,6 +89,9 @@ class _TeamTileState extends State<TeamTile> {
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text('Successfully joined ${widget.teamName} with response ${response}')),
       // );
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+      huntProgressModel.teamId = widget.teamID;
+
       Navigator.push(
         context,
         MaterialPageRoute(
