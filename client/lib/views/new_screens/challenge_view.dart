@@ -41,6 +41,7 @@ class _ChallengeViewState extends State<ChallengeView> {
   @override
   void initState() {
     super.initState();
+
     _totalSeconds = widget.previousSeconds;
   }
 
@@ -583,11 +584,15 @@ class _ChallengeContentState extends State<ChallengeContent> {
                 child: ListView(
                   children: [
                     Text(
-                      "Hints",
+                      "Hints:",
                       style: AppStyles.logisticsStyle
                           .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text("Hint 1.... \n Hint 2.....")
+                    Text(
+                      "Hint 1.... \n Hint 2.....",
+                      style: AppStyles.logisticsStyle
+                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
@@ -609,7 +614,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   const SizedBox(height: 5),
 
                   // Hint Button
-
                   Container(
                     height: 33,
                     decoration: AppStyles.challengeButtonStyle,

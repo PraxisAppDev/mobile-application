@@ -350,7 +350,35 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                       }
                     },
                   ),
-                )
+                ),
+                Container(
+                  height: 50,
+                  width: 75,
+                  decoration: AppStyles.challengeButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChallengeView(
+                            huntName: widget.huntName,
+                            huntID: widget.huntID,
+                            teamID: widget.teamID,
+                            previousSeconds: widget.totalSeconds,
+                            previousPoints: widget.totalPoints,
+                            challengeID: "123", // Pass the correct challenge ID
+                            challengeNum: 1,
+                          ),
+                        ),
+                      );
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text(
+                      'GO',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
 
 class MyTeamView extends StatelessWidget {
   MyTeamView({super.key, required this.huntID, required this.teamID});
@@ -9,7 +11,6 @@ class MyTeamView extends StatelessWidget {
   final String teamID;
   final String huntID;
   late String teamName;
-
 
   // Auxiliary function to handle leave team POST API call and handle view updates
   Future<void> leaveTeamAndUpdateView(BuildContext context) async {
@@ -32,6 +33,22 @@ class MyTeamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void _startHunt() async {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HuntProgressViewNoButtons(
+                huntName: "Hunt Name",
+                huntID: huntID,
+                teamID: teamID, // use updated team id from api call
+                totalSeconds: 0,
+                totalPoints: 0,
+                secondsSpentThisRound: 0,
+                pointsEarnedThisRound: 0,
+                currentChallenge: 0)),
+      );
+    }
+
     // print("current huntID: $huntID");
     // print("current teamID: $teamID");
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
@@ -80,6 +97,23 @@ class MyTeamView extends StatelessWidget {
                           child: const Text('Leave Team'),
                         ),
                       )),
+
+                  //REMOVE BUTTON IN FINAL GAME
+                  Container(
+                    height: 50,
+                    width: 175,
+                    decoration: AppStyles.confirmButtonStyle,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _startHunt();
+                      },
+                      style: AppStyles.elevatedButtonStyle,
+                      child: const Text(
+                        'Start Hunt',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
                 ],
               ))),
     );
