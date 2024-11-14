@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/instructions.dart';
 import 'package:praxis_afterhours/views/new_screens/leaderboard.dart' as leaderboard;
 
 class AppStyles {
@@ -150,6 +151,16 @@ class AppStyles {
       ),
       actions: [
         IconButton(
+          icon: const Icon(Icons.info),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
+            );
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.leaderboard),
           color: Colors.white,  // Uses the leaderboard icon
           onPressed: () {
@@ -179,6 +190,16 @@ class AppStyles {
     return AppBar(
         title: Text(screenName, style: AppStyles.appBarTextStyle),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.info),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.leaderboard),
             color: Colors.white,  // Uses the leaderboard icon
@@ -215,6 +236,18 @@ class AppStyles {
           Navigator.pop(context);
         },
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.info),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
+            );
+          },
+        ),
+      ],
       centerTitle: true,
       flexibleSpace: Align(
         alignment: Alignment.center,
