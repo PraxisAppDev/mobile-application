@@ -1,4 +1,4 @@
-import 'package:auto_size_text/auto_size_text.dart';
+/*import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -797,3 +797,4 @@ Future<void> showCreateHuntTeamNameDialog(BuildContext context,
     },
   );
 }
+*/

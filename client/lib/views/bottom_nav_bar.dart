@@ -14,7 +14,7 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentPageIndex = 0;
   final screens = [
-    const JoinHuntView(),
+    //const JoinHuntView(),
     //const HuntHistoryView(),
     const ProfileView(),
   ];

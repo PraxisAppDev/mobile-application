@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
-import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
-import 'package:praxis_afterhours/apis/hunts_api.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:provider/provider.dart';
-import '../../apis/new_teams_api.dart';
 import '../../provider/game_model.dart';
 import 'my_team_view.dart';
 

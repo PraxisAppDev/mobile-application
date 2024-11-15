@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
@@ -595,22 +596,52 @@ class _ChallengeContentState extends State<ChallengeContent> {
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
             if (_hintIndex > -1)
               Container(
-                height: MediaQuery.of(context).size.height * 0.15,
+                height: MediaQuery.of(context).size.height * 0.20,
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
-                child: ListView(
-                  children: [
-                    Text(
-                      "Hints:",
-                      style: AppStyles.logisticsStyle
-                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Hint 1....\nHint 2.....",
-                      style: AppStyles.logisticsStyle
-                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                child: CupertinoScrollbar(
+                  child: ListView(
+                    children: [
+                      Text(
+                        "Hints...",
+                        style: AppStyles.logisticsStyle.copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: _hints.length,
+                        itemBuilder: (context, index) {
+                          if (index < _hintIndex) {
+                            return Column(children: [
+                              Text(
+                                _hints[index]['description'],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Image.network(
+                                _hints[index]['url'],
+                                height: 100,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text(
+                                    'Image not available',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 10),
+                            ]);
+                          } else {
+                            return null;
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
             Expanded(

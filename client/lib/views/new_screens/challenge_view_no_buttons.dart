@@ -1,6 +1,7 @@
 import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
 import 'package:praxis_afterhours/apis/post_solve_challenge.dart';
@@ -549,69 +550,90 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
             // Team Answer header and input field
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Team Answer...',
-                  style: AppStyles.logisticsStyle
-                      .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  decoration: AppStyles.textFieldStyle,
-                  child: TextField(
-                    controller: _answerController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter answer here...',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
             // Submit Button
 
-            Container(
-              decoration: AppStyles.confirmButtonStyle,
-              child: ElevatedButton(
-                //onPressed: _submitAnswer,
-                onPressed: null,
-                style: AppStyles.elevatedButtonStyle,
-                child: const Text('Submit',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex >= 0)
+            if (_hintIndex > -1)
               Container(
+                height: MediaQuery.of(context).size.height * 0.20,
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
-                child: ListView(
-                  children: [
-                    Text(
-                      "Hints",
-                      style: AppStyles.logisticsStyle
-                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text("Hint 1.... \n Hint 2.....")
-                  ],
+                child: CupertinoScrollbar(
+                  child: ListView(
+                    children: [
+                      Text(
+                        "Hints...",
+                        style: AppStyles.logisticsStyle.copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: _hints.length,
+                        itemBuilder: (context, index) {
+                          if (index < _hintIndex) {
+                            return Column(children: [
+                              Text(
+                                _hints[index]['description'],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Image.network(
+                                _hints[index]['url'],
+                                height: 100,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text(
+                                    'Image not available',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 10),
+                            ]);
+                          } else {
+                            return null;
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
+
+            Expanded(
+              child: SizedBox(),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
+              decoration: AppStyles.infoBoxStyle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Stuck? Ask the team leader to reveal a hint...",
+                    style: AppStyles.logisticsStyle
+                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
+
+                  // Guesses Left Display
+                  const SizedBox(height: 5),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "Your team has $guessesLeft guesses left.",
+              style: AppStyles.logisticsStyle.copyWith(color: Colors.amber),
+            ),
+            SizedBox(
+              height: 15,
+            )
           ],
         ),
       );
