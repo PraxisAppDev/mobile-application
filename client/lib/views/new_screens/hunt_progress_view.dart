@@ -104,7 +104,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                               final seconds = (huntProgressModel.secondsSpent % 60)
                                   .toString()
                                   .padLeft(2, '0');
-
                               return Row(
                                 children: [
                                   Icon(Icons.timer, color: Colors.white, size: 25),

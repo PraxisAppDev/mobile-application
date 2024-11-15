@@ -48,6 +48,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
     // print("CHECKKK ${widget.secondsSpentThisRound}");
     huntProgressModel.addSecondsSpent(huntProgressModel.secondsSpentThisRound);
     huntProgressModel.addPointsEarned(huntProgressModel.pointsEarnedThisRound);
+    huntProgressModel.startTimer();
     fetchChallengesData(); // Fetch challenges when the widget is initialized
   }
 
@@ -58,6 +59,12 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
       challenges = data; // Update the challenges list
       isLoading = false; // Update loading state
     });
+  }
+
+  @override
+  void dispose() {
+    Provider.of<HuntProgressModel>(context, listen: false).stopTimer();
+    super.dispose();
   }
 
   @override
@@ -91,14 +98,24 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                           ],
                         ),
                         SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(Icons.timer, color: Colors.white, size: 25),
-                            Text(
-                              secondsToMinutes(huntProgressModel.totalSeconds),
-                              style: AppStyles.logisticsStyle,
-                            ),
-                          ],
+                        Consumer<HuntProgressModel>(
+                          builder: (context, huntProgressModel, child) {
+                            final minutes = (huntProgressModel.secondsSpent ~/ 60)
+                                .toString()
+                                .padLeft(2, '0');
+                            final seconds = (huntProgressModel.secondsSpent % 60)
+                                .toString()
+                                .padLeft(2, '0');
+                            return Row(
+                              children: [
+                                Icon(Icons.timer, color: Colors.white, size: 25),
+                                Text(
+                                  '$minutes:$seconds',
+                                  style: AppStyles.logisticsStyle,
+                                ),
+                              ],
+                            );
+                          },
                         ),
                         SizedBox(height: 20),
                         Row(
@@ -106,7 +123,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                             Icon(Icons.two_mp_outlined,
                                 color: Colors.white, size: 25),
                             Text(
-                              huntProgressModel.totalPoints.toString(),
+                              "${huntProgressModel.totalPoints} points",
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -130,8 +147,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                             return Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .center, // Center items in the row
+                                  mainAxisAlignment: MainAxisAlignment.center, // Center items in the row
                                   children: [
                                     Column(
                                       // Circle container

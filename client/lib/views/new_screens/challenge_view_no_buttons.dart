@@ -559,6 +559,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   decoration: AppStyles.textFieldStyle,
                   child: TextField(
                     controller: _answerController,
+                    readOnly: true,
                     decoration: const InputDecoration(
                       hintText: 'Enter answer here...',
                       hintStyle: TextStyle(color: Colors.grey),
@@ -582,7 +583,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
             Container(
               decoration: AppStyles.confirmButtonStyle,
               child: ElevatedButton(
-                onPressed: _submitAnswer,
+                //onPressed: _submitAnswer,
+                onPressed: null,
                 style: AppStyles.elevatedButtonStyle,
                 child: const Text('Submit',
                     style: TextStyle(fontWeight: FontWeight.bold)),
