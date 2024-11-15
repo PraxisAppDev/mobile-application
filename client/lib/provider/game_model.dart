@@ -1,36 +1,80 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class HuntProgressModel extends ChangeNotifier {
+  // Variables that were passed from screen to screen, may need to be used in
+  // API calls
+  late String huntName;
+  late String venue;
+  late String huntDate;
+  late String huntId;
+  late String city;
+  late String stateAbbr;
+  late String zipCode;
+  late String teamId;
+  late String teamName;
+
+  // Hunt Progress Screen variables
+  late int totalSeconds;
+  late int totalPoints;
+  late int secondsSpentThisRound;
+  late int pointsEarnedThisRound;
+  late int currentChallenge;
+
+  // Challenge Screen variables
+  late int previousSeconds;
+  late int previousPoints;
+  late String challengeId;
+  late int challengeNum;
+
   List<int> secondsSpentList = [];
   List<int> pointsEarnedList = [];
+  int secondsSpent = 0;
+  Timer? _timer;
+  bool _timerStarted = false;
+
+  void startTimer() {
+    if (_timerStarted) return; // Start the timer only once
+    _timerStarted = true;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      secondsSpent++;
+      notifyListeners(); // Notify listeners to update only relevant widgets
+    });
+  }
+
+  void stopTimer() {
+    _timer?.cancel();
+  }
+
+  void resetTimer() {
+    secondsSpent = 0;
+    _timerStarted = false;
+    notifyListeners();
+  }
 
   void addSecondsSpent(int seconds) {
     secondsSpentList.add(seconds);
-    print("SecondsSpentList: $secondsSpentList");
-    notifyListeners();  // Notify listeners to rebuild
+    notifyListeners();
   }
 
   void addPointsEarned(int points) {
     pointsEarnedList.add(points);
-    print("pointsEarnedList: $pointsEarnedList");
-    notifyListeners();  // Notify listeners to rebuild
+    notifyListeners();
   }
 
-  // returns a specific challenges seconds spent
   int getSecondsSpent(int index) {
-    if(index >= 0 && index < secondsSpentList.length) {
-      return secondsSpentList[index];
-    } else {
-      return 0;
-    }
+    return index >= 0 && index < secondsSpentList.length ? secondsSpentList[index] : 0;
   }
 
-  // returns a specific challenge's points earned
   int getPointsEarned(int index) {
-    if(index >= 0 && index < pointsEarnedList.length) {
-      return pointsEarnedList[index];
-    } else{
-      return 0;
-    }
+    return index >= 0 && index < pointsEarnedList.length ? pointsEarnedList[index] : 0;
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 }
+
+
