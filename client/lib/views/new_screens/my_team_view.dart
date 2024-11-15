@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view_no_buttons.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/game_model.dart';
@@ -76,6 +78,60 @@ class MyTeamView extends StatelessWidget {
                       child: Container(
                         height: 50,
                         width: 175,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            huntProgressModel.totalSeconds = 0;
+                            huntProgressModel.totalPoints = 0;
+                            huntProgressModel.secondsSpentThisRound = 0;
+                            huntProgressModel.pointsEarnedThisRound = 0;
+                            huntProgressModel.currentChallenge = 0;
+
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => HuntProgressViewNoButtons())
+                            );
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text('Progress NB'),
+                        ),
+                      )
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Container(
+                        height: 50,
+                        width: 175,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            huntProgressModel.totalSeconds = 0;
+                            huntProgressModel.totalPoints = 0;
+                            huntProgressModel.secondsSpentThisRound = 0;
+                            huntProgressModel.pointsEarnedThisRound = 0;
+                            huntProgressModel.currentChallenge = 0;
+                            huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
+                            huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+                            huntProgressModel.challengeId = "1";
+                            huntProgressModel.challengeNum = 0;
+                            //huntProgressModel.challengeId = challengeResponse[index]['id'];
+                            //huntProgressModel.challengeNum = index;
+
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => ChallengeViewNoButtons())
+                            );
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text('Challenge NB'),
+                        ),
+                      )
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Container(
+                        height: 50,
+                        width: 175,
                         decoration: AppStyles.cancelButtonStyle,
                         child: ElevatedButton(
                           onPressed: () {
@@ -85,7 +141,8 @@ class MyTeamView extends StatelessWidget {
                           style: AppStyles.elevatedButtonStyle,
                           child: const Text('Leave Team'),
                         ),
-                      )),
+                      )
+                  ),
                 ],
               ))),
     );
