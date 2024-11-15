@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
@@ -12,8 +11,9 @@ import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/patch_update_team.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
-
 import '../../apis/post_create_teams.dart';
+import 'package:provider/provider.dart';
+import '../../provider/game_model.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -73,13 +73,13 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
-  void showSnackbarMessage(String message) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
-    }
-  }
+  // void showSnackbarMessage(String message) {
+  //   if (mounted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(message)),
+  //     );
+  //   }
+  // }
 
   void showToast(String message) {
     Fluttertoast.showToast(
@@ -142,6 +142,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   void _startHunt() async {
     try {
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -162,18 +163,25 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                     timer.cancel();
                     Future.delayed(const Duration(seconds: 1), () {
                       _showPopup = false;
+
+                      huntProgressModel.totalSeconds = 0;
+                      huntProgressModel.totalPoints = 0;
+                      huntProgressModel.secondsSpentThisRound = 0;
+                      huntProgressModel.pointsEarnedThisRound = 0;
+                      huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => HuntProgressView(
-                                huntName: widget.huntName,
-                                huntID: widget.huntId,
-                                teamID: _updatedTeamId ?? widget.teamId,
-                                totalSeconds: 0,
-                                totalPoints: 0,
-                                secondsSpentThisRound: 0,
-                                pointsEarnedThisRound: 0,
-                                currentChallenge: 0)),
+                        // MaterialPageRoute(builder: (context) => HuntProgressView(
+                        //   huntName: widget.huntName,
+                        //   huntID: widget.huntId,
+                        //   teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
+                        //   totalSeconds: 0,
+                        //   totalPoints: 0,
+                        //   secondsSpentThisRound: 0,
+                        //   pointsEarnedThisRound: 0,
+                        //   currentChallenge: 0
+                        // )),
+                        MaterialPageRoute(builder: (context) => HuntProgressView())
                       );
                     });
                   }
