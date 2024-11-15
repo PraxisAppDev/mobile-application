@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/instructions.dart';
 import 'package:praxis_afterhours/views/new_screens/leaderboard.dart'
     as leaderboard;
 
@@ -34,6 +33,7 @@ class AppStyles {
         stops: [0.0, 0.5, 1.0],
       ),
       borderRadius: BorderRadius.circular(10));
+
   static BoxDecoration redInfoBoxStyle = BoxDecoration(
       gradient: const LinearGradient(
         begin: Alignment.topCenter,
@@ -139,6 +139,16 @@ class AppStyles {
       ),
       actions: [
         IconButton(
+          icon: const Icon(Icons.info),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Instructions(title: "Instr")));
+          },
+        ),
+        IconButton(
           icon: const Icon(Icons.leaderboard),
           color: Colors.white, // Uses the leaderboard icon
           onPressed: () {
@@ -168,6 +178,17 @@ class AppStyles {
         title: Text(screenName, style: AppStyles.appBarTextStyle),
         actions: [
           IconButton(
+            icon: const Icon(Icons.info),
+            color: Colors.white,
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          const Instructions(title: "Instr")));
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.leaderboard),
             color: Colors.white, // Uses the leaderboard icon
             onPressed: () {
@@ -189,6 +210,41 @@ class AppStyles {
             fit: BoxFit.cover,
           ),
         ));
+  }
+
+  static AppBar noLeaderboardAppBarStyle(
+      String screenName, BuildContext context) {
+    return AppBar(
+      title: Text(screenName, style: AppStyles.appBarTextStyle),
+      leading: IconButton(
+        icon: const Icon(Icons.keyboard_double_arrow_left,
+            color: Colors.white, size: 40),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.info),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const Instructions(title: "Instr")));
+          },
+        ),
+      ],
+      centerTitle: true,
+      flexibleSpace: Align(
+        alignment: Alignment.center,
+        child: Image(
+          image: const AssetImage("images/small_boomerang.jpg"),
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
   }
 
   static AppBar noIconsAppBarStyle(String screenName, dynamic context) {
@@ -263,4 +319,17 @@ class AppStyles {
           borderRadius: BorderRadius.circular(10));
     }
   }
+
+  static BoxDecoration hintBoxStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF6A553D),
+          Color(0xFF9D7E5A),
+          Color(0xFF6A553D)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10));
 }

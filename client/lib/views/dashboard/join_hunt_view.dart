@@ -80,36 +80,404 @@ class _JoinHuntViewState extends State<JoinHuntView> {
     return Scaffold(
         appBar: AppStyles.noIconsAppBarStyle("Hunt", context),
         body: DecoratedBox(
-            decoration: AppStyles.backgroundStyle,
-            //TODO: Non hard coded dates
-            child: FutureBuilder<List<dynamic>>(
-                future: hunts_api.getHunts(
-                    startdate: '2024-10-01', enddate: '2024-10-31', limit: 4),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else if (snapshot.hasData) {
-                    final List<dynamic> huntsResponse = snapshot.data!;
-                    return ListView.builder(
-                      itemCount: huntsResponse.length,
-                      itemBuilder: (context, index) {
-                        return HuntWidget(hunt: huntsResponse[index]);
-                      },
-                    );
-                  } else {
-                    return Center(child: Text('No data available.'));
-                  }
-                })));
+          decoration: AppStyles.backgroundStyle,
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                //expandedHeight: 120,
+                expandedHeight: 100,
+                pinned: true,
+                floating: true,
+                automaticallyImplyLeading: false,
+                flexibleSpace: FlexibleSpaceBar(
+                  titlePadding: const EdgeInsets.only(
+                    left: 16,
+                    bottom: 16,
+                  ),
+                  centerTitle: false,
+                  title: Text(
+                    "Join A Hunt",
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 32,
+                    ),
+                  ),
+                ),
+                actions: [
+                  IconButton(
+                    onPressed: () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const Instructions(
+                            title: 'Instructions',
+                          ),
+                        ),
+                      )
+                    },
+                    icon: const Icon(Icons.info_outline),
+                  ),
+                  IconButton(
+                    onPressed: () => {},
+                    icon: const Icon(Icons.notifications),
+                  ),
+                ],
+                backgroundColor: praxisRed,
+                elevation: 0,
+              ),
+              _hunts.isEmpty
+                  ? SliverFillRemaining(
+                      child: Center(
+                          // This text normally appears when there are no hunts available
+                          /* child: Text(
+                      "No hunts available!",
+                      style: GoogleFonts.poppins(
+                        color: praxisBlack,
+                        fontSize: 32,
+                      ),
+                    ), */
+                          //
+                          // Use this code when the AFTERHOURS server is down
+                          // child: Column(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     Container(
+                          //         height: 135,
+                          //         width: 450,
+                          //         padding: const EdgeInsets.all(16),
+                          //         decoration: AppStyles.infoBoxStyle,
+                          //         child: Column(
+                          //           children: [
+                          //             Row(
+                          //               children: [
+                          //                 Text(
+                          //                   "Explore Praxis",
+                          //                   textAlign: TextAlign.left,
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.location_pin,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "Greene Turtle (in-person only)",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //                 Spacer(),
+                          //                 Container(
+                          //                   height: 50,
+                          //                   width: 75,
+                          //                   decoration: AppStyles.confirmButtonStyle,
+                          //                   child: ElevatedButton(
+                          //                     onPressed: () {
+                          //                       Navigator.push(
+                          //                         context,
+                          //                         MaterialPageRoute(
+                          //                             builder: (context) =>
+                          //                             const HuntModeView(huntId: "1", huntName: "Explore Praxis", venue: "Greene Turtle (in-person only)", huntDate: "08/01/2024 at 4:00pm")),
+                          //                       );
+                          //                     },
+                          //                     style: AppStyles.elevatedButtonStyle,
+                          //                     child: const Text(
+                          //                       'GO',
+                          //                       style: TextStyle(
+                          //                           fontWeight: FontWeight.bold),
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.calendar_month,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "08/01/2024 at 4:00pm",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         )),
+                          //     SizedBox(height: 20),
+                          //     Container(
+                          //         height: 135,
+                          //         width: 450,
+                          //         padding: const EdgeInsets.all(16),
+                          //         decoration: AppStyles.infoBoxStyle,
+                          //         child: Column(
+                          //           children: [
+                          //             Row(
+                          //               children: [
+                          //                 Text(
+                          //                   "Praxis Intern Challenge",
+                          //                   textAlign: TextAlign.left,
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.location_pin,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "Praxis HQ (in-person only)",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //                 Spacer(),
+                          //                 Container(
+                          //                   height: 50,
+                          //                   width: 75,
+                          //                   decoration: AppStyles.confirmButtonStyle,
+                          //                   child: ElevatedButton(
+                          //                     onPressed: () {
+                          //                       Navigator.push(
+                          //                         context,
+                          //                         MaterialPageRoute(
+                          //                             builder: (context) =>
+                          //                             const HuntModeView(huntId: "2", huntName: "Praxis Intern Challenge", venue: "Praxis HQ (in-person only)", huntDate: "09/30/2024 at 4:00pm")),
+                          //                       );
+                          //                     },
+                          //                     style: AppStyles.elevatedButtonStyle,
+                          //                     child: const Text(
+                          //                       'GO',
+                          //                       style: TextStyle(
+                          //                           fontWeight: FontWeight.bold),
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.calendar_month,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "09/30/2024 at 4:00pm",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         )),
+                          //     SizedBox(height: 20),
+                          //     Container(
+                          //         height: 135,
+                          //         width: 450,
+                          //         padding: const EdgeInsets.all(16),
+                          //         decoration: AppStyles.infoBoxStyle,
+                          //         child: Column(
+                          //           children: [
+                          //             Row(
+                          //               children: [
+                          //                 Text(
+                          //                   "Praxis Employee Hunt",
+                          //                   textAlign: TextAlign.left,
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.location_pin,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "Praxis HQ (in-person only)",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //                 Spacer(),
+                          //                 Container(
+                          //                   height: 50,
+                          //                   width: 75,
+                          //                   decoration: AppStyles.confirmButtonStyle,
+                          //                   child: ElevatedButton(
+                          //                     onPressed: () {
+                          //                       Navigator.push(
+                          //                         context,
+                          //                         MaterialPageRoute(
+                          //                             builder: (context) =>
+                          //                             const HuntModeView(huntId: "3", huntName: "Praxis Employee Hunt", venue: "Praxis HQ (in-person only)", huntDate: "11/01/2024 at 4:00pm")),
+                          //                       );
+                          //                     },
+                          //                     style: AppStyles.elevatedButtonStyle,
+                          //                     child: const Text(
+                          //                       'GO',
+                          //                       style: TextStyle(
+                          //                           fontWeight: FontWeight.bold),
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //             Row(
+                          //               children: [
+                          //                 Icon(Icons.calendar_month,
+                          //                     color: Colors.white),
+                          //                 Text(
+                          //                   "11/01/2024 at 4:00pm",
+                          //                   style: AppStyles.logisticsStyle,
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         )),
+                          //   ],
+                          // ),
+                          // Use this code when the AFTERHOURS server is up and running
+                          child: FutureBuilder<
+                                  List<hunts_api.HuntResponseModel>>(
+                              future: hunts_api.getHunts(
+                                  startdate: '2024-10-01',
+                                  enddate: '2024-10-31',
+                                  limit: 4),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Center(
+                                      child: Text('Error: ${snapshot.error}'));
+                                } else if (snapshot.hasData) {
+                                  // If the data was successfully retrieved, display it
+                                  final List<hunts_api.HuntResponseModel>
+                                      huntResponse = snapshot.data!;
+                                  return ListView.builder(
+                                    itemCount: huntResponse.length,
+                                    itemBuilder: (context, index) {
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            height: 135,
+                                            width: 450,
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: AppStyles.infoBoxStyle,
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      huntResponse[index].name,
+                                                      textAlign: TextAlign.left,
+                                                      style: AppStyles
+                                                          .logisticsStyle,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.location_pin,
+                                                        color: Colors.white),
+                                                    Text(
+                                                      huntResponse[index].venue,
+                                                      style: AppStyles
+                                                          .logisticsStyle,
+                                                    ),
+                                                    Spacer(),
+                                                    Container(
+                                                      height: 50,
+                                                      width: 75,
+                                                      decoration: AppStyles
+                                                          .confirmButtonStyle,
+                                                      child: ElevatedButton(
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                // builder: (context) => HuntModeView(
+                                                                //     huntId: huntResponse[index].id,
+                                                                //     huntName: huntResponse[index].name,
+                                                                //     venue: huntResponse[index].venue,
+                                                                //     huntDate: truncatedDate(huntResponse[index].startDate))),
+                                                                builder:
+                                                                    (context) =>
+                                                                        HuntModeView()),
+                                                          );
+                                                        },
+                                                        style: AppStyles
+                                                            .elevatedButtonStyle,
+                                                        child: const Text(
+                                                          'GO',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.calendar_month,
+                                                        color: Colors.white),
+                                                    Text(
+                                                      truncatedDate(
+                                                          huntResponse[index]
+                                                              .startDate),
+                                                      style: AppStyles
+                                                          .logisticsStyle,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                              height:
+                                                  20), // Adding space between containers
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return const Center(
+                                      child: Text('No data available.'));
+                                }
+                              })))
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final hunt = _hunts[index];
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                              horizontal: 16,
+                            ),
+                            child: HuntWidget(hunt: hunt)
+                                .animate(
+                                  delay: 150.milliseconds * index,
+                                )
+                                .fade()
+                                .slideY(
+                                  begin: 0.5,
+                                  end: 0,
+                                ),
+                          );
+                        },
+                        childCount: _hunts.length,
+                      ),
+                    ),
+            ],
+          ),
+        ));
   }
-}
 
-DateTime parseToLocal(String startDate) {
-  var dateTime = DateFormat("yyyy-mm-ddTHH:mm:ssZ").parse(startDate, true);
-  var dateLocal = dateTime.toLocal();
+  String truncatedDate(String startDate) {
+    String cleanedUtcString = startDate.replaceAll('[UTC]', '');
 
-  return dateLocal;
+    DateTime utcDateTime = DateTime.parse(cleanedUtcString);
+
+    final estLocation = tz.getLocation('America/New_York');
+
+    tz.TZDateTime estDateTime = tz.TZDateTime.from(utcDateTime, estLocation);
+
+    String formattedEst = DateFormat('yyyy-MM-dd HH:mm:ss').format(estDateTime);
+
+    return "$formattedEst [EST]";
+  }
 }
 
 class HuntWidget extends StatelessWidget {

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/apis/hunts_api.dart' as hunts_api;
+import 'package:provider/provider.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
+import '../../provider/game_model.dart';
 import 'hunt_mode_view.dart';
 
 class JoinAHuntView extends StatefulWidget {
@@ -22,6 +24,8 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     return Scaffold(
         appBar: AppStyles.noBackArrowAppBarStyle("Hunts", context),
         body: DecoratedBox(
@@ -38,6 +42,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                     // If the data was successfully retrieved, display it
                     final List<hunts_api.HuntResponseModel> huntResponse =
                         snapshot.data!;
+
                     return ListView.builder(
                       itemCount: huntResponse.length,
                       itemBuilder: (context, index) {
@@ -47,7 +52,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                               SizedBox(height: 20),
                             Container(
                               height: 150,
-                              width: 450,
+                              width: 375,
                               padding: const EdgeInsets.all(16),
                               decoration: AppStyles.infoBoxStyle,
                               child: Column(
@@ -91,15 +96,23 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                                         decoration: AppStyles.confirmButtonStyle,
                                         child: ElevatedButton(
                                           onPressed: () {
+                                            huntProgressModel.huntName = huntResponse[index].name;
+                                            huntProgressModel.venue = huntResponse[index].venue;
+                                            huntProgressModel.huntDate = truncatedDate(huntResponse[index].startDate);
+                                            huntProgressModel.huntId = huntResponse[index].id;
+                                            huntProgressModel.city = huntResponse[index].city;
+                                            huntProgressModel.stateAbbr = huntResponse[index].stateAbbr;
+                                            huntProgressModel.zipCode = huntResponse[index].zipcode;
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => HuntModeView(
-                                                  huntId: huntResponse[index].id,
-                                                  huntName: huntResponse[index].name,
-                                                  venue: huntResponse[index].venue,
-                                                  huntDate: truncatedDate(huntResponse[index].startDate),
-                                                ),
+                                                // builder: (context) => HuntModeView(
+                                                //   huntId: huntResponse[index].id,
+                                                //   huntName: huntResponse[index].name,
+                                                //   venue: huntResponse[index].venue,
+                                                //   huntDate: truncatedDate(huntResponse[index].startDate),
+                                                // ),
+                                                builder: (context) => HuntModeView(),
                                               ),
                                             );
                                           },

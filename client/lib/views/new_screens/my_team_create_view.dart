@@ -11,8 +11,10 @@ import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/patch_update_team.dart';
+import 'package:provider/provider.dart';
 
 import '../../apis/post_create_teams.dart';
+import '../../provider/game_model.dart';
 
 class MyTeamCreateView extends StatefulWidget {
   final String huntId;
@@ -86,6 +88,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   void _startHunt() async {
     try {
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -106,18 +109,25 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                     timer.cancel();
                     Future.delayed(const Duration(seconds: 1), () {
                       _showPopup = false;
+
+                      huntProgressModel.totalSeconds = 0;
+                      huntProgressModel.totalPoints = 0;
+                      huntProgressModel.secondsSpentThisRound = 0;
+                      huntProgressModel.pointsEarnedThisRound = 0;
+                      huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HuntProgressView(
-                          huntName: widget.huntName, 
-                          huntID: widget.huntId, 
-                          teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
-                          totalSeconds: 0, 
-                          totalPoints: 0, 
-                          secondsSpentThisRound: 0, 
-                          pointsEarnedThisRound: 0, 
-                          currentChallenge: 0
-                        )),
+                        // MaterialPageRoute(builder: (context) => HuntProgressView(
+                        //   huntName: widget.huntName,
+                        //   huntID: widget.huntId,
+                        //   teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
+                        //   totalSeconds: 0,
+                        //   totalPoints: 0,
+                        //   secondsSpentThisRound: 0,
+                        //   pointsEarnedThisRound: 0,
+                        //   currentChallenge: 0
+                        // )),
+                        MaterialPageRoute(builder: (context) => HuntProgressView())
                       );
                     });
                   }

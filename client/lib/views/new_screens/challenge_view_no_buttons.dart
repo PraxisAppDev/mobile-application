@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
 import 'package:praxis_afterhours/apis/post_solve_challenge.dart';
+import 'package:provider/provider.dart';
+import '../../provider/game_model.dart';
 
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -12,24 +14,26 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
 class ChallengeViewNoButtons extends StatefulWidget {
-  final String huntName;
-  final String huntID;
-  final String teamID;
-  final int previousSeconds;
-  final int previousPoints;
-  final String challengeID;
-  final int challengeNum;
+  // final String huntName;
+  // final String huntID;
+  // final String teamID;
+  // final int previousSeconds;
+  // final int previousPoints;
+  // final String challengeID;
+  // final int challengeNum;
+  //
+  // const ChallengeViewNoButtons({
+  //   super.key,
+  //   required this.huntName,
+  //   required this.huntID,
+  //   required this.teamID,
+  //   required this.previousSeconds,
+  //   required this.previousPoints,
+  //   required this.challengeID,
+  //   required this.challengeNum,
+  // });
 
-  const ChallengeViewNoButtons({
-    super.key,
-    required this.huntName,
-    required this.huntID,
-    required this.teamID,
-    required this.previousSeconds,
-    required this.previousPoints,
-    required this.challengeID,
-    required this.challengeNum,
-  });
+  const ChallengeViewNoButtons({super.key});
   @override
   _ChallengeViewNoButtonsState createState() => _ChallengeViewNoButtonsState();
 }
@@ -41,7 +45,9 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
   @override
   void initState() {
     super.initState();
-    _totalSeconds = widget.previousSeconds;
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+    _totalSeconds = huntProgressModel.previousSeconds;
   }
 
   // Callback func to update total seconds, will be called from HeaderWidget
@@ -53,6 +59,9 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppStyles.noBackArrowAppBarStyle("Hunt", context),
@@ -64,11 +73,11 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: HeaderWidget(
-                  huntName: widget.huntName,
-                  huntID: widget.huntID,
-                  challengeID: widget.challengeID,
-                  challengeNum: widget.challengeNum,
-                  previousSeconds: widget.previousSeconds,
+                  huntName: huntProgressModel.huntName,
+                  huntID: huntProgressModel.huntId,
+                  challengeID: huntProgressModel.challengeId,
+                  challengeNum: huntProgressModel.challengeNum,
+                  previousSeconds: huntProgressModel.previousSeconds,
                   onTimeUpdated:
                       _updateTotalSeconds, // pass the callback to update total seconds
                 ),
@@ -76,13 +85,13 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
               const SizedBox(height: 10),
               Expanded(
                 child: ChallengeContent(
-                  huntName: widget.huntName,
-                  huntID: widget.huntID,
-                  challengeID: widget.challengeID,
-                  teamID: widget.teamID,
-                  previousSeconds: widget.previousSeconds,
-                  previousPoints: widget.previousPoints,
-                  challengeNum: widget.challengeNum,
+                  huntName: huntProgressModel.huntName,
+                  huntID: huntProgressModel.huntId,
+                  challengeID: huntProgressModel.challengeId,
+                  teamID: huntProgressModel.teamId,
+                  previousSeconds: huntProgressModel.previousSeconds,
+                  previousPoints: huntProgressModel.previousPoints,
+                  challengeNum: huntProgressModel.challengeNum,
                   totalSeconds:
                       _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
                 ),
@@ -330,21 +339,31 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
   // Helper method to navigate to HuntProgressView
   void _navigateToHuntProgress(int totalSec) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
     int points = randomPoints();
+
+    huntProgressModel.totalSeconds = totalSec;
+    huntProgressModel.totalPoints = huntProgressModel.previousPoints + points;
+    huntProgressModel.secondsSpentThisRound =
+        totalSec - huntProgressModel.previousSeconds;
+    huntProgressModel.pointsEarnedThisRound = points;
+    huntProgressModel.currentChallenge = huntProgressModel.challengeNum + 1;
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => HuntProgressView(
-          huntName: widget.huntName,
-          huntID: widget.huntID,
-          teamID: widget.teamID,
-          totalSeconds: totalSec,
-          totalPoints: widget.previousPoints + points,
-          secondsSpentThisRound: totalSec - widget.previousSeconds,
-          pointsEarnedThisRound: points,
-          currentChallenge: widget.challengeNum + 1,
-        ),
-      ),
+          // builder: (context) => HuntProgressView(
+          //   huntName: widget.huntName,
+          //   huntID: widget.huntID,
+          //   teamID: widget.teamID,
+          //   totalSeconds: totalSec,
+          //   totalPoints: widget.previousPoints + points,
+          //   secondsSpentThisRound: totalSec - widget.previousSeconds,
+          //   pointsEarnedThisRound: points,
+          //   currentChallenge: widget.challengeNum + 1,
+          // ),
+          builder: (context) => HuntProgressView()),
     );
   }
 
@@ -543,6 +562,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   decoration: AppStyles.textFieldStyle,
                   child: TextField(
                     controller: _answerController,
+                    readOnly: true,
                     decoration: const InputDecoration(
                       hintText: 'Enter answer here...',
                       hintStyle: TextStyle(color: Colors.grey),
@@ -566,7 +586,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
             Container(
               decoration: AppStyles.confirmButtonStyle,
               child: ElevatedButton(
-                onPressed: _submitAnswer,
+                //onPressed: _submitAnswer,
+                onPressed: null,
                 style: AppStyles.elevatedButtonStyle,
                 child: const Text('Submit',
                     style: TextStyle(fontWeight: FontWeight.bold)),
@@ -576,7 +597,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
             const SizedBox(height: 20),
 
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex > -1)
+            if (_hintIndex >= 0)
               Container(
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
