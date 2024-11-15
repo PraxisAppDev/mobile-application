@@ -1,45 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/apis/fetch_challenges.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:provider/provider.dart';
+import 'package:confetti/confetti.dart';
+
 import '../../provider/game_model.dart';
 import '../../apis/fetch_challenges.dart';
 import '../../styles/app_styles.dart';
 import 'challenge_view.dart';
 
 class HuntProgressView extends StatefulWidget {
-  // final String huntName;
-  // final String huntID;
-  // final String teamID;
-  // final int totalSeconds;
-  // final int totalPoints;
-  // final int secondsSpentThisRound;
-  // final int pointsEarnedThisRound;
-  // final int currentChallenge;
-  //
-  // const HuntProgressView({
-  //   super.key,
-  //   required this.huntName,
-  //   required this.huntID,
-  //   required this.teamID,
-  //   required this.totalSeconds,
-  //   required this.totalPoints,
-  //   required this.secondsSpentThisRound,
-  //   required this.pointsEarnedThisRound,
-  //   required this.currentChallenge,
-  // });
+  /*final String huntName;
+  final String huntID;
+  final String teamID;
+  final int totalSeconds;
+  final int totalPoints;
+  final int secondsSpentThisRound;
+  final int pointsEarnedThisRound;
+  final int currentChallenge;*/
 
-  const HuntProgressView({super.key});
+   const HuntProgressView({super.key});
 
   @override
   _HuntProgressViewState createState() => _HuntProgressViewState();
 }
 
+
 class _HuntProgressViewState extends State<HuntProgressView> {
   List<dynamic> challenges = [];
-  bool isLoading = true;
+  bool isLoading = true; // Loading state
+  bool isHuntCompleted = false;
+  late ConfettiController _confettiController;
 
   @override
   void initState() {
     super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 5));
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
     // Initialize the round's data and start the timer
     huntProgressModel.addSecondsSpent(huntProgressModel.secondsSpentThisRound);
@@ -52,14 +50,19 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
     var data = await fetchChallenges(huntProgressModel.huntId);
     setState(() {
-      challenges = data;
-      isLoading = false;
+      challenges = data;  // Update the challenges list
+      isLoading = false;  // Update loading state
+      if (huntProgressModel.currentChallenge >= data.length) {
+        isHuntCompleted = true;
+        _confettiController.play(); // Play confetti animation when hunt is completed
+        _showCompletionDialog(context);
+      }
     });
   }
 
   @override
   void dispose() {
-    Provider.of<HuntProgressModel>(context, listen: false).stopTimer();
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -362,6 +365,73 @@ class _HuntProgressViewState extends State<HuntProgressView> {
         ),
     );
   }
+
+    
+  void _showCompletionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissal by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.black.withOpacity(0.8),
+          contentPadding: EdgeInsets.zero,
+          content: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color(0xff261919),
+                  Color(0xff332323),
+                  Color(0xff261919),
+                ],
+                stops: [0.0, 0.5, 1.0],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'Congratulations! You completed all challenges!',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const EndGameScreen()),
+                    );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   String secondsToMinutes(int numSeconds) {
     int minutes = numSeconds ~/ 60;

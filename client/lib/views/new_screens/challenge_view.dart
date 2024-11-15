@@ -49,6 +49,7 @@ class _ChallengeViewState extends State<ChallengeView> {
     _totalSeconds = huntProgressModel.previousSeconds;
   }
 
+
   // Callback func to update total seconds, will be called from HeaderWidget
   void _updateTotalSeconds(int seconds) {
     setState(() {
@@ -56,6 +57,7 @@ class _ChallengeViewState extends State<ChallengeView> {
     });
   }
 
+ 
   @override
   Widget build(BuildContext context) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
@@ -106,7 +108,7 @@ class HeaderWidget extends StatefulWidget {
   final String challengeID;
   final int challengeNum;
   final int previousSeconds;
-  final Function(int) onTimeUpdated; // Callback to send total seconds elapsed on this challenge
+  final Function(int) onTimeUpdated; // Callback to send total seconds elasped on this challenge
 
   const HeaderWidget({
     super.key,
@@ -147,8 +149,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      final challengeData = await fetchChallenge(huntProgressModel.huntId, huntProgressModel.challengeId);
+      final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
       });
@@ -163,17 +164,18 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     super.dispose();
   }
 
-  // helper function to get total seconds elapsed when submit is clicked
+  // helper function to get total seconds ellipsed when submit is clicked
   int get totalSeconds => widget.previousSeconds + _secondsSpent;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 16.0),
+      padding: const EdgeInsets.all(16.0),
       decoration: AppStyles.infoBoxStyle,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          
           const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -245,8 +247,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      final challengeData = await fetchChallenge(huntProgressModel.huntId, huntProgressModel.challengeId);
+      final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
         _hints = challengeData['hints'] ?? []; // Initialize _hints here
@@ -266,8 +267,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
     try {
       // Call the solveChallenge API with the necessary parameters
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      final result = await solveChallenge(huntProgressModel.huntId, huntProgressModel.teamId, huntProgressModel.challengeId, _answerController.text);
+      final result = await solveChallenge(widget.huntID, widget.teamID, widget.challengeID, _answerController.text);
 
       bool isCorrect = result['challengeSolved'];
 
@@ -326,7 +326,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
     int randomPoints = 50 * (random.nextInt(6) + 1);
     return randomPoints;
   }
-  // Helper method to navigate to HuntProgressView
+  
   void _navigateToHuntProgress(int totalSec) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
     int points = randomPoints();
@@ -494,156 +494,136 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
     // int hintsLeft = (_challengeData['hints']?.length ?? 0) - _hintIndex - 1;
 
-    return LayoutBuilder(builder: (context, constraints) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
-        child: Column(
-          children: [
-            // Question description and image section
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: AppStyles.redInfoBoxStyle,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'This is a question about something...',
-                    style: AppStyles.logisticsStyle,
-                  ),
-                  /*const SizedBox(height: 10),
-                  Center(
-                    child: _challengeData['clueUrl'] != null
-                        ? Image.network(
-                            _challengeData['clueUrl'],
-                            height: constraints.maxHeight * 0.2,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'images/huntLogo.png',
-                                height: constraints.maxHeight * 0.2,
-                              );
-                            },
-                          )
-                        : const Text(
-                            'Picture (if needed)',
-                            style: TextStyle(color: Colors.white),
+    return LayoutBuilder(
+      builder: (context, constraints){
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+
+              // Question description and image section
+                  Flexible(
+                    flex: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: AppStyles.infoBoxStyle,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'This is a question about something...',
+                            style: AppStyles.logisticsStyle,
                           ),
-                  ),*/
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Team Answer header and input field
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Team Answer...',
-                  style: AppStyles.logisticsStyle
-                      .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  decoration: AppStyles.textFieldStyle,
-                  child: TextField(
-                    controller: _answerController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter answer here...',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        color: Colors.grey,
+                          const SizedBox(height: 10),
+                          Expanded(
+                            child: Center(
+                              child: _challengeData['clueUrl'] != null
+                                  ? Image.network(
+                                      _challengeData['clueUrl'],
+                                      height: constraints.maxHeight * 0.2,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Image.asset(
+                                          'images/huntLogo.png',
+                                          height: constraints.maxHeight * 0.2,
+                                        );
+                                      },
+                                    )
+                                  : const Text(
+                                      'Picture (if needed)',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    style: const TextStyle(color: Colors.black),
                   ),
-                ),
-              ],
-            ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 20),
-
-            // Submit Button
-
-            Container(
-              decoration: AppStyles.confirmButtonStyle,
-              child: ElevatedButton(
-                onPressed: _submitAnswer,
-                style: AppStyles.elevatedButtonStyle,
-                child: const Text('Submit',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex >= 0)
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: AppStyles.infoBoxStyle,
-                child: ListView(
+              // Team Answer header and input field
+              Flexible(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Hints",
-                      style: AppStyles.logisticsStyle
-                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                      'Team Answer...',
+                      style: AppStyles.logisticsStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    Text("Hint 1.... \n Hint 2.....")
+                    const SizedBox(height: 5),
+                    Container(
+                      decoration: AppStyles.textFieldStyle,
+                      child: TextField(
+                        controller: _answerController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter answer here...',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                          suffixIcon: Icon(Icons.edit, color: Colors.grey),
+                        ),
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            Expanded(
-              child: SizedBox(),
-            ),
-            Container(
-              padding:
-              const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
-              decoration: AppStyles.infoBoxStyle,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Stuck? Reveal a hint...",
-                    style: AppStyles.logisticsStyle
-                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
+              const SizedBox(height: 20),
 
-                  // Hint Button
-
-                  Container(
-                    height: 33,
-                    decoration: AppStyles.hintBoxStyle,
-                    child: ElevatedButton(
-                      onPressed: _revealHint,
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Hint',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
+              // Submit Button
+              Flexible(
+                flex: 1,
+                child: Container(
+                  decoration: AppStyles.confirmButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: _submitAnswer,
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text('Submit', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-
-                  // Guesses Left Display
-                  const SizedBox(height: 5),
-                  Text(
-                    "Your team has $guessesLeft guesses left.",
-                    style:
-                    AppStyles.logisticsStyle.copyWith(color: Colors.amber),
-                  ),
-                ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 15,
-            )
-          ],
-        ),
-      );
+              const SizedBox(height: 20),
+
+              Flexible(// Hint and guesses left section
+                flex: 3,
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Stuck? Reveal a hint...",
+                        style: AppStyles.logisticsStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Hint Button
+                      Container(
+                        decoration: AppStyles.challengeButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: _revealHint,
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text('Hint', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+
+                      // Guesses Left Display
+                      const SizedBox(height: 10),
+                      Text(
+                        "Your team has $guessesLeft guesses left.",
+                        style: AppStyles.logisticsStyle.copyWith(color: Colors.amber),
+                      ),
+                    ],
+                  ),
+                  
+                ),
+              ),
+            ],
+          ),
+        );
     });
+
   }
 }
 
