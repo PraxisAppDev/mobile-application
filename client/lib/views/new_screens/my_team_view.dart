@@ -341,6 +341,11 @@ class _TeamTileState extends State<TeamTile> {
             showToast("${data['playerName']} left team");
           } else if (eventType == "HUNT_STARTED") {
             showToast("Hunt started");
+            model.totalSeconds = 0;
+            model.totalPoints = 0;
+            model.secondsSpentThisRound = 0;
+            model.pointsEarnedThisRound = 0;
+            model.currentChallenge = 0;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -352,9 +357,17 @@ class _TeamTileState extends State<TeamTile> {
               context,
               MaterialPageRoute(builder: (context) => EndGameScreen()),
             );
-          // TODO: Fix routing issue
           } else if (eventType == "CHALLENGE_RESPONSE") {
             showToast("Challenge response");
+            model.totalSeconds = 0;
+            model.totalPoints = 0;
+            model.secondsSpentThisRound = 0;
+            model.pointsEarnedThisRound = 0;
+            model.currentChallenge = 0;
+            model.previousSeconds = model.totalSeconds;
+            model.previousPoints = model.totalPoints;
+            model.challengeId = "1";
+            model.challengeNum = 0;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => ChallengeViewNoButtons()),
