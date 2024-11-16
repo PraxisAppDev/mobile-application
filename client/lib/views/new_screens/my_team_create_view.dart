@@ -15,7 +15,7 @@ import 'package:praxis_afterhours/apis/post_join_team.dart';
 import '../../apis/post_create_teams.dart';
 import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
+import '../../provider/websocket_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class MyTeamCreateView extends StatefulWidget {
@@ -94,14 +94,14 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     );
   }
 
-  void connectWebSocket() async {
-    final wsUrl = Uri.parse(
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamName}&playerName=${widget.playerName}&huntAlone=false');
+  void connectWebSocket(WebSocketModel webSocketModel) async {
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntId}&teamId=${widget.teamName}&playerName=${widget.playerName}&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
-      var channel = WebSocketChannel.connect(wsUrl);
-      print('Connected to WebSocket. Awaiting messages...');
-      channel.stream.listen(
+      webSocketModel.connect(wsUrl);
+      print('WebSocket connected successfully.');
+      final channel = webSocketModel.messages;
+      channel.listen(
         (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
@@ -287,6 +287,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   @override
   Widget build(BuildContext context) {
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
+
     return GestureDetector(
       onTap: _unfocusTextField, // Unfocus when tapping outside the TextField
       child: Scaffold(
@@ -378,7 +380,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      connectWebSocket();
+                      connectWebSocket(webSocketModel);
                       _startHunt();
                       _updateTeamName();
                     },
