@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
@@ -102,9 +103,19 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       print('Connected to WebSocket. Awaiting messages...');
       channel.stream.listen(
         (message) {
-          print('Received message: $message');
-          // showSnackbarMessage("Received message: $message");
-          showToast("Received message: $message");
+          final Map<String, dynamic> data = json.decode(message);
+          final String eventType = data['eventType'];
+          if (eventType == "PLAYER_JOIN_TEAM") {
+            showToast("${data['playerName']} joined team");
+          } else if (eventType == "PLAYER_LEFT_TEAM") {
+            showToast("${data['playerName']} left team");
+          } else if (eventType == "HUNT_STARTED") {
+            showToast("Hunt started");
+          } else if (eventType == "HUNT_ENDED") {
+            showToast("Hunt ended");
+          } else if (eventType == "CHALLENGE_RESPONSE") {
+            showToast("Challenge response");
+          }
         },
         onError: (error) {
           print('WebSocket error: $error');
@@ -142,7 +153,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   void _startHunt() async {
     try {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -170,19 +182,19 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       huntProgressModel.pointsEarnedThisRound = 0;
                       huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
-                        context,
-                        // MaterialPageRoute(builder: (context) => HuntProgressView(
-                        //   huntName: widget.huntName,
-                        //   huntID: widget.huntId,
-                        //   teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
-                        //   totalSeconds: 0,
-                        //   totalPoints: 0,
-                        //   secondsSpentThisRound: 0,
-                        //   pointsEarnedThisRound: 0,
-                        //   currentChallenge: 0
-                        // )),
-                        MaterialPageRoute(builder: (context) => HuntProgressView())
-                      );
+                          context,
+                          // MaterialPageRoute(builder: (context) => HuntProgressView(
+                          //   huntName: widget.huntName,
+                          //   huntID: widget.huntId,
+                          //   teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
+                          //   totalSeconds: 0,
+                          //   totalPoints: 0,
+                          //   secondsSpentThisRound: 0,
+                          //   pointsEarnedThisRound: 0,
+                          //   currentChallenge: 0
+                          // )),
+                          MaterialPageRoute(
+                              builder: (context) => HuntProgressView()));
                     });
                   }
                 });
