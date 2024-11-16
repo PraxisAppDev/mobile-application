@@ -53,6 +53,7 @@ dependencies:
   win32: ^5.5.4
   provider: ^6.1.2
   timezone: ^0.10.0
+  web_socket_channel: ^3.0.1
 
 
 dev_dependencies:

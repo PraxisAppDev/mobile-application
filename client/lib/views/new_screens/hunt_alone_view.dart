@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/leaderboard.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
@@ -11,9 +13,10 @@ import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
-import 'package:provider/provider.dart';
-
 import '../../provider/game_model.dart';
+import 'package:provider/provider.dart';
+import '../../provider/websocket_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HuntAloneView extends StatefulWidget {
   // String teamName;
@@ -236,6 +239,82 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
+  // void showSnackbarMessage(String message) {
+  //   if (mounted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(message)),
+  //     );
+  //   }
+  // }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void handleMessage(BuildContext context, String message) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
+  }
+
+  void connectWebSocket(BuildContext context, HuntProgressModel huntProgressModel, WebSocketModel webSocketModel) async {
+    final playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Player name cannot be empty')),
+      );
+      return;
+    }
+
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${huntProgressModel.teamName}&playerName=$playerName&huntAlone=true';
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      webSocketModel.connect(wsUrl);
+      print('Connected to WebSocket. Awaiting messages...');
+      final channel = webSocketModel.messages;
+      channel.listen(
+        (message) {
+          try {
+            final Map<String, dynamic> data = json.decode(message);
+            final String eventType = data['eventType'];
+            if (eventType == "PLAYER_JOIN_TEAM") {
+              showToast("${data['playerName']} joined team");
+            } else if (eventType == "PLAYER_LEFT_TEAM") {
+              showToast("${data['playerName']} left team");
+            } else if (eventType == "HUNT_STARTED") {
+              showToast("Hunt started");
+            } else if (eventType == "HUNT_ENDED") {
+              showToast("Hunt ended");
+            } else if (eventType == "CHALLENGE_RESPONSE") {
+              showToast("Challenge response");
+            }
+          } catch (e) {
+            print(e);
+          }
+          print('Received message: $message');
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+          showToast("WebSocket error: $error");
+        },
+        onDone: () {
+          print('WebSocket closed');
+          showToast("Websocket closed");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+    }
+  }
+
   Future<void> makeTeam(HuntProgressModel model) async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
@@ -253,14 +332,13 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  void _startHunt() async {
+  void _startHunt(HuntProgressModel huntProgressModel) async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
       showNoPlayerNameDialog(context);
       return;
     }
     try {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam(huntProgressModel);
 
       setState(() {
@@ -289,16 +367,16 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
                         context,
-                        // MaterialPageRoute(builder: (context) => HuntProgressView(
-                        //   huntName: huntName,
-                        //   huntID: huntProgressModel.huntId,
-                        //   teamID: _updatedTeamId!, // team id is id returned from create team api call
-                        //   totalSeconds: 0,
-                        //   totalPoints: 0,
-                        //   secondsSpentThisRound: 0,
-                        //   pointsEarnedThisRound: 0,
-                        //   currentChallenge: 0
-                        // )),
+                      //   // MaterialPageRoute(builder: (context) => HuntProgressView(
+                      //   //   huntName: huntName,
+                      //   //   huntID: huntProgressModel.huntId,
+                      //   //   teamID: _updatedTeamId!, // team id is id returned from create team api call
+                      //   //   totalSeconds: 0,
+                      //   //   totalPoints: 0,
+                      //   //   secondsSpentThisRound: 0,
+                      //   //   pointsEarnedThisRound: 0,
+                      //   //   currentChallenge: 0
+                      //   // )),
                         MaterialPageRoute(builder: (context) => HuntProgressView())
                       );
                     });
@@ -373,6 +451,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   @override
   Widget build(BuildContext context) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
     return GestureDetector(
       onTap: _unfocusTextField,
@@ -515,7 +594,10 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       width: 175,
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
-                        onPressed: _startHunt,
+                        onPressed: () {
+                          connectWebSocket(context, huntProgressModel, webSocketModel);
+                          _startHunt(huntProgressModel);
+                        },
                         style: AppStyles.elevatedButtonStyle,
                         child: const Text('Start Hunt',
                             style: TextStyle(fontWeight: FontWeight.bold)),
