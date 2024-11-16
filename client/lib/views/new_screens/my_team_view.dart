@@ -309,7 +309,6 @@ class _TeamTileState extends State<TeamTile> {
   }
 
   void connectWebSocket(BuildContext context, HuntProgressModel model) async {
-    // final logger = Logger();
     final playerName =
         "samplePlayer"; // Replace with actual logic to get the player name
 
@@ -321,6 +320,7 @@ class _TeamTileState extends State<TeamTile> {
       return;
     }
 
+    // Currently, hard-coded using 'rays' as the teamName
     final wsUrl = Uri.parse(
         'ws://afterhours.praxiseng.com/ws/hunt?huntId=${model.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false');
     try {
@@ -330,9 +330,11 @@ class _TeamTileState extends State<TeamTile> {
       print('WebSocket connected successfully.');
       channel.stream.listen(
         (message) {
+          // Listen for String message, then convert to JSON object
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
 
+          // Cases for each event type
           if (eventType == "PLAYER_JOINED_TEAM") {
             showToast("${data['playerName']} joined team");
           } else if (eventType == "PLAYER_LEFT_TEAM") {
@@ -350,6 +352,7 @@ class _TeamTileState extends State<TeamTile> {
               context,
               MaterialPageRoute(builder: (context) => EndGameScreen()),
             );
+          // TODO: Fix routing issue
           } else if (eventType == "CHALLENGE_RESPONSE") {
             showToast("Challenge response");
             Navigator.pushReplacement(
