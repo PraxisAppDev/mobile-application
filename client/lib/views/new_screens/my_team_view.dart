@@ -384,34 +384,34 @@ class _TeamTileState extends State<TeamTile> {
                         ]);
                       }).toList(),
                     ),
-                    if (widget.members.length < 4 && !hasAddedMember) ...[
-                      const Divider(color: Colors.grey, indent: 15, endIndent: 15, height: 1),
-                      ListTile(
-                        leading: Icon(Icons.person_add, color: Colors.grey),
-                        title: TextField(
-                          controller: _newMemberController,
-                          decoration: InputDecoration(
-                            hintText: "Enter new member name",
-                            hintStyle: AppStyles.logisticsStyle.copyWith(color: Colors.grey),
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.check, color: Colors.green),
-                              onPressed: () {
-                                setState(() {
-                                  widget.members.add({
-                                    'name': _newMemberController.text,
-                                    'teamLeader': false,
-                                  });
-                                  _newMemberController.clear();
-                                  hasAddedMember = true; //Set flag prevent furthur additions to team
-                                });
-                              },
-                            ),
-                          ),
-                          style: AppStyles.logisticsStyle,
-                        ),
-                      ),
-                    ],
+                    // if (widget.members.length < 4 && !hasAddedMember) ...[
+                    //   const Divider(color: Colors.grey, indent: 15, endIndent: 15, height: 1),
+                    //   ListTile(
+                    //     leading: Icon(Icons.person_add, color: Colors.grey),
+                    //     title: TextField(
+                    //       controller: _newMemberController,
+                    //       decoration: InputDecoration(
+                    //         hintText: "Enter new member name",
+                    //         hintStyle: AppStyles.logisticsStyle.copyWith(color: Colors.grey),
+                    //         border: InputBorder.none,
+                    //         suffixIcon: IconButton(
+                    //           icon: const Icon(Icons.check, color: Colors.green),
+                    //           onPressed: () {
+                    //             setState(() {
+                    //               widget.members.add({
+                    //                 'name': _newMemberController.text,
+                    //                 'teamLeader': false,
+                    //               });
+                    //               _newMemberController.clear();
+                    //               hasAddedMember = true; //Set flag prevent furthur additions to team
+                    //             });
+                    //           },
+                    //         ),
+                    //       ),
+                    //       style: AppStyles.logisticsStyle,
+                    //     ),
+                    //   ),
+                    // ],
                     SizedBox(height: 20),
                   ])),
         ));

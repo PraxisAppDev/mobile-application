@@ -10,7 +10,7 @@ class EndGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppStyles.appBarStyle("End of Game!", context),
+        appBar: AppStyles.noIconsAppBarStyle("End of Game!", context),
         body: DecoratedBox(
           decoration: AppStyles.backgroundStyle,
           child: Center(
@@ -68,7 +68,7 @@ class EndGameScreen extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'Return home',
+                      'Return Home',
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -99,7 +99,7 @@ class EndGameScreen extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      'View leaderboard',
+                      'View Leaderboard',
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,

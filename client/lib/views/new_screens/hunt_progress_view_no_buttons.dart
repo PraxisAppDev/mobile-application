@@ -53,8 +53,10 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
   }
 
   Future<void> fetchChallengesData() async {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-    var data = await fetchChallenges(huntProgressModel.huntId); // Call the imported fetchChallenges function
+    final huntProgressModel =
+    Provider.of<HuntProgressModel>(context, listen: false);
+    var data = await fetchChallenges(
+        huntProgressModel.huntId); // Call the imported fetchChallenges function
     setState(() {
       challenges = data; // Update the challenges list
       isLoading = false; // Update loading state
@@ -69,7 +71,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final huntProgressModel =
+    Provider.of<HuntProgressModel>(context, listen: false);
 
     return MaterialApp(
       home: Scaffold(
@@ -100,15 +103,18 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                         SizedBox(height: 20),
                         Consumer<HuntProgressModel>(
                           builder: (context, huntProgressModel, child) {
-                            final minutes = (huntProgressModel.secondsSpent ~/ 60)
+                            final minutes =
+                            (huntProgressModel.secondsSpent ~/ 60)
                                 .toString()
                                 .padLeft(2, '0');
-                            final seconds = (huntProgressModel.secondsSpent % 60)
+                            final seconds =
+                            (huntProgressModel.secondsSpent % 60)
                                 .toString()
                                 .padLeft(2, '0');
                             return Row(
                               children: [
-                                Icon(Icons.timer, color: Colors.white, size: 25),
+                                Icon(Icons.timer,
+                                    color: Colors.white, size: 25),
                                 Text(
                                   '$minutes:$seconds',
                                   style: AppStyles.logisticsStyle,
@@ -147,7 +153,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                             return Column(
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.center, // Center items in the row
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .center, // Center items in the row
                                   children: [
                                     Column(
                                       // Circle container
@@ -160,18 +167,22 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: index <
-                                                huntProgressModel.currentChallenge
+                                                huntProgressModel
+                                                    .currentChallenge
                                                 ? Colors.green
                                                 : index >
-                                                huntProgressModel.currentChallenge
+                                                huntProgressModel
+                                                    .currentChallenge
                                                 ? Colors.grey
                                                 : Colors.amber,
                                             border: Border.all(
                                               color: index <
-                                                  huntProgressModel.currentChallenge
+                                                  huntProgressModel
+                                                      .currentChallenge
                                                   ? Colors.greenAccent
                                                   : index >
-                                                  huntProgressModel.currentChallenge
+                                                  huntProgressModel
+                                                      .currentChallenge
                                                   ? Colors.grey
                                                   : Colors.amberAccent,
                                               //width: 2.0,
@@ -197,10 +208,12 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                           const EdgeInsets.only(right: 8.0),
                                           decoration: BoxDecoration(
                                             color: index <
-                                                huntProgressModel.currentChallenge
+                                                huntProgressModel
+                                                    .currentChallenge
                                                 ? Colors.green
                                                 : index >
-                                                huntProgressModel.currentChallenge
+                                                huntProgressModel
+                                                    .currentChallenge
                                                 ? Colors.grey
                                                 : Colors.amber,
                                             borderRadius: BorderRadius.circular(
@@ -242,7 +255,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                       width: 300,
                                       padding: const EdgeInsets.all(16),
                                       decoration: AppStyles.challengeBoxStyle(
-                                          index, huntProgressModel.currentChallenge),
+                                          index,
+                                          huntProgressModel.currentChallenge),
                                       child: Center(
                                         // Center content inside the challenge container
                                         child: Column(
@@ -253,7 +267,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                           children: [
                                             // Check if the index is less than or equal to currentChallenge
                                             if (index <=
-                                                huntProgressModel.currentChallenge) ...[
+                                                huntProgressModel
+                                                    .currentChallenge) ...[
                                               Row(
                                                 mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -278,7 +293,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                       color: Colors.white),
                                                   const SizedBox(width: 5),
                                                   if (index <
-                                                      huntProgressModel.currentChallenge) ...[
+                                                      huntProgressModel
+                                                          .currentChallenge) ...[
                                                     // Display timer from the HuntProgressModel for completed challenges
                                                     Text(
                                                       secondsToMinutes(Provider
@@ -290,7 +306,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                           .logisticsStyle,
                                                     ),
                                                   ] else if (index ==
-                                                      huntProgressModel.currentChallenge) ...[
+                                                      huntProgressModel
+                                                          .currentChallenge) ...[
                                                     // Display "Not yet started" for the current challenge
                                                     Text(
                                                       "Not yet started",
@@ -300,7 +317,9 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                   ] else ...[
                                                     // Placeholder for upcoming challenges
                                                     Text(
-                                                      secondsToMinutes(huntProgressModel.totalSeconds),
+                                                      secondsToMinutes(
+                                                          huntProgressModel
+                                                              .totalSeconds),
                                                       style: AppStyles
                                                           .logisticsStyle,
                                                     ),
@@ -318,7 +337,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                       color: Colors.white),
                                                   const SizedBox(width: 5),
                                                   if (index <
-                                                      huntProgressModel.currentChallenge) ...[
+                                                      huntProgressModel
+                                                          .currentChallenge) ...[
                                                     // Display points from the HuntProgressModel for completed challenges
                                                     Text(
                                                       "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index + 1]}/300 points",
@@ -326,7 +346,8 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                           .logisticsStyle,
                                                     ),
                                                   ] else if (index ==
-                                                      huntProgressModel.currentChallenge) ...[
+                                                      huntProgressModel
+                                                          .currentChallenge) ...[
                                                     // Display "Not yet started" for the current challenge
                                                     Text(
                                                       "300 points possible",
@@ -336,7 +357,9 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
                                                   ],
                                                 ],
                                               ),
-                                            ] else if (index > huntProgressModel.currentChallenge) ...[
+                                            ] else if (index >
+                                                huntProgressModel
+                                                    .currentChallenge) ...[
                                               Row(
                                                 mainAxisAlignment:
                                                 MainAxisAlignment.center,
