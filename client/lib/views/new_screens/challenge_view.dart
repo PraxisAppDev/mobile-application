@@ -503,9 +503,9 @@ class _ChallengeContentState extends State<ChallengeContent> {
                                       _challengeData['clueUrl'],
                                       height: constraints.maxHeight * 0.2,
                                       errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(
-                                          'images/huntLogo.png',
-                                          height: constraints.maxHeight * 0.2,
+                                        return Text(
+                                          'clueUrl could not be displayed',
+                                          style: TextStyle(color: Colors.white),
                                         );
                                       },
                                     )
