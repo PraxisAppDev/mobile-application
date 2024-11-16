@@ -2,21 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view_no_buttons.dart';
+import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
 import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
+import 'package:provider/provider.dart';
+import '../../provider/game_model.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MyTeamView extends StatelessWidget {
-  MyTeamView({super.key, required this.huntID, required this.teamID});
+  // final String teamID;
+  // final String huntID;
+  // late String teamName;
+  //
+  // MyTeamView({super.key, required this.huntID, required this.teamID});
 
-  final String teamID;
-  final String huntID;
-  late String teamName;
-
+  MyTeamView({super.key});
 
   // Function to show the confirmation dialog for leaving a team
   Future<void> _showLeaveTeamConfirmation(BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user can dismiss the dialog by tapping outside
+      barrierDismissible:
+          true, // user can dismiss the dialog by tapping outside
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -72,7 +82,8 @@ class MyTeamView extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () async {
                           Navigator.of(context).pop(); // Close the dialog
-                          await leaveTeamAndUpdateView(context); // Call the leave team function, handling the API calls 
+                          await leaveTeamAndUpdateView(
+                              context); // Call the leave team function, handling the API calls
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -101,9 +112,12 @@ class MyTeamView extends StatelessWidget {
   // Updated leaveTeam function to handle the API calls and leave the team
   Future<void> leaveTeamAndUpdateView(BuildContext context) async {
     try {
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
       // Call the leaveTeam API
-      await leaveTeam(huntID, teamID, "placeholder"); // Add any required parameters here
-      // Show a success message
+      await leaveTeam(huntProgressModel.huntId, huntProgressModel.teamId,
+          "placeholder"); // TODO: Fix
+      // Show a success message or refresh the view
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully left the team')),
       );
@@ -116,7 +130,6 @@ class MyTeamView extends StatelessWidget {
       );
     }
   }
-
 
   // // Auxiliary function to handle leave team POST API call and handle view updates
   // Future<void> leaveTeamAndUpdateView(BuildContext context) async {
@@ -139,6 +152,8 @@ class MyTeamView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
     // print("current huntID: $huntID");
     // print("current teamID: $teamID");
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
@@ -152,7 +167,8 @@ class MyTeamView extends StatelessWidget {
               child: Column(
                 children: [
                   FutureBuilder<Map<String, dynamic>>(
-                    future: fetchTeam(huntID, teamID),
+                    future: fetchTeam(
+                        huntProgressModel.huntId, huntProgressModel.teamId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -160,9 +176,8 @@ class MyTeamView extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         // If the data was successfully retrieved, display it
-
                         print(snapshot.data);
-                        teamName = snapshot.data!['name'];
+                        huntProgressModel.teamName = snapshot.data!['name'];
                         return TeamTile(
                             isLocked: snapshot.data!['lockStatus'],
                             teamName: snapshot.data!['name'],
@@ -172,6 +187,62 @@ class MyTeamView extends StatelessWidget {
                       }
                     },
                   ),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Container(
+                        height: 50,
+                        width: 175,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            huntProgressModel.totalSeconds = 0;
+                            huntProgressModel.totalPoints = 0;
+                            huntProgressModel.secondsSpentThisRound = 0;
+                            huntProgressModel.pointsEarnedThisRound = 0;
+                            huntProgressModel.currentChallenge = 0;
+
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HuntProgressViewNoButtons()));
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text('Progress NB'),
+                        ),
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 30.0),
+                      child: Container(
+                        height: 50,
+                        width: 175,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            huntProgressModel.totalSeconds = 0;
+                            huntProgressModel.totalPoints = 0;
+                            huntProgressModel.secondsSpentThisRound = 0;
+                            huntProgressModel.pointsEarnedThisRound = 0;
+                            huntProgressModel.currentChallenge = 0;
+                            huntProgressModel.previousSeconds =
+                                huntProgressModel.totalSeconds;
+                            huntProgressModel.previousPoints =
+                                huntProgressModel.totalPoints;
+                            huntProgressModel.challengeId = "1";
+                            huntProgressModel.challengeNum = 0;
+                            //huntProgressModel.challengeId = challengeResponse[index]['id'];
+                            //huntProgressModel.challengeNum = index;
+
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ChallengeViewNoButtons()));
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text('Challenge NB'),
+                        ),
+                      )),
                   Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Container(
@@ -212,10 +283,114 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
-
   // Text controller for the new member input
   final TextEditingController _newMemberController = TextEditingController();
-  bool hasAddedMember = false; //Track if a member has already been added to team
+  bool hasAddedMember =
+      false; //Track if a member has already been added to team
+
+  @override
+  void initState() {
+    super.initState();
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+    connectWebSocket(context, huntProgressModel);
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void connectWebSocket(BuildContext context, HuntProgressModel model) async {
+    final playerName =
+        "samplePlayer"; // Replace with actual logic to get the player name
+
+    if (playerName.isEmpty) {
+      print("Player name is empty.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Player name cannot be empty')),
+      );
+      return;
+    }
+
+    // Currently, hard-coded using 'rays' as the teamName
+    final wsUrl = Uri.parse(
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${model.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false');
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      var channel = WebSocketChannel.connect(wsUrl);
+
+      print('WebSocket connected successfully.');
+      channel.stream.listen(
+        (message) {
+          // Listen for String message, then convert to JSON object
+          final Map<String, dynamic> data = json.decode(message);
+          final String eventType = data['eventType'];
+
+          // Cases for each event type
+          if (eventType == "PLAYER_JOINED_TEAM") {
+            showToast("${data['playerName']} joined team");
+          } else if (eventType == "PLAYER_LEFT_TEAM") {
+            showToast("${data['playerName']} left team");
+          } else if (eventType == "HUNT_STARTED") {
+            showToast("Hunt started");
+            model.totalSeconds = 0;
+            model.totalPoints = 0;
+            model.secondsSpentThisRound = 0;
+            model.pointsEarnedThisRound = 0;
+            model.currentChallenge = 0;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HuntProgressViewNoButtons()),
+            );
+          } else if (eventType == "HUNT_ENDED") {
+            showToast("Hunt ended");
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => EndGameScreen()),
+            );
+          } else if (eventType == "CHALLENGE_RESPONSE") {
+            showToast("Challenge response");
+            model.totalSeconds = 0;
+            model.totalPoints = 0;
+            model.secondsSpentThisRound = 0;
+            model.pointsEarnedThisRound = 0;
+            model.currentChallenge = 0;
+            model.previousSeconds = model.totalSeconds;
+            model.previousPoints = model.totalPoints;
+            model.challengeId = "1";
+            model.challengeNum = 0;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => ChallengeViewNoButtons()),
+            );
+          }
+          print('Received message: $message');
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+        },
+        onDone: () {
+          print('WebSocket connection closed.');
+          showToast("WebSocket connection closed");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect to WebSocket: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -322,17 +497,23 @@ class _TeamTileState extends State<TeamTile> {
                       }).toList(),
                     ),
                     if (widget.members.length < 4 && !hasAddedMember) ...[
-                      const Divider(color: Colors.grey, indent: 15, endIndent: 15, height: 1),
+                      const Divider(
+                          color: Colors.grey,
+                          indent: 15,
+                          endIndent: 15,
+                          height: 1),
                       ListTile(
                         leading: Icon(Icons.person_add, color: Colors.grey),
                         title: TextField(
                           controller: _newMemberController,
                           decoration: InputDecoration(
                             hintText: "Enter new member name",
-                            hintStyle: AppStyles.logisticsStyle.copyWith(color: Colors.grey),
+                            hintStyle: AppStyles.logisticsStyle
+                                .copyWith(color: Colors.grey),
                             border: InputBorder.none,
                             suffixIcon: IconButton(
-                              icon: const Icon(Icons.check, color: Colors.green),
+                              icon:
+                                  const Icon(Icons.check, color: Colors.green),
                               onPressed: () {
                                 setState(() {
                                   widget.members.add({
@@ -340,7 +521,8 @@ class _TeamTileState extends State<TeamTile> {
                                     'teamLeader': false,
                                   });
                                   _newMemberController.clear();
-                                  hasAddedMember = true; //Set flag prevent furthur additions to team
+                                  hasAddedMember =
+                                      true; //Set flag prevent furthur additions to team
                                 });
                               },
                             ),
