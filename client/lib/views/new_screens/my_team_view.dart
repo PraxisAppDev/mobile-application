@@ -11,6 +11,7 @@ import '../../provider/game_model.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:praxis_afterhours/provider/websocket_model.dart';
 
 class MyTeamView extends StatelessWidget {
   // final String teamID;
@@ -159,6 +160,7 @@ class MyTeamView extends StatelessWidget {
     //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
     //Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
     //Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
+
     return MaterialApp(
       home: Scaffold(
           appBar: AppStyles.appBarStyle("My Team", context),
@@ -284,6 +286,7 @@ class TeamTile extends StatefulWidget {
 
 class _TeamTileState extends State<TeamTile> {
   // Text controller for the new member input
+  bool _isWebSocketConnected = false;
   final TextEditingController _newMemberController = TextEditingController();
   bool hasAddedMember =
       false; //Track if a member has already been added to team
@@ -291,9 +294,19 @@ class _TeamTileState extends State<TeamTile> {
   @override
   void initState() {
     super.initState();
-    final huntProgressModel =
-        Provider.of<HuntProgressModel>(context, listen: false);
-    connectWebSocket(context, huntProgressModel);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isWebSocketConnected) {
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
+      final webSocketModel =
+          Provider.of<WebSocketModel>(context, listen: false);
+      connectWebSocket(context, huntProgressModel, webSocketModel);
+      _isWebSocketConnected = true;
+    }
   }
 
   void showToast(String message) {
@@ -308,7 +321,10 @@ class _TeamTileState extends State<TeamTile> {
     );
   }
 
-  void connectWebSocket(BuildContext context, HuntProgressModel model) async {
+  void connectWebSocket(
+      BuildContext context,
+      HuntProgressModel huntProgressModel,
+      WebSocketModel webSocketModel) async {
     final playerName =
         "samplePlayer"; // Replace with actual logic to get the player name
 
@@ -321,14 +337,14 @@ class _TeamTileState extends State<TeamTile> {
     }
 
     // Currently, hard-coded using 'rays' as the teamName
-    final wsUrl = Uri.parse(
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${model.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false');
+    final wsUrl =
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
-      var channel = WebSocketChannel.connect(wsUrl);
-
+      webSocketModel.connect(wsUrl);
       print('WebSocket connected successfully.');
-      channel.stream.listen(
+      final channel = webSocketModel.messages;
+      channel.listen(
         (message) {
           // Listen for String message, then convert to JSON object
           final Map<String, dynamic> data = json.decode(message);
@@ -341,11 +357,11 @@ class _TeamTileState extends State<TeamTile> {
             showToast("${data['playerName']} left team");
           } else if (eventType == "HUNT_STARTED") {
             showToast("Hunt started");
-            model.totalSeconds = 0;
-            model.totalPoints = 0;
-            model.secondsSpentThisRound = 0;
-            model.pointsEarnedThisRound = 0;
-            model.currentChallenge = 0;
+            huntProgressModel.totalSeconds = 0;
+            huntProgressModel.totalPoints = 0;
+            huntProgressModel.secondsSpentThisRound = 0;
+            huntProgressModel.pointsEarnedThisRound = 0;
+            huntProgressModel.currentChallenge = 0;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -359,15 +375,15 @@ class _TeamTileState extends State<TeamTile> {
             );
           } else if (eventType == "CHALLENGE_RESPONSE") {
             showToast("Challenge response");
-            model.totalSeconds = 0;
-            model.totalPoints = 0;
-            model.secondsSpentThisRound = 0;
-            model.pointsEarnedThisRound = 0;
-            model.currentChallenge = 0;
-            model.previousSeconds = model.totalSeconds;
-            model.previousPoints = model.totalPoints;
-            model.challengeId = "1";
-            model.challengeNum = 0;
+            huntProgressModel.totalSeconds = 0;
+            huntProgressModel.totalPoints = 0;
+            huntProgressModel.secondsSpentThisRound = 0;
+            huntProgressModel.pointsEarnedThisRound = 0;
+            huntProgressModel.currentChallenge = 0;
+            huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
+            huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+            huntProgressModel.challengeId = "1";
+            huntProgressModel.challengeNum = 0;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => ChallengeViewNoButtons()),
