@@ -172,24 +172,24 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   ),
                 ),
                 // This button leads to a screen that is not supposed to be in the final product
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.cancelButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          // builder: (context) => StartHuntView(huntID: widget.huntId)),
-                          builder: (context) => Instructions(title: "Randomness"))
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
+                // Container(
+                //   height: 50,
+                //   width: 175,
+                //   decoration: AppStyles.cancelButtonStyle,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           // builder: (context) => StartHuntView(huntID: widget.huntId)),
+                //           builder: (context) => Instructions(title: "Randomness"))
+                //       );
+                //     },
+                //     style: AppStyles.elevatedButtonStyle,
+                //     child: const Text('Start Hunt',
+                //         style: TextStyle(fontWeight: FontWeight.bold)),
+                //   ),
+                // ),
               ],
             ),
           ),

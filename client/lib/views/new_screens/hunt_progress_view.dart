@@ -5,11 +5,7 @@ import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:provider/provider.dart';
 import 'package:confetti/confetti.dart';
-
 import '../../provider/game_model.dart';
-import '../../apis/fetch_challenges.dart';
-import '../../styles/app_styles.dart';
-import 'challenge_view.dart';
 
 class HuntProgressView extends StatefulWidget {
   /*final String huntName;

@@ -574,6 +574,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
               Flexible(
                 flex: 1,
                 child: Container(
+                  height: 50,
+                  width: 115,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: _submitAnswer,
