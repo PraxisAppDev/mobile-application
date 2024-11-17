@@ -232,6 +232,7 @@ class MyTeamView extends StatelessWidget {
                                 huntProgressModel.totalPoints;
                             huntProgressModel.challengeId = "1";
                             huntProgressModel.challengeNum = 0;
+                            huntProgressModel.currentChallenge = 1;
                             //huntProgressModel.challengeId = challengeResponse[index]['id'];
                             //huntProgressModel.challengeNum = index;
 
@@ -239,7 +240,7 @@ class MyTeamView extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        ChallengeViewNoButtons()));
+                                        ChallengeViewNoButtons(currentChallenge: 1,)));
                           },
                           style: AppStyles.elevatedButtonStyle,
                           child: const Text('Challenge NB'),
@@ -362,10 +363,14 @@ class _TeamTileState extends State<TeamTile> {
             huntProgressModel.secondsSpentThisRound = 0;
             huntProgressModel.pointsEarnedThisRound = 0;
             huntProgressModel.currentChallenge = 0;
+            huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
+            huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+            huntProgressModel.challengeId = "1";
+            huntProgressModel.challengeNum = 0;
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                  builder: (context) => HuntProgressViewNoButtons()),
+                  builder: (context) => ChallengeViewNoButtons(currentChallenge: 1,)),
             );
           } else if (eventType == "HUNT_ENDED") {
             showToast("Hunt ended");
@@ -386,7 +391,7 @@ class _TeamTileState extends State<TeamTile> {
             huntProgressModel.challengeNum = 0;
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => ChallengeViewNoButtons()),
+              MaterialPageRoute(builder: (context) => ChallengeViewNoButtons(currentChallenge: 1,)),
             );
           }
           print('Received message: $message');
