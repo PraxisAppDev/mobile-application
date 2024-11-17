@@ -62,7 +62,10 @@ class Instructions extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
+<<<<<<< HEAD
         centerTitle: true,
+=======
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
         title: const Text(
           'How To Play!',
           style: TextStyle(
@@ -111,38 +114,66 @@ class Instructions extends StatelessWidget {
                   _SectionHeader(text: 'Hunt alone or in a pack...'),
                   _ContentText(
                     'Want to go solo? Or perhaps hunt with some friends? '
+<<<<<<< HEAD
                         'Both are great options for completing challenges- just '
                         'don\'t forget to name your team!',
+=======
+                    'Both are great options for completing challenges- just '
+                    'don\'t forget to name your team!',
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
                   ),
                   SizedBox(height: 24),
                   _SectionHeader(text: 'Challenges...'),
                   _ContentText(
                     'This game is designed to be a fun way to get to know '
+<<<<<<< HEAD
                         'Praxis as you break the ice with your peers. There are '
                         'challenges- or questions- pertaining to Praxis which help '
                         'make you familiar with the company!',
+=======
+                    'Praxis as you break the ice with your peers. There are '
+                    'challenges- or questions- pertaining to Praxis which help '
+                    'make you familiar with the company!',
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
                   ),
                   SizedBox(height: 16),
                   _ContentText(
                     'Each challenge is worth anywhere between 200-600 points, '
+<<<<<<< HEAD
                         'and the time spent on each question is recorded and can '
                         'be used as a tie-breaker in the event that two teams '
                         'earn the same score!',
+=======
+                    'and the time spent on each question is recorded and can '
+                    'be used as a tie-breaker in the event that two teams '
+                    'earn the same score!',
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
                   ),
                   SizedBox(height: 24),
                   _SectionHeader(text: 'Hints...'),
                   _ContentText(
                     'Each challenge comes with three available hints relevant '
+<<<<<<< HEAD
                         'to the question- but beware! A hint will cost some points!',
+=======
+                    'to the question- but beware! A hint will cost some points!',
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
                   ),
                   SizedBox(height: 24),
                   _SectionHeader(text: 'Team Leader vs Team Member...'),
                   _ContentText(
                     'If you join a team before the game starts, you can leave '
+<<<<<<< HEAD
                         'freely. Once the team reaches four members, the game begins '
                         'automatically. The team leader can start the game early with '
                         'fewer than four members and is the only one who can submit '
                         'answers and review hints.',
+=======
+                    'freely. Once the team reaches four members, the game begins '
+                    'automatically. The team leader can start the game early with '
+                    'fewer than four members and is the only one who can submit '
+                    'answers and review hints.',
+>>>>>>> 4652eb375c5dee7ca1b699fc80edf431f892060d
                   ),
                   SizedBox(height: 24),
                   Center(
