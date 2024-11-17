@@ -51,6 +51,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
       if (huntProgressModel.currentChallenge >= data.length) {
         isHuntCompleted = true;
         _confettiController.play(); // Play confetti animation when hunt is completed
+        huntProgressModel.stopTimer();
         _showCompletionDialog(context);
       }
     });
@@ -364,6 +365,8 @@ class _HuntProgressViewState extends State<HuntProgressView> {
 
     
   void _showCompletionDialog(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     showDialog(
       context: context,
       barrierDismissible: false, // Prevent dismissal by tapping outside
@@ -399,26 +402,33 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const EndGameScreen()),
-                    );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  Container(
+                    decoration: AppStyles.confirmButtonStyle,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          huntProgressModel.markHuntCompleted(huntProgressModel.currentHuntIndex);
+                        });
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const EndGameScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
+                      child: const Text(
+                        'Continue',
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
                     ),
-                    child: const Text(
-                      'Continue',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),

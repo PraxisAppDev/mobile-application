@@ -27,6 +27,8 @@ class HuntProgressModel extends ChangeNotifier {
   late String challengeId;
   late int challengeNum;
 
+  late int currentHuntIndex;
+  final Set<int> pressedHunts = {}; // Track indexes of completed hunts
   List<int> secondsSpentList = [];
   List<int> pointsEarnedList = [];
   int secondsSpent = 0;
@@ -49,6 +51,11 @@ class HuntProgressModel extends ChangeNotifier {
   void resetTimer() {
     secondsSpent = 0;
     _timerStarted = false;
+    notifyListeners();
+  }
+
+  void markHuntCompleted(int index) {
+    pressedHunts.add(index);
     notifyListeners();
   }
 
