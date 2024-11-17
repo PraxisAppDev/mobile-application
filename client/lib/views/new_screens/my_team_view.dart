@@ -351,7 +351,7 @@ class _TeamTileState extends State<TeamTile> {
      return;
    }
 
-
+// rays hardcoded for now, needs to be changed for actual team id.
    final wsUrl =
        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
    try {

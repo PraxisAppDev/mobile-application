@@ -1,19 +1,25 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
-import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
-import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
-import 'package:praxis_afterhours/apis/post_create_teams.dart';
+import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
+import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
+import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/patch_update_team.dart';
+import 'package:praxis_afterhours/apis/post_join_team.dart';
+import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
+import '../../apis/post_create_teams.dart';
 import 'package:provider/provider.dart';
-
 import '../../provider/game_model.dart';
-import '../instructions.dart';
+import '../../provider/websocket_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateATeamView extends StatefulWidget {
-  // final String huntId;
-  // final String huntName;
-  // String? teamId;
-  // CreateATeamView({super.key, required this.huntId, this.teamId, required this.huntName});
   CreateATeamView({super.key});
 
   @override
@@ -25,17 +31,6 @@ class _CreateATeamViewState extends State<CreateATeamView> {
   final TextEditingController _playerNameController = TextEditingController();
   final FocusNode _teamFocusNode = FocusNode();
   final FocusNode _playerFocusNode = FocusNode();
-  //bool _isFocused = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _teamFocusNode.addListener(() {
-      //setState(() {
-      //_isFocused = _focusNode.hasFocus;
-      //});
-    });
-  }
 
   @override
   void dispose() {
@@ -46,49 +41,106 @@ class _CreateATeamViewState extends State<CreateATeamView> {
     super.dispose();
   }
 
-  Future<String> makeTeam(HuntProgressModel model) async {
+  // Show toast messages for WebSocket events
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  // Connect to WebSocket after team creation
+  void connectWebSocket(WebSocketModel webSocketModel, String huntId, String teamName, String playerName) async {
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId&teamId=$teamName&playerName=$playerName&huntAlone=false';
     try {
-      String playerName = _playerNameController.text.trim();
-      if (playerName.isEmpty) {
-        throw Exception("Player name cannot be empty");
-      }
-      String teamName = _teamNameController.text.trim();
-      if (teamName.isEmpty) {
-        throw Exception("Team name cannot be empty");
-      }
-      final postResponse =
-          await createTeam(model.huntId, teamName, playerName, false);
-      return postResponse['teamId'];
+      print('Connecting to WebSocket at: $wsUrl');
+      webSocketModel.connect(wsUrl);
+      print('WebSocket connected successfully.');
+
+      final channel = webSocketModel.messages;
+      channel.listen(
+        (message) {
+          final Map<String, dynamic> data = json.decode(message);
+          final String eventType = data['eventType'];
+
+          if (eventType == "PLAYER_JOINED_TEAM") {
+            showToast("${data['playerName']} joined the team");
+          } else if (eventType == "PLAYER_LEFT_TEAM") {
+            showToast("${data['playerName']} left the team");
+          } else if (eventType == "HUNT_STARTED") {
+            showToast("Hunt started");
+          } else if (eventType == "HUNT_ENDED") {
+            showToast("Hunt ended");
+          } else if (eventType == "CHALLENGE_RESPONSE") {
+            showToast("Challenge response received");
+          }
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+          showToast("WebSocket error: $error");
+        },
+        onDone: () {
+          print('WebSocket closed');
+          showToast("WebSocket connection closed");
+        },
+        cancelOnError: true,
+      );
     } catch (e) {
-      throw e;
+      print('Failed to connect to WebSocket: $e');
+      showToast("Failed to connect to WebSocket: $e");
     }
   }
 
-  void _createTeam(HuntProgressModel model) async {
+  // Create a team and navigate to the next screen
+  void _createTeam(HuntProgressModel model, WebSocketModel webSocketModel) async {
     try {
-      model.teamId = await makeTeam(model);
+      // Get user inputs
+      final teamName = _teamNameController.text.trim();
+      final playerName = _playerNameController.text.trim();
+
+      // Validate inputs
+      if (teamName.isEmpty) {
+        throw Exception("Team name cannot be empty");
+      }
+      if (playerName.isEmpty) {
+        throw Exception("Player name cannot be empty");
+      }
+
+      // Create team
+      final response = await createTeam(model.huntId, teamName, playerName, false);
+      model.teamId = response['teamId'];
+
+      // Connect to WebSocket
+      connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
+
+      // Navigate to the next view
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MyTeamCreateView(
-                huntId: model.huntId,
-                huntName: model.huntName,
-                teamId: model.teamId,
-                teamName: _teamNameController.text,
-                playerName: _playerNameController.text, individualName: '',)),
+          builder: (context) => MyTeamCreateView(
+            huntId: model.huntId,
+            huntName: model.huntName,
+            teamId: model.teamId,
+            teamName: teamName,
+            playerName: playerName,
+          ),
+        ),
       );
     } catch (e) {
       print("Failed to create team: $e");
-      // Not working
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Failed to create team: $e')),
-      // );
+      showToast("Failed to create team: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
 
     return MaterialApp(
       home: Scaffold(
@@ -110,14 +162,15 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                     controller: _teamNameController,
                     focusNode: _teamFocusNode,
                     decoration: InputDecoration(
-                        border: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.white)),
-                        labelText: 'Enter team name here...',
-                        labelStyle:
-                            TextStyle(color: Colors.white, fontSize: 14),
-                        filled: true,
-                        fillColor: Colors.grey),
+                      border: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.white),
+                      ),
+                      labelText: 'Enter team name here...',
+                      labelStyle: TextStyle(color: Colors.white, fontSize: 14),
+                      filled: true,
+                      fillColor: Colors.grey,
+                    ),
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -141,15 +194,16 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                           controller: _playerNameController,
                           focusNode: _playerFocusNode,
                           decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.edit, color: Colors.white),
-                              border: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Colors.white)),
-                              labelText: 'Enter name here...',
-                              labelStyle:
-                                  TextStyle(color: Colors.white, fontSize: 14),
-                              filled: true,
-                              fillColor: Colors.grey),
+                            suffixIcon: Icon(Icons.edit, color: Colors.white),
+                            border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            labelText: 'Enter name here...',
+                            labelStyle: TextStyle(color: Colors.white, fontSize: 14),
+                            filled: true,
+                            fillColor: Colors.grey,
+                          ),
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -163,31 +217,9 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   width: 175,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
-                    onPressed: () {
-                      _createTeam(huntProgressModel);
-                    },
+                    onPressed: () => _createTeam(huntProgressModel, webSocketModel),
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Create',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-                // This button leads to a screen that is not supposed to be in the final product
-                Container(
-                  height: 50,
-                  width: 175,
-                  decoration: AppStyles.cancelButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          // builder: (context) => StartHuntView(huntID: widget.huntId)),
-                          builder: (context) => Instructions(title: "Randomness"))
-                      );
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Start Hunt',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Create', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
