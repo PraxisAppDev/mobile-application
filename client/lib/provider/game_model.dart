@@ -13,6 +13,7 @@ class HuntProgressModel extends ChangeNotifier {
   late String zipCode;
   late String teamId;
   late String teamName;
+  late String playerName;
 
   // Hunt Progress Screen variables
   late int totalSeconds;
@@ -20,6 +21,7 @@ class HuntProgressModel extends ChangeNotifier {
   late int secondsSpentThisRound;
   late int pointsEarnedThisRound;
   late int currentChallenge;
+  late int totalChallenges; //holds total num of challenges 
 
   // Challenge Screen variables
   late int previousSeconds;
@@ -82,6 +84,11 @@ class HuntProgressModel extends ChangeNotifier {
   void dispose() {
     _timer?.cancel();
     super.dispose();
+  }
+
+  void incrementCurrentChallenge() {
+    currentChallenge++;
+    notifyListeners(); // ensures UI or state dependent on this updates
   }
 }
 

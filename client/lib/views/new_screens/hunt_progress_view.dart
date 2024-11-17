@@ -47,6 +47,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     var data = await fetchChallenges(huntProgressModel.huntId);
     setState(() {
       challenges = data;  // Update the challenges list
+      huntProgressModel.totalChallenges = challenges.length; //updates model var with total num of lists
       isLoading = false;  // Update loading state
       if (huntProgressModel.currentChallenge >= data.length) {
         isHuntCompleted = true;

@@ -10,6 +10,9 @@ import '../../provider/game_model.dart';
 import 'my_team_view.dart';
 import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
+// import 'package:provider/provider.dart';
+// import 'package:praxis_afterhours/provider/websocket_model.dart';
+
 class JoinATeamView extends StatelessWidget {
   // final String huntID;
   // const JoinATeamView({super.key, required this.huntID});
@@ -90,6 +93,7 @@ class _TeamTileState extends State<TeamTile> {
     }
     try {
       await joinTeam(widget.huntID, widget.teamName, _newMemberController.text);
+
 
       /* FOR TESTING PURPOSES */
       // ScaffoldMessenger.of(context).showSnackBar(
