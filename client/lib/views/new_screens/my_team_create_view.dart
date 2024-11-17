@@ -31,7 +31,7 @@ class MyTeamCreateView extends StatefulWidget {
     required this.huntName,
     required this.teamId,
     required this.teamName,
-    required this.playerName,
+    required this.playerName, required String individualName,
   });
 
   @override

@@ -757,7 +757,7 @@ Future<void> showCreateHuntTeamNameDialog(BuildContext context,
               ),
               const SizedBox(height: 16),
               GestureDetector(
-                onTap: () async {
+                /*onTap: () async {
                   //close this dialog and open a new one to create a team
                   Navigator.pop(context);
                   MaterialPageRoute route = await openCreateTeamManagerRoute(
@@ -767,7 +767,7 @@ Future<void> showCreateHuntTeamNameDialog(BuildContext context,
                   );
                   if (!context.mounted) return;
                   Navigator.push(context, route);
-                },
+                },*/
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),

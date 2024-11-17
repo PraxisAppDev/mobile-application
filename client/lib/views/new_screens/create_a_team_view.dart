@@ -75,7 +75,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                 huntName: model.huntName,
                 teamId: model.teamId,
                 teamName: _teamNameController.text,
-                playerName: _playerNameController.text)),
+                playerName: _playerNameController.text, individualName: '',)),
       );
     } catch (e) {
       print("Failed to create team: $e");

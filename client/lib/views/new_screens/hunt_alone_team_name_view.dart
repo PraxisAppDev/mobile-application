@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:praxis_afterhours/views/hunt_alone.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:praxis_afterhours/views/new_screens/my_team_create_view.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/game_model.dart';
@@ -259,4 +261,3 @@ class _HuntAloneViewState extends State<HuntAloneTeamNameView> {
    );
  }
 }
-
