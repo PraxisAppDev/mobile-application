@@ -26,6 +26,7 @@ class HuntProgressModel extends ChangeNotifier {
   late int previousPoints;
   late String challengeId;
   late int challengeNum;
+  late String challengeName;
 
   late int currentHuntIndex;
   final Set<int> pressedHunts = {}; // Track indexes of completed hunts

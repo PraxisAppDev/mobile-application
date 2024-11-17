@@ -525,6 +525,27 @@ class _ChallengeContentState extends State<ChallengeContent> {
                     'This is a question about something...',
                     style: AppStyles.logisticsStyle,
                   ),
+                  const SizedBox(height: 10),
+                  Center(
+                      child: _challengeData['url'] != null
+                          ? Image.network(
+                        _challengeData['url'],
+                        height: constraints.maxHeight * 0.2,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Text(
+                            'clueUrl could not be displayed',
+                            style: TextStyle(color: Colors.white),
+                          );
+                        },
+                      )
+                      //     : const Text(
+                      //   'Picture (if needed)',
+                      //   style: TextStyle(color: Colors.white),
+                      // ),
+                          : Image.asset("images/huntLogo.png",
+                          height: 150,
+                          width: 150)
+                  ),
                   /*const SizedBox(height: 10),
                   Center(
                     child: _challengeData['clueUrl'] != null

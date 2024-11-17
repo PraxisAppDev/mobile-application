@@ -275,6 +275,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                             onPressed: () {
                                                               huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
                                                               huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+                                                              huntProgressModel.challengeName = challengeResponse[index]['description'];
                                                               huntProgressModel.challengeId = challengeResponse[index]['id'];
                                                               huntProgressModel.challengeNum = index;
 
