@@ -10,9 +10,6 @@ import '../../provider/game_model.dart';
 import 'my_team_view.dart';
 import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
-// import 'package:provider/provider.dart';
-// import 'package:praxis_afterhours/provider/websocket_model.dart';
-
 class JoinATeamView extends StatelessWidget {
   // final String huntID;
   // const JoinATeamView({super.key, required this.huntID});
@@ -82,35 +79,38 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
+  final TextEditingController _newMemberController = TextEditingController();
+  bool hasAddedMember = false; //Track if a member has already been added to team
 
   // Function to handle the join_team API call and navigate to MyTeamView after successful joining
   void _handleJoinTeam(BuildContext context) async {
-    try {
-      await joinTeam(widget.huntID, widget.teamName, "placeholder");
-
-      /* FOR TESTING PURPOSES */
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Successfully joined ${widget.teamName} with response ${response}')),
-      // );
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      huntProgressModel.teamId = widget.teamID;
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          // builder: (context) => MyTeamView(
-          //   huntID: widget.huntID,
-          //   teamID: widget.teamID,
-          // ),
-          builder: (context) => MyTeamView()
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error joining team: $e')),
-      );
-    }
+  if (_newMemberController.text.trim().isEmpty) {
+    ShowEmptyTeamDialog(context);
+    return;
   }
+  try {
+    // Get the entered name
+    String playerName = _newMemberController.text.trim();
+    
+    await joinTeam(widget.huntID, widget.teamName, playerName);
+
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    huntProgressModel.teamId = widget.teamID;
+    // Store the player name in the model
+    huntProgressModel.playerName = playerName;  // Add this line
+
+    Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(
+    builder: (context) => MyTeamView(playerName: playerName),
+  ),
+);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error joining team: $e')),
+    );
+  }
+}
 
 
   @override
@@ -173,6 +173,34 @@ class _TeamTileState extends State<TeamTile> {
                   ]);
                 }).toList(),
               ),
+              if (widget.members.length < 4 && !hasAddedMember) ...[
+                const Divider(color: Colors.grey, indent: 15, endIndent: 15, height: 1),
+                ListTile(
+                  leading: Icon(Icons.person_add, color: Colors.grey),
+                  title: TextField(
+                    controller: _newMemberController,
+                    decoration: InputDecoration(
+                      hintText: "Enter new member name",
+                      hintStyle: AppStyles.logisticsStyle.copyWith(color: Colors.grey),
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.check, color: Colors.green),
+                        onPressed: () {
+                          setState(() {
+                            widget.members.add({
+                              'name': _newMemberController.text,
+                              'teamLeader': false,
+                            });
+                            _newMemberController.clear();
+                            hasAddedMember = true; //Set flag prevent further additions to team
+                          });
+                        },
+                      ),
+                    ),
+                    style: AppStyles.logisticsStyle,
+                  ),
+                ),
+              ],
               if (!widget.isLocked)
                 Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -195,8 +223,8 @@ class _TeamTileState extends State<TeamTile> {
                                 //             teamID: widget.teamID,
                                 //           )),
                                 // );
-                                
-                                
+
+
                                 // Join team functionality
                                 /*
                                 /*
@@ -212,7 +240,7 @@ class _TeamTileState extends State<TeamTile> {
                                       builder: (context) => MyTeamView()),
                                 );
                                 */
-                                
+
                                 // *****************
                                 // setState(() {
                                 //   widget.members.add("CURRENT USER NAME");
@@ -224,7 +252,76 @@ class _TeamTileState extends State<TeamTile> {
                       ),
                     )),
             ],
+
           ),
         ));
+  }
+
+  //Tells players the game is starting, dissappears after 3 seconds
+  Future<void> ShowEmptyTeamDialog(context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            backgroundColor: Colors.black,
+            contentPadding: EdgeInsets.all(0),
+            content: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: <Color>[
+                      Color(0xff261919),
+                      Color(0xff332323),
+                      Color(0xff261919),
+                    ],
+                    stops: [0.0, 0.5, 1.0],
+                  ),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 45,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 32,
+                            ),
+                            Expanded(
+                              child: DotDivider,
+                            ),
+                            SizedBox(
+                                width: 32,
+                                child: IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    icon:
+                                    Icon(Icons.close, color: Colors.white)))
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          'Your player name cannot be empty!',
+                          style: AppStyles.titleStyle.copyWith(fontSize: 20),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      SizedBox(height: 45, child: DotDivider)
+                    ],
+                  ),
+                )));
+      },
+    );
   }
 }

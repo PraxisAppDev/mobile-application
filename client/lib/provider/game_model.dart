@@ -2,6 +2,14 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class HuntProgressModel extends ChangeNotifier {
+  String _playerName = '';
+  
+  String get playerName => _playerName;
+  
+  set playerName(String name) {
+    _playerName = name;
+    notifyListeners();
+  }
   // Variables that were passed from screen to screen, may need to be used in
   // API calls
   late String huntName;
