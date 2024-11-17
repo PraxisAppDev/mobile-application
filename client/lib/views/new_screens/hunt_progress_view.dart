@@ -363,7 +363,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     );
   }
 
-    
+
   void _showCompletionDialog(BuildContext context) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
 
@@ -371,72 +371,93 @@ class _HuntProgressViewState extends State<HuntProgressView> {
       context: context,
       barrierDismissible: false, // Prevent dismissal by tapping outside
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          backgroundColor: Colors.black.withOpacity(0.8),
-          contentPadding: EdgeInsets.zero,
-          content: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xff261919),
-                  Color(0xff332323),
-                  Color(0xff261919),
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Text(
-                    'Congratulations! You completed all challenges!',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: AppStyles.confirmButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          huntProgressModel.markHuntCompleted(huntProgressModel.currentHuntIndex);
-                        });
+        return StatefulBuilder(
+          builder: (context, setState) {
+            // You can use this to trigger the confetti animation when the dialog is displayed
+            if (!isHuntCompleted) {
+              _confettiController.play(); // Start confetti when dialog is shown
+              isHuntCompleted = true;
+            }
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const EndGameScreen()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                      ),
-                      child: const Text(
-                        'Continue',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+            return Stack(
+              children: [
+                // The Dialog itself
+                AlertDialog(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  backgroundColor: Colors.black.withOpacity(0.8),
+                  contentPadding: EdgeInsets.zero,
+                  content: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: <Color>[
+                          Color(0xff261919),
+                          Color(0xff332323),
+                          Color(0xff261919),
+                        ],
+                        stops: [0.0, 0.5, 1.0],
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-          ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Text(
+                            'Congratulations! You completed all challenges!',
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            height: 50,
+                            width: 125,
+                            decoration: AppStyles.confirmButtonStyle,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  huntProgressModel.markHuntCompleted(huntProgressModel.currentHuntIndex);
+                                });
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const EndGameScreen()),
+                                );
+                              },
+                              style: AppStyles.elevatedButtonStyle,
+                              child: const Text(
+                                'Continue',
+                                style: TextStyle(fontSize: 16, color: Colors.white),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                // ConfettiWidget added on top of the dialog
+                Stack(
+                  children: [
+                    if (isHuntCompleted) ConfettiWidget(
+                      confettiController: _confettiController,
+                      blastDirectionality: BlastDirectionality.explosive,
+                      shouldLoop: false,
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
+
 
 
   String secondsToMinutes(int numSeconds) {

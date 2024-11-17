@@ -544,6 +544,8 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, S
                   children: [
                     // No Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.cancelButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
@@ -558,6 +560,8 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context, String huntId, S
                     ),
                     // Yes Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {

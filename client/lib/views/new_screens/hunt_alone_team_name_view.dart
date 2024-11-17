@@ -120,7 +120,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Container(
+                SizedBox(
                   width: 250,
                   child: TextField(
                     controller: _teamNameController,

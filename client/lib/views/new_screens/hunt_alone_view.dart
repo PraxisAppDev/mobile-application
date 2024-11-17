@@ -386,11 +386,13 @@ class _HuntAloneViewState extends State<HuntAloneView> {
           decoration: AppStyles.backgroundStyle,
           child: Column(
             children: [
-              SizedBox(height: 10),
+              SizedBox(height: 50),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: EdgeInsets.all(8),
+                  width: 350,
+                  height: 150,
+                  padding: EdgeInsets.all(16),
                   decoration: AppStyles.infoBoxStyle,
                   child: Column(
                     children: [
@@ -403,6 +405,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 20),
                       Row(
                         children: [
                           Icon(Icons.location_pin, color: Colors.white),
@@ -412,7 +415,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Icon(Icons.calendar_month, color: Colors.white),
@@ -509,8 +512,8 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       },
                     )),
               ),
-              Expanded(
-                child: Column(
+              SizedBox(height: 30),
+              Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
@@ -543,7 +546,6 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     ),
                   ],
                 ),
-              )
             ],
           ),
         ),
@@ -631,6 +633,8 @@ Future<void> ShowDeleteConfirmationDialog(
                   children: [
                     // No Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.cancelButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
@@ -646,6 +650,8 @@ Future<void> ShowDeleteConfirmationDialog(
                     ),
                     // Yes Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {

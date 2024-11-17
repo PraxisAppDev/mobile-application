@@ -22,79 +22,91 @@ class MyTeamView extends StatelessWidget {
   Future<void> _showLeaveTeamConfirmation(BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user can dismiss the dialog by tapping outside
+      barrierDismissible: false, // user must tap a button!
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
-          backgroundColor: Colors.black.withOpacity(0.8),
-          contentPadding: EdgeInsets.zero,
+          backgroundColor: Colors.black,
+          contentPadding: const EdgeInsets.all(0),
           content: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xff261919),
-                  Color(0xff332323),
-                  Color(0xff261919),
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-            ),
+            decoration: AppStyles.popupStyle(),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Text(
-                    'Are you sure you would like to leave this team?',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                    textAlign: TextAlign.center,
+                  SizedBox(
+                    height: 45,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const SizedBox(width: 32),
+                        Expanded(child: DotDivider),
+                        SizedBox(
+                          width: 32,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close dialog
+                            },
+                            icon: const Icon(Icons.close, color: Colors.white),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  const Flexible(
+                    child: Text(
+                      'Are you sure you would like to leave this team?',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the dialog
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      // No Button
+                      Container(
+                        height: 50,
+                        width: 80,
+                        decoration: AppStyles.cancelButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          style: AppStyles
+                              .elevatedButtonStyle, // Applying elevatedButtonStyle
+                          child: const Text(
+                            'No',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          Navigator.of(context).pop(); // Close the dialog
-                          await leaveTeamAndUpdateView(context); // Call the leave team function, handling the API calls 
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      // Yes Button
+                      Container(
+                        height: 50,
+                        width: 80,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop(); // Close dialog
+                            await leaveTeamAndUpdateView(context); // Call the leave team function, handling the API calls
+                          },
+                          style: AppStyles
+                              .elevatedButtonStyle, // Applying elevatedButtonStyle
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                        ),
-                        child: const Text(
-                          'Confirm',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 20),
+                  SizedBox(height: 45, child: DotDivider),
                 ],
               ),
             ),
@@ -102,6 +114,88 @@ class MyTeamView extends StatelessWidget {
         );
       },
     );
+    // return showDialog<void>(
+    //   context: context,
+    //   barrierDismissible: true, // user can dismiss the dialog by tapping outside
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(10),
+    //       ),
+    //       backgroundColor: Colors.black.withOpacity(0.8),
+    //       contentPadding: EdgeInsets.zero,
+    //       content: DecoratedBox(
+    //         decoration: BoxDecoration(
+    //           borderRadius: BorderRadius.circular(10),
+    //           gradient: const LinearGradient(
+    //             begin: Alignment.topCenter,
+    //             end: Alignment.bottomCenter,
+    //             colors: <Color>[
+    //               Color(0xff261919),
+    //               Color(0xff332323),
+    //               Color(0xff261919),
+    //             ],
+    //             stops: [0.0, 0.5, 1.0],
+    //           ),
+    //         ),
+    //         child: Padding(
+    //           padding: const EdgeInsets.all(16.0),
+    //           child: Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: <Widget>[
+    //               const Text(
+    //                 'Are you sure you would like to leave this team?',
+    //                 style: TextStyle(color: Colors.white, fontSize: 18),
+    //                 textAlign: TextAlign.center,
+    //               ),
+    //               const SizedBox(height: 20),
+    //               Row(
+    //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //                 children: [
+    //                   ElevatedButton(
+    //                     onPressed: () {
+    //                       Navigator.of(context).pop(); // Close the dialog
+    //                     },
+    //                     style: ElevatedButton.styleFrom(
+    //                       backgroundColor: Colors.red,
+    //                       shape: RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.circular(8),
+    //                       ),
+    //                       padding: const EdgeInsets.symmetric(
+    //                           horizontal: 20, vertical: 10),
+    //                     ),
+    //                     child: const Text(
+    //                       'Cancel',
+    //                       style: TextStyle(fontSize: 16, color: Colors.white),
+    //                     ),
+    //                   ),
+    //                   ElevatedButton(
+    //                     onPressed: () async {
+    //                       Navigator.of(context).pop(); // Close the dialog
+    //                       await leaveTeamAndUpdateView(context); // Call the leave team function, handling the API calls
+    //                     },
+    //                     style: ElevatedButton.styleFrom(
+    //                       backgroundColor: Colors.green,
+    //                       shape: RoundedRectangleBorder(
+    //                         borderRadius: BorderRadius.circular(8),
+    //                       ),
+    //                       padding: const EdgeInsets.symmetric(
+    //                           horizontal: 20, vertical: 10),
+    //                     ),
+    //                     child: const Text(
+    //                       'Confirm',
+    //                       style: TextStyle(fontSize: 16, color: Colors.white),
+    //                     ),
+    //                   ),
+    //                 ],
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
   // Updated leaveTeam function to handle the API calls and leave the team

@@ -50,38 +50,11 @@ class EndGameScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                
-                // Return Home Button
-                SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                      ),
-                    ),
-                    child: const Text(
-                      'Return Home',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 20),
-                
                 // View Leaderboard Button
-                SizedBox(
+                Container(
+                  height: 60,
                   width: 200,
+                  decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
                       // Add navigation to leaderboard screen here
@@ -89,17 +62,29 @@ class EndGameScreen extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => const Leaderboard())
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                      ),
-                    ),
+                    style: AppStyles.elevatedButtonStyle,
                     child: const Text(
                       'View Leaderboard',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Return Home Button
+                Container(
+                  height: 60,
+                  width: 200,
+                  decoration: AppStyles.cancelButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text(
+                      'Return Home',
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,

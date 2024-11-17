@@ -210,7 +210,7 @@ class _TeamTileState extends State<TeamTile> {
                     child: Container(
                       height: 50,
                       width: 175,
-                      decoration: AppStyles.cancelButtonStyle,
+                      decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: widget.isLocked
                             ? null // Disable button if team is locked
