@@ -43,108 +43,100 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                     final List<hunts_api.HuntResponseModel> huntResponse =
                         snapshot.data!;
 
-                    return ListView.builder(
-                      itemCount: huntResponse.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            if (index == 0)
-                              SizedBox(height: 20),
-                            Container(
-                              height: 150,
-                              width: 375,
-                              padding: const EdgeInsets.all(16),
-                              decoration: AppStyles.infoBoxStyle,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_pin, color: Colors.transparent),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        huntResponse[index].name,
-                                        textAlign: TextAlign.left,
-                                        style: AppStyles.logisticsStyle.copyWith(fontSize: 20),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.location_pin, color: Colors.white),
-                                      SizedBox(width: 5),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            huntResponse[index].venue,
-                                            style: AppStyles.logisticsStyle,
-                                          ),
-                                          Text(
-                                            huntResponse[index].address,
-                                            style: AppStyles.logisticsStyle.copyWith(fontSize: 12),
-                                          ),
-                                          Text(
-                                            "${huntResponse[index].city}, ${huntResponse[index].stateAbbr}, ${huntResponse[index].zipcode}",
-                                            style: AppStyles.logisticsStyle.copyWith(fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      Spacer(),
-                                      Container(
-                                        height: 50,
-                                        width: 75,
-                                        decoration: AppStyles.confirmButtonStyle,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            huntProgressModel.huntName = huntResponse[index].name;
-                                            huntProgressModel.venue = huntResponse[index].venue;
-                                            huntProgressModel.huntDate = truncatedDate(huntResponse[index].startDate);
-                                            huntProgressModel.huntId = huntResponse[index].id;
-                                            huntProgressModel.city = huntResponse[index].city;
-                                            huntProgressModel.stateAbbr = huntResponse[index].stateAbbr;
-                                            huntProgressModel.zipCode = huntResponse[index].zipcode;
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                // builder: (context) => HuntModeView(
-                                                //   huntId: huntResponse[index].id,
-                                                //   huntName: huntResponse[index].name,
-                                                //   venue: huntResponse[index].venue,
-                                                //   huntDate: truncatedDate(huntResponse[index].startDate),
-                                                // ),
-                                                builder: (context) => HuntModeView(),
-                                              ),
-                                            );
-                                          },
-                                          style: AppStyles.elevatedButtonStyle,
-                                          child: const Text(
-                                            'GO',
-                                            style: TextStyle(fontWeight: FontWeight.bold),
-                                          ),
+                   return ListView.builder(
+                    itemCount: huntResponse.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          if (index == 0)
+                            SizedBox(height: 20),
+                          Container(
+                            height: 150,
+                            width: 375,
+                            padding: const EdgeInsets.all(16),
+                            decoration: AppStyles.infoBoxStyle,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_pin, color: Colors.transparent),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      huntResponse[index].name,
+                                      textAlign: TextAlign.left,
+                                      style: AppStyles.logisticsStyle.copyWith(fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.location_pin, color: Colors.white),
+                                    SizedBox(width: 5),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          huntResponse[index].venue,
+                                          style: AppStyles.logisticsStyle,
+                                        ),
+                                        Text(
+                                          huntResponse[index].address,
+                                          style: AppStyles.logisticsStyle.copyWith(fontSize: 12),
+                                        ),
+                                        Text(
+                                          huntResponse[index].city,  // City on its own line
+                                          style: AppStyles.logisticsStyle.copyWith(fontSize: 12),
+                                        ),
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      height: 50,
+                                      width: 75,
+                                      decoration: AppStyles.confirmButtonStyle,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          huntProgressModel.huntName = huntResponse[index].name;
+                                          huntProgressModel.venue = huntResponse[index].venue;
+                                          huntProgressModel.huntDate = truncatedDate(huntResponse[index].startDate).split(' [EST]')[0];
+                                          huntProgressModel.huntId = huntResponse[index].id;
+                                          huntProgressModel.city = huntResponse[index].city;
+                                          huntProgressModel.stateAbbr = huntResponse[index].stateAbbr;
+                                          huntProgressModel.zipCode = huntResponse[index].zipcode;
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HuntModeView(),
+                                            ),
+                                          );
+                                        },
+                                        style: AppStyles.elevatedButtonStyle,
+                                        child: const Text(
+                                          'GO',
+                                          style: TextStyle(fontWeight: FontWeight.bold),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(Icons.calendar_month, color: Colors.white),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        truncatedDate(huntResponse[index].startDate),
-                                        style: AppStyles.logisticsStyle,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(Icons.calendar_month, color: Colors.white),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      truncatedDate(huntResponse[index].startDate).split(' [EST]')[0], // Removes [EST]
+                                      style: AppStyles.logisticsStyle,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-
-                            const SizedBox(
-                                height: 20), // Adding space between containers
-                          ],
-                        );
-                      },
-                    );
+                          ),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  );
                   } else {
                     return const Center(child: Text('No data available.'));
                   }

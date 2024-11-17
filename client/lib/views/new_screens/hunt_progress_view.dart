@@ -72,7 +72,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
 
     return MaterialApp(
         home: Scaffold(
-          appBar: AppStyles.noBackArrowAppBarStyle("Hunt Progress", context),
+          appBar: AppStyles.appBarStyle("Hunt Progress", context),
           body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
             child: Center(
@@ -368,69 +368,67 @@ class _HuntProgressViewState extends State<HuntProgressView> {
 
     
   void _showCompletionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent dismissal by tapping outside
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor: Colors.black.withOpacity(0.8),
+        contentPadding: EdgeInsets.zero,
+        content: DecoratedBox(
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-          ),
-          backgroundColor: Colors.black.withOpacity(0.8),
-          contentPadding: EdgeInsets.zero,
-          content: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Color(0xff261919),
-                  Color(0xff332323),
-                  Color(0xff261919),
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: <Color>[
+                Color(0xff261919),
+                Color(0xff332323),
+                Color(0xff261919),
+              ],
+              stops: [0.0, 0.5, 1.0],
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Text(
-                    'Congratulations! You completed all challenges!',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
+                  'Congratulations! You completed all challenges!',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.confirmButtonStyle,
+                  child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const EndGameScreen()),
-                    );
+                        context,
+                        MaterialPageRoute(builder: (context) => const EndGameScreen()),
+                      );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                    ),
+                    style: AppStyles.elevatedButtonStyle,
                     child: const Text(
                       'Continue',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
 
   String secondsToMinutes(int numSeconds) {

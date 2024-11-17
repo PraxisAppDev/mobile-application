@@ -142,71 +142,59 @@ class AppStyles {
   );
 
   static AppBar appBarStyle(String screenName, BuildContext context) {
-    return AppBar(
-      title: Text(screenName, style: AppStyles.appBarTextStyle),
-      leading: IconButton(
-        icon: const Icon(Icons.keyboard_double_arrow_left,
-            color: Colors.white, size: 40),
+  return AppBar(
+    title: Text(screenName, style: AppStyles.appBarTextStyle),
+    leading: IconButton(
+      icon: const Icon(Icons.keyboard_double_arrow_left,
+          color: Colors.white, size: 40),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    ),
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.leaderboard),
+        color: Colors.white,  // Uses the leaderboard icon
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const leaderboard.Leaderboard()
+            ),
+          );
         },
       ),
-      actions: [
-        IconButton(
+    ],
+    centerTitle: true,
+    flexibleSpace: Align(
+      alignment: Alignment.center,
+      child: Image(
+        image: const AssetImage("images/small_boomerang.jpg"),
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+}
+
+  static AppBar noBackArrowAppBarStyle(String screenName, dynamic context) {
+    return AppBar(
+        leading: IconButton(  
           icon: const Icon(Icons.info),
           color: Colors.white,
           onPressed: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
+                context,
+                MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
             );
           },
         ),
-        IconButton(
-          icon: const Icon(Icons.leaderboard),
-          color: Colors.white,  // Uses the leaderboard icon
-          onPressed: () {
-            // Define the action for when the icon is tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const leaderboard.Leaderboard()
-              ),
-            );
-          },
-        ),
-      ],
-      centerTitle: true,
-      flexibleSpace: Align(
-        alignment: Alignment.center,
-        child: Image(
-          image: const AssetImage("images/small_boomerang.jpg"),
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  static AppBar noBackArrowAppBarStyle(String screenName, dynamic context) {
-    return AppBar(
         title: Text(screenName, style: AppStyles.appBarTextStyle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.info),
-            color: Colors.white,
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Instructions(title: "Instr"))
-              );
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.leaderboard),
-            color: Colors.white,  // Uses the leaderboard icon
+            color: Colors.white,  
             onPressed: () {
-              // Define the action for when the icon is tapped
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -226,7 +214,7 @@ class AppStyles {
           ),
         )
     );
-  }
+}
 
   static AppBar noLeaderboardAppBarStyle(String screenName, BuildContext context) {
     return AppBar(

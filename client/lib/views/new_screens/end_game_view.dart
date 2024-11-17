@@ -52,58 +52,41 @@ class EndGameScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 
                 // Return Home Button
-                SizedBox(
-                  width: 200,
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.popUntil(context, (route) => route.isFirst);
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                      ),
-                    ),
+                    style: AppStyles.elevatedButtonStyle,
                     child: const Text(
                       'Return home',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 
                 const SizedBox(height: 20),
                 
-                // View Leaderboard Button
-                SizedBox(
-                  width: 200,
+             // View Leaderboard Button
+                Container(
+                  height: 50,
+                  width: 200,  
+                  decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add navigation to leaderboard screen here
                       Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Leaderboard())
+                        MaterialPageRoute(builder: (context) => const Leaderboard())
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                      ),
-                    ),
+                    style: AppStyles.elevatedButtonStyle,
                     child: const Text(
                       'View leaderboard',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.visible,  
+                      softWrap: false,  
                     ),
                   ),
                 ),
