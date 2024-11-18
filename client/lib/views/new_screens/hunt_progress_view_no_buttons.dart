@@ -73,7 +73,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => ChallengeViewNoButtons(currentChallenge: 1,),
+            builder: (context) => ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: 1,),
           ),
         );
       } else {

@@ -75,8 +75,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isWebSocketConnected) {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
+      final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
       connectWebSocket(context, huntProgressModel, webSocketModel);
       _isWebSocketConnected = true;
     }
@@ -192,7 +192,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _startHunt() async {
     try {
       final huntProgressModel =
-          Provider.of<HuntProgressModel>(context, listen: false);
+          Provider.of<HuntProgressModel>(context, listen: true);
       await makeTeam();
 
       setState(() {
@@ -712,4 +712,4 @@ Future<void> ShowDeleteConfirmationDialog(
       );
     },
   );
-}
+    }

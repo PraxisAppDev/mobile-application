@@ -19,7 +19,7 @@ import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
 class ChallengeViewNoButtons extends StatefulWidget {
   final int currentChallenge;
-  const ChallengeViewNoButtons({
+  const ChallengeViewNoButtons(String challengeId, {
     Key? key,
     required this.currentChallenge
   }) : super(key: key);
@@ -141,7 +141,7 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
       huntProgressModel.incrementCurrentChallenge();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ChallengeViewNoButtons(currentChallenge: widget.currentChallenge + 1,)),
+        MaterialPageRoute(builder: (context) => ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: widget.currentChallenge + 1,)),
       );
     } else {
       // Navigate to HuntProgressView or EndGameScreen if all challenges are completed

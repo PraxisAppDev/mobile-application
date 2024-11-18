@@ -4,6 +4,13 @@ import 'package:flutter/foundation.dart';
 class HuntProgressModel extends ChangeNotifier {
   // Variables that were passed from screen to screen, may need to be used in
   // API calls
+  String _playerName = '';
+  String get playerName => _playerName;
+  set playerName(String name) {
+    _playerName = name;
+    notifyListeners();
+  }
+
   late String huntName;
   late String venue;
   late String huntDate;
@@ -13,7 +20,6 @@ class HuntProgressModel extends ChangeNotifier {
   late String zipCode;
   late String teamId;
   late String teamName;
-  late String playerName;
 
   // Hunt Progress Screen variables
   late int totalSeconds;

@@ -139,8 +139,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
     return MaterialApp(
       home: Scaffold(
