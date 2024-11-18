@@ -114,7 +114,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     final playerName = huntProgressModel.playerName;
 
     if (playerName.isEmpty) {
-      print("Player name is empty.");
+      print("My Team Create View Player name is empty.");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Player name cannot be empty')),
       );

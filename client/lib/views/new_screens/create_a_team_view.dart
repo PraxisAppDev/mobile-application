@@ -103,6 +103,9 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       final teamName = _teamNameController.text.trim();
       final playerName = _playerNameController.text.trim();
 
+      model.teamName = teamName;
+      model.playerName = playerName;
+
       // Validate inputs
       if (teamName.isEmpty) {
         throw Exception("Team name cannot be empty");

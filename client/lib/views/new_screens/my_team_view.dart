@@ -344,7 +344,7 @@ class _TeamTileState extends State<TeamTile> {
 
 
    if (playerName.isEmpty) {
-     print("Player name is empty.");
+     print("My Team View Player name is empty.");
      ScaffoldMessenger.of(context).showSnackBar(
        const SnackBar(content: Text('Player name cannot be empty')),
      );
