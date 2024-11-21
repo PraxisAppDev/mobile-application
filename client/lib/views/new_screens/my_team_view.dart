@@ -197,64 +197,64 @@ Widget build(BuildContext context) {
                }
                    },
                  ),
-                 Padding(
-                     padding: const EdgeInsets.only(top: 30.0),
-                     child: Container(
-                       height: 50,
-                       width: 175,
-                       decoration: AppStyles.confirmButtonStyle,
-                       child: ElevatedButton(
-                         onPressed: () {
-                           huntProgressModel.totalSeconds = 0;
-                           huntProgressModel.totalPoints = 0;
-                           huntProgressModel.secondsSpentThisRound = 0;
-                           huntProgressModel.pointsEarnedThisRound = 0;
-                           huntProgressModel.currentChallenge = 0;
-
-
-                           Navigator.pushReplacement(
-                               context,
-                               MaterialPageRoute(
-                                   builder: (context) =>
-                                       HuntProgressViewNoButtons()));
-                         },
-                         style: AppStyles.elevatedButtonStyle,
-                         child: const Text('Progress NB'),
-                       ),
-                     )),
-                 Padding(
-                     padding: const EdgeInsets.only(top: 30.0),
-                     child: Container(
-                       height: 50,
-                       width: 175,
-                       decoration: AppStyles.confirmButtonStyle,
-                       child: ElevatedButton(
-                         onPressed: () {
-                           huntProgressModel.totalSeconds = 0;
-                           huntProgressModel.totalPoints = 0;
-                           huntProgressModel.secondsSpentThisRound = 0;
-                           huntProgressModel.pointsEarnedThisRound = 0;
-                           huntProgressModel.currentChallenge = 0;
-                           huntProgressModel.previousSeconds =
-                               huntProgressModel.totalSeconds;
-                           huntProgressModel.previousPoints =
-                               huntProgressModel.totalPoints;
-                           huntProgressModel.challengeId = "1";
-                           huntProgressModel.challengeNum = 0;
-                           //huntProgressModel.challengeId = challengeResponse[index]['id'];
-                           //huntProgressModel.challengeNum = index;
-
-
-                           Navigator.pushReplacement(
-                               context,
-                               MaterialPageRoute(
-                                   builder: (context) =>
-                                       ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: huntProgressModel.challengeNum)));
-                         },
-                         style: AppStyles.elevatedButtonStyle,
-                         child: const Text('Challenge NB'),
-                       ),
-                     )),
+                 // Padding(
+                 //     padding: const EdgeInsets.only(top: 30.0),
+                 //     child: Container(
+                 //       height: 50,
+                 //       width: 175,
+                 //       decoration: AppStyles.confirmButtonStyle,
+                 //       child: ElevatedButton(
+                 //         onPressed: () {
+                 //           huntProgressModel.totalSeconds = 0;
+                 //           huntProgressModel.totalPoints = 0;
+                 //           huntProgressModel.secondsSpentThisRound = 0;
+                 //           huntProgressModel.pointsEarnedThisRound = 0;
+                 //           huntProgressModel.currentChallenge = 0;
+                 //
+                 //
+                 //           Navigator.pushReplacement(
+                 //               context,
+                 //               MaterialPageRoute(
+                 //                   builder: (context) =>
+                 //                       HuntProgressViewNoButtons()));
+                 //         },
+                 //         style: AppStyles.elevatedButtonStyle,
+                 //         child: const Text('Progress NB'),
+                 //       ),
+                 //     )),
+                 // Padding(
+                 //     padding: const EdgeInsets.only(top: 30.0),
+                 //     child: Container(
+                 //       height: 50,
+                 //       width: 175,
+                 //       decoration: AppStyles.confirmButtonStyle,
+                 //       child: ElevatedButton(
+                 //         onPressed: () {
+                 //           huntProgressModel.totalSeconds = 0;
+                 //           huntProgressModel.totalPoints = 0;
+                 //           huntProgressModel.secondsSpentThisRound = 0;
+                 //           huntProgressModel.pointsEarnedThisRound = 0;
+                 //           huntProgressModel.currentChallenge = 0;
+                 //           huntProgressModel.previousSeconds =
+                 //               huntProgressModel.totalSeconds;
+                 //           huntProgressModel.previousPoints =
+                 //               huntProgressModel.totalPoints;
+                 //           huntProgressModel.challengeId = "1";
+                 //           huntProgressModel.challengeNum = 0;
+                 //           //huntProgressModel.challengeId = challengeResponse[index]['id'];
+                 //           //huntProgressModel.challengeNum = index;
+                 //
+                 //
+                 //           Navigator.pushReplacement(
+                 //               context,
+                 //               MaterialPageRoute(
+                 //                   builder: (context) =>
+                 //                       ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: huntProgressModel.challengeNum)));
+                 //         },
+                 //         style: AppStyles.elevatedButtonStyle,
+                 //         child: const Text('Challenge NB'),
+                 //       ),
+                 //     )),
                  Padding(
                      padding: const EdgeInsets.only(top: 30.0),
                      child: Container(

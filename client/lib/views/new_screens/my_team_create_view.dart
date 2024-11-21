@@ -46,7 +46,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   int _countdown = 3;
   Timer? _timer;
   final List<Color> memberColors = [Colors.blue, Colors.green, Colors.purple, Colors.red];
-  
+
   // Add member list tracking
   List<Map<String, dynamic>> _members = [];
   bool _isWebSocketConnected = false;
@@ -63,7 +63,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
         _isEditing = _focusNode.hasFocus;
       });
     });
-    
+
     // Initialize members list with team leader
     _members = [{
       'name': widget.playerName,
@@ -75,8 +75,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isWebSocketConnected) {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
-      final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
+      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+      final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
       connectWebSocket(context, huntProgressModel, webSocketModel);
       _isWebSocketConnected = true;
     }
@@ -121,8 +121,11 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       return;
     }
 
-    final wsUrl =
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
+    // final wsUrl =
+    //     'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
+    // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt/${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&playerId=oijf654dfe&huntAlone=false';
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&huntAlone=false';
+
     try {
       print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
@@ -139,6 +142,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                 'name': data['playerName'],
                 'teamLeader': false,
               };
+              // print("Condition: ${_members.any((member) => member['name'] == newPlayer['name'])}");
               if (!_members.any((member) => member['name'] == newPlayer['name'])) {
                 _members.add(newPlayer);
               }
@@ -192,7 +196,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _startHunt() async {
     try {
       final huntProgressModel =
-          Provider.of<HuntProgressModel>(context, listen: true);
+          Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -325,7 +329,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
 
   @override
   Widget build(BuildContext context) {
-    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
 
     return GestureDetector(
       onTap: _unfocusTextField,
@@ -426,6 +430,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                       }).toList(),
                     ),
                   ),
+                  for (var member in _members)
+                    Text(member.toString(), style: TextStyle(fontSize: 12, color: Colors.white)),
                   const SizedBox(height: 20),
                   Container(
                     height: 50,
@@ -617,7 +623,7 @@ final DotDivider = Row(
 
 Future<void> ShowDeleteConfirmationDialog(
     BuildContext context, String huntId, String teamId) async {
-  print(context.widget);
+  // print(context.widget);
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap a button!
@@ -712,4 +718,4 @@ Future<void> ShowDeleteConfirmationDialog(
       );
     },
   );
-    }
+}

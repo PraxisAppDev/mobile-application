@@ -183,7 +183,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                             ),
                                             Container(
                                               width: 5,
-                                              height: 150,
+                                              height: 160,
                                               margin: const EdgeInsets.only(right: 8.0),
                                               decoration: BoxDecoration(
                                                 color: index < huntProgressModel.currentChallenge
@@ -219,7 +219,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                         ),
                                         // Challenge container
                                         Container(
-                                          height: 135,
+                                          height: 160,
                                           width: 300,
                                           padding: const EdgeInsets.all(16),
                                           decoration: AppStyles.challengeBoxStyle(index, huntProgressModel.currentChallenge),
@@ -277,7 +277,7 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                               huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
                                                               huntProgressModel.previousPoints = huntProgressModel.totalPoints;
                                                               huntProgressModel.challengeName = challengeResponse[index]['description'];
-                                                              huntProgressModel.challengeId = challengeResponse[index]['id'];
+                                                              huntProgressModel.challengeId = challengeResponse[index]['challengeId'];
                                                               huntProgressModel.challengeNum = index;
 
                                                               Navigator.push(
@@ -344,7 +344,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                             ),
                                           ),
                                         ),
-
                                       ],
                                     ),
                                   ],
@@ -423,6 +422,8 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                               onPressed: () {
                                 setState(() {
                                   huntProgressModel.markHuntCompleted(huntProgressModel.currentHuntIndex);
+                                  huntProgressModel.totalPoints = 0;
+                                  // TODO: Reset fields for next challenge
                                 });
 
                                 Navigator.push(

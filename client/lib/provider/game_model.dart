@@ -15,6 +15,7 @@ class HuntProgressModel extends ChangeNotifier {
   late String teamId;
   late String teamName;
   late String playerName;
+  late String playerId;
 
   // Hunt Progress Screen variables
   late int totalSeconds;
