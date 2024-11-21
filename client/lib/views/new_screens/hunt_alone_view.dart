@@ -616,7 +616,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                     ),
                   ),
                   SizedBox(height: 15),
-                  Container(
+                  /*Container(
                     height: 50,
                     width: 175,
                     decoration: AppStyles.cancelButtonStyle,
@@ -629,7 +629,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       child: const Text('Delete Team',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                  ),
+                  ),*/
                 ],
               ),
             ],

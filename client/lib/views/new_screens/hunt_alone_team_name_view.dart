@@ -120,6 +120,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                 SizedBox(
                   width: 250,
                   child: TextField(
+                    onChanged: (value) {},
                     controller: _teamNameController,
                     focusNode: _focusNode,
                     style: const TextStyle(color: Colors.grey),
@@ -158,6 +159,8 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                           if (_teamNameController.text.trim().isEmpty) {
                             ShowEmptyTeamDialog(context);
                           } else {
+                            huntProgressModel.teamName =
+                                _teamNameController.text.trim();
                             Navigator.push(
                               context,
                               MaterialPageRoute(

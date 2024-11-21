@@ -5,7 +5,6 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
 import 'my_team_view.dart';
-import 'package:praxis_afterhours/apis/new_teams_api.dart' as teams_api;
 
 class JoinATeamView extends StatelessWidget {
   // final String huntID;
