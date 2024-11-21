@@ -4,20 +4,26 @@ import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view_no_buttons.dart';
+import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
-import 'package:provider/provider.dart';
-
-import '../../provider/game_model.dart';
 import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
+import 'package:provider/provider.dart';
+import '../../provider/game_model.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'dart:convert';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:praxis_afterhours/provider/websocket_model.dart';
 
 class MyTeamView extends StatelessWidget {
+  final String playerName; // Add this line to store the player's name
+
   // final String teamID;
   // final String huntID;
   // late String teamName;
   //
   // MyTeamView({super.key, required this.huntID, required this.teamID});
 
-  MyTeamView({super.key});
+  MyTeamView({super.key, required this.playerName});
 
   // Function to show the confirmation dialog for leaving a team
   Future<void> _showLeaveTeamConfirmation(BuildContext context) async {
@@ -153,11 +159,6 @@ class MyTeamView extends StatelessWidget {
     final huntProgressModel =
         Provider.of<HuntProgressModel>(context, listen: false);
 
-    // print("current huntID: $huntID");
-    // print("current teamID: $teamID");
-    //AUTOMATICALLY SHOWS TEAM FULL DIALOG AND THEN GAME STARTING DIALOG
-    //Future.delayed(Duration(seconds: 3), () => ShowTeamFullDialog(context));
-    //Future.delayed(Duration(seconds: 6), () => ShowGameStartDialog(context));
     return MaterialApp(
       home: Scaffold(
           appBar: AppStyles.appBarStyle("My Team", context),
@@ -174,74 +175,82 @@ class MyTeamView extends StatelessWidget {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
-                        // If the data was successfully retrieved, display it
-                        print(snapshot.data);
-                        huntProgressModel.teamName = snapshot.data!['name'];
+                        // Add the player name to the members list
+                        List<dynamic> members = snapshot.data!['players'];
+                        if (!members
+                            .any((member) => member['name'] == playerName)) {
+                          members
+                              .add({'name': playerName, 'teamLeader': false});
+                        }
+
                         return TeamTile(
-                            isLocked: snapshot.data!['lockStatus'],
-                            teamName: snapshot.data!['name'],
-                            members: snapshot.data!['players']);
+                          isLocked: snapshot.data!['lockStatus'],
+                          teamName: snapshot.data!['name'],
+                          members: members,
+                        );
                       } else {
                         return const Center(child: Text('No data available.'));
                       }
                     },
                   ),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 30.0),
-                      child: Container(
-                        height: 50,
-                        width: 175,
-                        decoration: AppStyles.confirmButtonStyle,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            huntProgressModel.totalSeconds = 0;
-                            huntProgressModel.totalPoints = 0;
-                            huntProgressModel.secondsSpentThisRound = 0;
-                            huntProgressModel.pointsEarnedThisRound = 0;
-                            huntProgressModel.currentChallenge = 0;
-
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        HuntProgressViewNoButtons()));
-                          },
-                          style: AppStyles.elevatedButtonStyle,
-                          child: const Text('Progress NB'),
-                        ),
-                      )),
-                  Padding(
-                      padding: const EdgeInsets.only(top: 30.0),
-                      child: Container(
-                        height: 50,
-                        width: 175,
-                        decoration: AppStyles.confirmButtonStyle,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            huntProgressModel.totalSeconds = 0;
-                            huntProgressModel.totalPoints = 0;
-                            huntProgressModel.secondsSpentThisRound = 0;
-                            huntProgressModel.pointsEarnedThisRound = 0;
-                            huntProgressModel.currentChallenge = 0;
-                            huntProgressModel.previousSeconds =
-                                huntProgressModel.totalSeconds;
-                            huntProgressModel.previousPoints =
-                                huntProgressModel.totalPoints;
-                            huntProgressModel.challengeId = "1";
-                            huntProgressModel.challengeNum = 0;
-                            //huntProgressModel.challengeId = challengeResponse[index]['id'];
-                            //huntProgressModel.challengeNum = index;
-
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ChallengeViewNoButtons()));
-                          },
-                          style: AppStyles.elevatedButtonStyle,
-                          child: const Text('Challenge NB'),
-                        ),
-                      )),
+                  // Padding(
+                  //     padding: const EdgeInsets.only(top: 30.0),
+                  //     child: Container(
+                  //       height: 50,
+                  //       width: 175,
+                  //       decoration: AppStyles.confirmButtonStyle,
+                  //       child: ElevatedButton(
+                  //         onPressed: () {
+                  //           huntProgressModel.totalSeconds = 0;
+                  //           huntProgressModel.totalPoints = 0;
+                  //           huntProgressModel.secondsSpentThisRound = 0;
+                  //           huntProgressModel.pointsEarnedThisRound = 0;
+                  //           huntProgressModel.currentChallenge = 0;
+                  //
+                  //
+                  //           Navigator.pushReplacement(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                   builder: (context) =>
+                  //                       HuntProgressViewNoButtons()));
+                  //         },
+                  //         style: AppStyles.elevatedButtonStyle,
+                  //         child: const Text('Progress NB'),
+                  //       ),
+                  //     )),
+                  // Padding(
+                  //     padding: const EdgeInsets.only(top: 30.0),
+                  //     child: Container(
+                  //       height: 50,
+                  //       width: 175,
+                  //       decoration: AppStyles.confirmButtonStyle,
+                  //       child: ElevatedButton(
+                  //         onPressed: () {
+                  //           huntProgressModel.totalSeconds = 0;
+                  //           huntProgressModel.totalPoints = 0;
+                  //           huntProgressModel.secondsSpentThisRound = 0;
+                  //           huntProgressModel.pointsEarnedThisRound = 0;
+                  //           huntProgressModel.currentChallenge = 0;
+                  //           huntProgressModel.previousSeconds =
+                  //               huntProgressModel.totalSeconds;
+                  //           huntProgressModel.previousPoints =
+                  //               huntProgressModel.totalPoints;
+                  //           huntProgressModel.challengeId = "1";
+                  //           huntProgressModel.challengeNum = 0;
+                  //           //huntProgressModel.challengeId = challengeResponse[index]['id'];
+                  //           //huntProgressModel.challengeNum = index;
+                  //
+                  //
+                  //           Navigator.pushReplacement(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                   builder: (context) =>
+                  //                       ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: huntProgressModel.challengeNum)));
+                  //         },
+                  //         style: AppStyles.elevatedButtonStyle,
+                  //         child: const Text('Challenge NB'),
+                  //       ),
+                  //     )),
                   Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Container(
@@ -282,13 +291,146 @@ class TeamTile extends StatefulWidget {
 }
 
 class _TeamTileState extends State<TeamTile> {
-  // Text controller for the new member input
+  bool _isWebSocketConnected = false;
   final TextEditingController _newMemberController = TextEditingController();
-  bool hasAddedMember =
-      false; //Track if a member has already been added to team
+  bool hasAddedMember = false;
+  List<Map<String, dynamic>> _members = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _members = List<Map<String, dynamic>>.from(widget.members);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isWebSocketConnected) {
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
+      final webSocketModel =
+          Provider.of<WebSocketModel>(context, listen: false);
+      connectWebSocket(context, huntProgressModel, webSocketModel);
+      _isWebSocketConnected = true;
+    }
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void connectWebSocket(
+      BuildContext context,
+      HuntProgressModel huntProgressModel,
+      WebSocketModel webSocketModel) async {
+    final playerName = huntProgressModel.playerName;
+
+    if (playerName.isEmpty) {
+      print("My Team View Player name is empty.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Player name cannot be empty')),
+      );
+      return;
+    }
+
+// rays hardcoded for now, needs to be changed for actual team id.
+    final wsUrl =
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      webSocketModel.connect(wsUrl);
+      print('WebSocket connected successfully.');
+      final channel = webSocketModel.messages;
+      channel.listen(
+        (message) {
+          final Map<String, dynamic> data = json.decode(message);
+          final String eventType = data['eventType'];
+
+          if (eventType == "PLAYER_JOINED_TEAM") {
+            setState(() {
+              final newPlayer = {
+                'name': data['playerName'],
+                'teamLeader': false,
+              };
+              if (!_members
+                  .any((member) => member['name'] == newPlayer['name'])) {
+                _members.add(newPlayer);
+              }
+            });
+            showToast("${data['playerName']} joined team");
+          } else if (eventType == "PLAYER_LEFT_TEAM") {
+            setState(() {
+              _members.removeWhere(
+                  (member) => member['name'] == data['playerName']);
+            });
+            showToast("${data['playerName']} left team");
+          } else if (eventType == "HUNT_STARTED") {
+            showToast("Hunt started");
+            huntProgressModel.totalSeconds = 0;
+            huntProgressModel.totalPoints = 0;
+            huntProgressModel.secondsSpentThisRound = 0;
+            huntProgressModel.pointsEarnedThisRound = 0;
+            huntProgressModel.currentChallenge = 0;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HuntProgressViewNoButtons()),
+            );
+          } else if (eventType == "HUNT_ENDED") {
+            showToast("Hunt ended");
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => EndGameScreen()),
+            );
+          } else if (eventType == "CHALLENGE_RESPONSE") {
+            showToast("Challenge response");
+            huntProgressModel.totalSeconds = 0;
+            huntProgressModel.totalPoints = 0;
+            huntProgressModel.secondsSpentThisRound = 0;
+            huntProgressModel.pointsEarnedThisRound = 0;
+            huntProgressModel.currentChallenge = 0;
+            huntProgressModel.previousSeconds = huntProgressModel.totalSeconds;
+            huntProgressModel.previousPoints = huntProgressModel.totalPoints;
+            huntProgressModel.challengeId = "1";
+            huntProgressModel.challengeNum = 0;
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChallengeViewNoButtons(
+                      huntProgressModel.challengeId,
+                      currentChallenge: huntProgressModel.challengeNum)),
+            );
+          }
+          print('Received message: $message');
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+        },
+        onDone: () {
+          print('WebSocket connection closed.');
+          showToast("WebSocket connection closed");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to connect to WebSocket: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context);
     return Padding(
         padding: EdgeInsets.only(top: 50),
         child: Card(
@@ -308,18 +450,15 @@ class _TeamTileState extends State<TeamTile> {
                             style:
                                 AppStyles.logisticsStyle.copyWith(fontSize: 24),
                           ),
-                          //TODO: Should length be hard coded at 4?
                           Text(
-                            "(${widget.members.length}/4)",
+                            "(${_members.length}/4)",
                             style:
                                 AppStyles.logisticsStyle.copyWith(fontSize: 24),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 10),
                     Padding(
                       padding: EdgeInsets.only(left: 15),
                       child: Text(
@@ -329,103 +468,42 @@ class _TeamTileState extends State<TeamTile> {
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: widget.members.asMap().entries.map((entry) {
+                      children: _members.asMap().entries.map((entry) {
                         int index = entry.key;
                         String member = entry.value['name'];
                         bool teamLeader = entry.value['teamLeader'];
 
-                        return Column(children: [
-                          Divider(
+                        return Column(
+                          children: [
+                            Divider(
                               color: Colors.grey,
                               indent: 15,
                               endIndent: 15,
-                              height: 1),
-                          ListTile(
-                            leading:
-                                Icon(Icons.person, color: widget.colors[index]),
-                            title: Row(
-                              children: [
-                                /*if (index == 3)
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        color: Color(0xff363737),
-                                        border: Border.all(color: Colors.grey)),
-                                    child: Row(children: [
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.5,
-                                        child: TextFormField(
-                                            cursorColor: Colors.white,
-                                            decoration: InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                border: InputBorder.none,
-                                                focusedBorder:
-                                                    InputBorder.none),
-                                            initialValue: "Isa",
-                                            style: AppStyles.logisticsStyle),
-                                      ),
-                                      IconButton(
-                                          icon: Icon(Icons.create_outlined,
-                                              color: Colors.grey),
-                                          onPressed: () {
-                                            //TODO: Push name change
-                                          })
-                                    ]),
-                                  ),*/
-                                Text(
-                                  member,
-                                  style: AppStyles.logisticsStyle,
-                                ),
-                                if (teamLeader) // Add crown to the first member
-                                  const Padding(
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    child:
-                                        Icon(Icons.star, color: Colors.amber),
-                                  ),
-                              ],
+                              height: 1,
                             ),
-                          )
-                        ]);
+                            ListTile(
+                              leading: Icon(Icons.person,
+                                  color: widget
+                                      .colors[index % widget.colors.length]),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    member,
+                                    style: AppStyles.logisticsStyle,
+                                  ),
+                                  if (teamLeader)
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 8.0),
+                                      child:
+                                          Icon(Icons.star, color: Colors.amber),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
                       }).toList(),
                     ),
-                    if (widget.members.length < 4 && !hasAddedMember) ...[
-                      const Divider(
-                          color: Colors.grey,
-                          indent: 15,
-                          endIndent: 15,
-                          height: 1),
-                      ListTile(
-                        leading: Icon(Icons.person_add, color: Colors.grey),
-                        title: TextField(
-                          controller: _newMemberController,
-                          decoration: InputDecoration(
-                            hintText: "Enter new member name",
-                            hintStyle: AppStyles.logisticsStyle
-                                .copyWith(color: Colors.grey),
-                            border: InputBorder.none,
-                            suffixIcon: IconButton(
-                              icon:
-                                  const Icon(Icons.check, color: Colors.green),
-                              onPressed: () {
-                                setState(() {
-                                  widget.members.add({
-                                    'name': _newMemberController.text,
-                                    'teamLeader': false,
-                                  });
-                                  _newMemberController.clear();
-                                  hasAddedMember =
-                                      true; //Set flag prevent furthur additions to team
-                                });
-                              },
-                            ),
-                          ),
-                          style: AppStyles.logisticsStyle,
-                        ),
-                      ),
-                    ],
                     SizedBox(height: 20),
                   ])),
         ));

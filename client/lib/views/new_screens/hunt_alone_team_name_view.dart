@@ -72,12 +72,9 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              huntProgressModel.huntName,
-                              textAlign: TextAlign.left,
-                              style: AppStyles.titleStyle.copyWith(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
+                            Text(huntProgressModel.huntName,
+                                textAlign: TextAlign.left,
+                                style: AppStyles.logisticsStyle),
                           ],
                         ),
                         const SizedBox(height: 20),
@@ -120,7 +117,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Container(
+                SizedBox(
                   width: 250,
                   child: TextField(
                     controller: _teamNameController,
@@ -257,71 +254,4 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
       },
     );
   }
-}
-
-//Tells players the game is starting, dissappears after 3 seconds
-Future<void> ShowEmptyTeamDialog(context) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: true, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          backgroundColor: Colors.black,
-          contentPadding: EdgeInsets.all(0),
-          content: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                gradient: const LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: <Color>[
-                    Color(0xff261919),
-                    Color(0xff332323),
-                    Color(0xff261919),
-                  ],
-                  stops: [0.0, 0.5, 1.0],
-                ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 45,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 32,
-                          ),
-                          Expanded(
-                            child: DotDivider,
-                          ),
-                          SizedBox(
-                              width: 32,
-                              child: IconButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  icon: Icon(Icons.close, color: Colors.white)))
-                        ],
-                      ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        'Your team name cannot be empty!',
-                        style: AppStyles.titleStyle.copyWith(fontSize: 20),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    SizedBox(height: 45, child: DotDivider)
-                  ],
-                ),
-              )));
-    },
-  );
 }

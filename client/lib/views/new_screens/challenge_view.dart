@@ -176,6 +176,9 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
       decoration: AppStyles.infoBoxStyle,
@@ -185,8 +188,13 @@ class _HeaderWidgetState extends State<HeaderWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              // Text(
+              //   _challengeData['description'] ?? 'Challenge Description',
+              //   style: AppStyles.logisticsStyle
+              //       .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+              // ),
               Text(
-                _challengeData['description'] ?? 'Challenge Description',
+                huntProgressModel.challengeName,
                 style: AppStyles.logisticsStyle
                     .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -525,6 +533,25 @@ class _ChallengeContentState extends State<ChallengeContent> {
                     'This is a question about something...',
                     style: AppStyles.logisticsStyle,
                   ),
+                  const SizedBox(height: 10),
+                  Center(
+                      child: _challengeData['url'] != null
+                          ? Image.network(
+                              _challengeData['url'],
+                              height: constraints.maxHeight * 0.2,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Text(
+                                  'clueUrl could not be displayed',
+                                  style: TextStyle(color: Colors.white),
+                                );
+                              },
+                            )
+                          //     : const Text(
+                          //   'Picture (if needed)',
+                          //   style: TextStyle(color: Colors.white),
+                          // ),
+                          : Image.asset("images/huntLogo.png",
+                              height: 150, width: 150)),
                   /*const SizedBox(height: 10),
                   Center(
                     child: _challengeData['clueUrl'] != null
@@ -584,6 +611,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
             // Submit Button
 
             Container(
+              height: 50,
+              width: 115,
               decoration: AppStyles.confirmButtonStyle,
               child: ElevatedButton(
                 onPressed: _submitAnswer,
@@ -664,7 +693,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   // Hint Button
                   Container(
                     height: 33,
-                    decoration: AppStyles.challengeButtonStyle,
+                    decoration: AppStyles.hintBoxStyle,
                     child: ElevatedButton(
                       onPressed: _revealHint,
                       style: AppStyles.elevatedButtonStyle,

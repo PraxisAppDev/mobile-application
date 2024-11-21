@@ -1,4 +1,4 @@
-const WebSocket = require('ws');
+const WebSocket = require('ws')
 const socket = new WebSocket('ws://afterhours.praxiseng.com/ws/hunt?huntId=1&teamId=rays&playerName=Jim&huntAlone=true');
 socket.onopen = () => {
   console.log('WebSocket connection opened');

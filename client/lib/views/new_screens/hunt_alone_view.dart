@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/views/new_screens/leaderboard.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
@@ -11,9 +13,10 @@ import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
 import 'package:praxis_afterhours/apis/post_join_team.dart';
-import 'package:provider/provider.dart';
-
 import '../../provider/game_model.dart';
+import 'package:provider/provider.dart';
+import '../../provider/websocket_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HuntAloneView extends StatefulWidget {
   // String teamName;
@@ -236,6 +239,86 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
+  // void showSnackbarMessage(String message) {
+  //   if (mounted) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(message)),
+  //     );
+  //   }
+  // }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void handleMessage(BuildContext context, String message) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+  }
+
+  void connectWebSocket(
+      BuildContext context,
+      HuntProgressModel huntProgressModel,
+      WebSocketModel webSocketModel) async {
+    final playerName = _playerNameController.text.trim();
+    if (playerName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Player name cannot be empty')),
+      );
+      return;
+    }
+
+    final wsUrl =
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${huntProgressModel.teamName}&playerName=$playerName&huntAlone=true';
+    try {
+      print('Connecting to WebSocket at: $wsUrl');
+      webSocketModel.connect(wsUrl);
+      print('Connected to WebSocket. Awaiting messages...');
+      final channel = webSocketModel.messages;
+      channel.listen(
+        (message) {
+          try {
+            final Map<String, dynamic> data = json.decode(message);
+            final String eventType = data['eventType'];
+            if (eventType == "PLAYER_JOIN_TEAM") {
+              showToast("${data['playerName']} joined team");
+            } else if (eventType == "PLAYER_LEFT_TEAM") {
+              showToast("${data['playerName']} left team");
+            } else if (eventType == "HUNT_STARTED") {
+              showToast("Hunt started");
+            } else if (eventType == "HUNT_ENDED") {
+              showToast("Hunt ended");
+            } else if (eventType == "CHALLENGE_RESPONSE") {
+              showToast("Challenge response");
+            }
+          } catch (e) {
+            print(e);
+          }
+          print('Received message: $message');
+        },
+        onError: (error) {
+          print('WebSocket error: $error');
+          showToast("WebSocket error: $error");
+        },
+        onDone: () {
+          print('WebSocket closed');
+          showToast("Websocket closed");
+        },
+        cancelOnError: true,
+      );
+    } catch (e) {
+      print('Failed to connect to WebSocket: $e');
+    }
+  }
+
   Future<void> makeTeam(HuntProgressModel model) async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
@@ -255,7 +338,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  void _startHunt() async {
+  void _startHunt(HuntProgressModel huntProgressModel) async {
     String playerName = _playerNameController.text.trim();
     if (playerName.isEmpty) {
       showNoPlayerNameDialog(context);
@@ -377,6 +460,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   Widget build(BuildContext context) {
     final huntProgressModel =
         Provider.of<HuntProgressModel>(context, listen: false);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
     return GestureDetector(
       onTap: _unfocusTextField,
@@ -386,11 +470,13 @@ class _HuntAloneViewState extends State<HuntAloneView> {
           decoration: AppStyles.backgroundStyle,
           child: Column(
             children: [
-              SizedBox(height: 10),
+              SizedBox(height: 50),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: EdgeInsets.all(8),
+                  width: 350,
+                  height: 150,
+                  padding: EdgeInsets.all(16),
                   decoration: AppStyles.infoBoxStyle,
                   child: Column(
                     children: [
@@ -399,11 +485,11 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           Text(
                             huntProgressModel.huntName,
                             textAlign: TextAlign.left,
-                            style: AppStyles.titleStyle.copyWith(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                            style: AppStyles.logisticsStyle,
                           ),
                         ],
                       ),
+                      SizedBox(height: 20),
                       Row(
                         children: [
                           Icon(Icons.location_pin, color: Colors.white),
@@ -413,7 +499,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           Icon(Icons.calendar_month, color: Colors.white),
@@ -510,41 +596,42 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       },
                     )),
               ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 50,
-                      width: 175,
-                      decoration: AppStyles.confirmButtonStyle,
-                      child: ElevatedButton(
-                        onPressed: _startHunt,
-                        style: AppStyles.elevatedButtonStyle,
-                        child: const Text('Start Hunt',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
+              SizedBox(height: 30),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 50,
+                    width: 175,
+                    decoration: AppStyles.confirmButtonStyle,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        connectWebSocket(
+                            context, huntProgressModel, webSocketModel);
+                        _startHunt(huntProgressModel);
+                      },
+                      style: AppStyles.elevatedButtonStyle,
+                      child: const Text('Start Hunt',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                    SizedBox(height: 15),
-                    Container(
-                      height: 50,
-                      width: 175,
-                      decoration: AppStyles.cancelButtonStyle,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ShowDeleteConfirmationDialog(
-                              context,
-                              huntProgressModel.huntId,
-                              huntProgressModel.teamId);
-                        },
-                        style: AppStyles.elevatedButtonStyle,
-                        child: const Text('Delete Team',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
+                  ),
+                  SizedBox(height: 15),
+                  Container(
+                    height: 50,
+                    width: 175,
+                    decoration: AppStyles.cancelButtonStyle,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ShowDeleteConfirmationDialog(context,
+                            huntProgressModel.huntId, huntProgressModel.teamId);
+                      },
+                      style: AppStyles.elevatedButtonStyle,
+                      child: const Text('Delete Team',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
-                  ],
-                ),
-              )
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -632,6 +719,8 @@ Future<void> ShowDeleteConfirmationDialog(
                   children: [
                     // No Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.cancelButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
@@ -647,6 +736,8 @@ Future<void> ShowDeleteConfirmationDialog(
                     ),
                     // Yes Button
                     Container(
+                      height: 50,
+                      width: 80,
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
@@ -794,7 +885,7 @@ Future<void> showNoPlayerNameDialog(context) async {
                     ),
                     Flexible(
                       child: Text(
-                        'Your player name cannot be empty',
+                        'Your player name cannot be empty!',
                         style: AppStyles.titleStyle.copyWith(fontSize: 20),
                         textAlign: TextAlign.center,
                       ),
