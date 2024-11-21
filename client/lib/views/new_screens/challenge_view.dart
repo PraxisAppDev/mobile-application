@@ -193,10 +193,12 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               //   style: AppStyles.logisticsStyle
               //       .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
               // ),
-              Text(
-                huntProgressModel.challengeName,
-                style: AppStyles.logisticsStyle
-                    .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+              Flexible(
+                child: Text(
+                  "Challenge ${huntProgressModel.challengeNum + 1}",
+                  style: AppStyles.logisticsStyle
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               Row(
                 children: [
@@ -530,7 +532,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'This is a question about something...',
+                    _challengeData['description'],
                     style: AppStyles.logisticsStyle,
                   ),
                   const SizedBox(height: 10),
@@ -551,7 +553,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                           //   style: TextStyle(color: Colors.white),
                           // ),
                           : Image.asset("images/huntLogo.png",
-                              height: 150, width: 150)),
+                              height: 50, width: 50)),
                   /*const SizedBox(height: 10),
                   Center(
                     child: _challengeData['clueUrl'] != null
@@ -587,6 +589,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                 ),
                 const SizedBox(height: 5),
                 Container(
+                  height: 33,
                   decoration: AppStyles.textFieldStyle,
                   child: TextField(
                     controller: _answerController,
@@ -594,7 +597,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
                       hintText: 'Enter answer here...',
                       hintStyle: TextStyle(color: Colors.grey),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
                       suffixIcon: Icon(
                         Icons.edit,
                         color: Colors.grey,
@@ -611,7 +613,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
             // Submit Button
 
             Container(
-              height: 50,
+              height: 33,
               width: 115,
               decoration: AppStyles.confirmButtonStyle,
               child: ElevatedButton(
@@ -625,7 +627,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
             if (_hintIndex > -1)
               Container(
-                height: MediaQuery.of(context).size.height * 0.20,
+                height: MediaQuery.of(context).size.height * 0.15,
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
                 child: CupertinoScrollbar(
@@ -642,28 +644,28 @@ class _ChallengeContentState extends State<ChallengeContent> {
                         itemCount: _hints.length,
                         itemBuilder: (context, index) {
                           if (index < _hintIndex) {
-                            return Column(children: [
-                              Text(
-                                _hints[index]['description'],
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              Image.network(
-                                _hints[index]['url'],
-                                height: 100,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Text(
-                                    'Image not available',
-                                    style: TextStyle(color: Colors.white),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 10),
-                            ]);
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hint ${index + 1}: ${_hints[index]['description']}",
+                                    style: AppStyles.logisticsStyle,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  if (_hints[index]['url'] != null)
+                                    Image.network(
+                                      _hints[index]['url'],
+                                      height: 100,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Text(
+                                          'Image not available',
+                                          style: TextStyle(color: Colors.white),
+                                        );
+                                      },
+                                    ),
+                                  SizedBox(height: 10),
+                                ]);
                           } else {
                             return null;
                           }
