@@ -45,7 +45,12 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
-  final List<Color> memberColors = [Colors.blue, Colors.green, Colors.purple, Colors.red];
+  final List<Color> memberColors = [
+    Colors.blue,
+    Colors.green,
+    Colors.purple,
+    Colors.red
+  ];
 
   // Add member list tracking
   List<Map<String, dynamic>> _members = [];
@@ -65,18 +70,22 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     });
 
     // Initialize members list with team leader
-    _members = [{
-      'name': widget.playerName,
-      'teamLeader': true,
-    }];
+    _members = [
+      {
+        'name': widget.playerName,
+        'teamLeader': true,
+      }
+    ];
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isWebSocketConnected) {
-      final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-      final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+      final huntProgressModel =
+      Provider.of<HuntProgressModel>(context, listen: false);
+      final webSocketModel =
+      Provider.of<WebSocketModel>(context, listen: false);
       connectWebSocket(context, huntProgressModel, webSocketModel);
       _isWebSocketConnected = true;
     }
@@ -108,9 +117,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   }
 
   void connectWebSocket(
-    BuildContext context,
-    HuntProgressModel huntProgressModel,
-    WebSocketModel webSocketModel) async {
+      BuildContext context,
+      HuntProgressModel huntProgressModel,
+      WebSocketModel webSocketModel) async {
     final playerName = huntProgressModel.playerName;
 
     if (playerName.isEmpty) {
@@ -124,7 +133,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     // final wsUrl =
     //     'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
     // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt/${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&playerId=oijf654dfe&huntAlone=false';
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&huntAlone=false';
+    final wsUrl =
+        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&huntAlone=false';
 
     try {
       print('Connecting to WebSocket at: $wsUrl');
@@ -132,7 +142,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       print('WebSocket connected successfully.');
       final channel = webSocketModel.messages;
       channel.listen(
-        (message) {
+            (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
 
@@ -143,14 +153,16 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                 'teamLeader': false,
               };
               // print("Condition: ${_members.any((member) => member['name'] == newPlayer['name'])}");
-              if (!_members.any((member) => member['name'] == newPlayer['name'])) {
+              if (!_members
+                  .any((member) => member['name'] == newPlayer['name'])) {
                 _members.add(newPlayer);
               }
             });
             showToast("${data['playerName']} joined team");
           } else if (eventType == "PLAYER_LEFT_TEAM") {
             setState(() {
-              _members.removeWhere((member) => member['name'] == data['playerName']);
+              _members.removeWhere(
+                      (member) => member['name'] == data['playerName']);
             });
             showToast("${data['playerName']} left team");
           } else if (eventType == "HUNT_STARTED") {
@@ -177,17 +189,14 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   }
 
   Future<void> makeTeam() async {
+    final model = Provider.of<HuntProgressModel>(context, listen: false);
     String teamName = _teamNameController.text.trim();
     if (teamName.isEmpty) {
       throw Exception("Team name cannot be empty");
     }
-
     try {
-      final postResponse = await createTeam(
-          widget.huntId, widget.teamName, widget.playerName, true);
-      _updatedTeamId =
-          postResponse['teamId']; // new team ID returned when team was created
-      await startHunt(widget.huntId, _updatedTeamId!);
+      createTeam(model.huntId, model.teamName, model.playerName, true);
+      await startHunt(model.huntId, model.teamId);
     } catch (e) {
       throw e;
     }
@@ -196,7 +205,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _startHunt() async {
     try {
       final huntProgressModel =
-          Provider.of<HuntProgressModel>(context, listen: false);
+      Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -342,137 +351,143 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
               fit: BoxFit.cover,
             ),
           ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    "Team Name",
-                    style: AppStyles.logisticsStyle,
-                  ),
-                  const SizedBox(width: 350, child: Divider(thickness: 2)),
-                  Container(
-                    height: 75,
-                    width: 325,
-                    padding: const EdgeInsets.all(16),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Row(
-                      children: [
-                        Icon(Icons.person, color: Colors.white),
-                        const SizedBox(width: 5),
-                        SizedBox(
-                          width: 250,
-                          child: TextField(
-                            controller: _teamNameController,
-                            focusNode: _focusNode,
-                            decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.check, color: Colors.white),
-                                onPressed: _updateTeamName,
-                              ),
-                              border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: Colors.white),
-                              ),
-                              hintText: _isEditing ? null : widget.teamName,
-                              labelStyle: const TextStyle(color: Colors.white, fontSize: 14),
-                              filled: true,
-                              fillColor: Colors.grey,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                Text(
+                  "Team Name",
+                  style: AppStyles.logisticsStyle,
+                ),
+                const SizedBox(width: 350, child: Divider(thickness: 2)),
+                Container(
+                  height: 75,
+                  width: 325,
+                  padding: const EdgeInsets.all(16),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Row(
+                    children: [
+                      Icon(Icons.person, color: Colors.white),
+                      const SizedBox(width: 5),
+                      SizedBox(
+                        width: 250,
+                        child: TextField(
+                          controller: _teamNameController,
+                          focusNode: _focusNode,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.check, color: Colors.white),
+                              onPressed: _updateTeamName,
                             ),
-                            onSubmitted: (value) {
-                              _updateTeamName();
-                            },
-                            style: const TextStyle(color: Colors.white),
+                            border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                            hintText: _isEditing ? null : widget.teamName,
+                            labelStyle: const TextStyle(
+                                color: Colors.white, fontSize: 14),
+                            filled: true,
+                            fillColor: Colors.grey,
                           ),
+                          onSubmitted: (value) {
+                            _updateTeamName();
+                          },
+                          style: const TextStyle(color: Colors.white),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Team Members (${_members.length}/4)",
-                    style: AppStyles.logisticsStyle,
-                  ),
-                  const SizedBox(width: 350, child: Divider(thickness: 2)),
-                  // Member List
-                  Container(
-                    width: 325,
-                    decoration: AppStyles.infoBoxStyle,
-                    child: Column(
-                      children: _members.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        Map<String, dynamic> member = entry.value;
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Row(
-                            children: [
-                              Icon(Icons.person, color: memberColors[index % memberColors.length]),
-                              const SizedBox(width: 10),
-                              Text(
-                                member['name'],
-                                style: AppStyles.logisticsStyle,
-                              ),
-                              const Spacer(),
-                              if (member['teamLeader'])
-                                Icon(FontAwesomeIcons.crown, color: Color(0xFFFFD700)),
-                              if (member['name'] == widget.playerName)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    "(Me)",
-                                    style: AppStyles.logisticsStyle,
-                                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  "Team Members (${_members.length}/4)",
+                  style: AppStyles.logisticsStyle,
+                ),
+                const SizedBox(width: 350, child: Divider(thickness: 2)),
+                // Member List
+                Container(
+                  width: 325,
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Column(
+                    children: _members.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Map<String, dynamic> member = entry.value;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person,
+                                color:
+                                memberColors[index % memberColors.length]),
+                            const SizedBox(width: 10),
+                            Text(
+                              member['name'],
+                              style: AppStyles.logisticsStyle,
+                            ),
+                            const Spacer(),
+                            if (member['teamLeader'])
+                              Icon(FontAwesomeIcons.crown,
+                                  color: Color(0xFFFFD700)),
+                            if (member['name'] == widget.playerName)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  "(Me)",
+                                  style: AppStyles.logisticsStyle,
                                 ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                              ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                // for (var member in _members)
+                //   Text(member.toString(),
+                //       style: TextStyle(fontSize: 12, color: Colors.white)),
+                const SizedBox(height: 20),
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.confirmButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _startHunt();
+                      _updateTeamName();
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text(
+                      'Start Hunt',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  for (var member in _members)
-                    Text(member.toString(), style: TextStyle(fontSize: 12, color: Colors.white)),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.confirmButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _startHunt();
-                        _updateTeamName();
-                      },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text(
-                        'Start Hunt',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.cancelButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ShowDeleteConfirmationDialog(
+                          context, widget.huntId, widget.teamId);
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text(
+                      'Delete Team',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.cancelButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ShowDeleteConfirmationDialog(
-                            context, widget.huntId, widget.teamId);
-                      },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text(
-                        'Delete Team',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }
 
