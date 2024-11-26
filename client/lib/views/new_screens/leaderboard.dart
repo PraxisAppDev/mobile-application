@@ -42,7 +42,7 @@ class _LeaderboardState extends State<Leaderboard> {
               } else if (snapshot.hasData) {
                 final data = snapshot.data ?? {};
                 // print(data);
-                
+
                 String huntName = data['name'];
                 String formattedDate = formatDate(data['startDate']);
                 List<dynamic> teams = data['teams'] ?? [];
@@ -99,190 +99,239 @@ class _LeaderboardState extends State<Leaderboard> {
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 20),
                                 decoration: AppStyles.infoBoxStyle,
-                                child: ExpansionTile(
-                                  leading: Container(
-                                    padding: const EdgeInsets.all(2.0),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color:
-                                            Colors.white, // Color of the ring
-                                        width: 2.0, // Thickness of the ring
-                                      ),
-                                    ),
-                                    child: CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      child: Text("${index + 1}",
+                                child: (challengeResults.length > 0)
+                                    ? ExpansionTile(
+                                        leading: Container(
+                                          padding: const EdgeInsets.all(2.0),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors
+                                                  .white, // Color of the ring
+                                              width:
+                                                  2.0, // Thickness of the ring
+                                            ),
+                                          ),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: Text("${index + 1}",
+                                                style: AppStyles.logisticsStyle
+                                                    .copyWith(fontSize: 24)),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          team['name'],
                                           style: AppStyles.logisticsStyle
-                                              .copyWith(fontSize: 24)),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    team['name'],
-                                    style: AppStyles.logisticsStyle
-                                        .copyWith(fontSize: 24),
-                                  ),
-                                  backgroundColor: Colors.transparent,
-                                  collapsedBackgroundColor: Colors.transparent,
-                                  // trailing: const Icon(Icons.arrow_drop_down,
-                                  //     color: Colors.white,
-                                  //     size: 50),
-                                  iconColor: Colors.white,
-                                  collapsedIconColor: Colors.white,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 12),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                              .copyWith(fontSize: 24),
+                                        ),
+                                        backgroundColor: Colors.transparent,
+                                        collapsedBackgroundColor:
+                                            Colors.transparent,
+                                        // trailing: const Icon(Icons.arrow_drop_down,
+                                        //     color: Colors.white,
+                                        //     size: 50),
+                                        iconColor: Colors.white,
+                                        collapsedIconColor: Colors.white,
                                         children: [
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  right: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 1),
-                                                ),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              child: Text(
-                                                "Challenge",
-                                                style: AppStyles.logisticsStyle
-                                                    .copyWith(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border(
-                                                  right: BorderSide(
-                                                      color: Colors.white,
-                                                      width: 1),
-                                                ),
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              child: Text(
-                                                "Score",
-                                                style: AppStyles.logisticsStyle
-                                                    .copyWith(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              "Time",
-                                              style: AppStyles.logisticsStyle
-                                                  .copyWith(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Divider below header
-                                    Divider(
-                                      color: Colors.white,
-                                      thickness: 1,
-                                      height: 1,
-                                      indent: 15,
-                                      endIndent: 15,
-                                    ),
-                                    for (var i = 0;
-                                        i < challengeResults.length;
-                                        i++) ...[
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 12),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    right: BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1),
-                                                  ),
-                                                ),
-                                                padding: const EdgeInsets.only(
-                                                    right: 8),
-                                                child: Text(
-                                                  "Challenge ${challengeResults[i]["_id"]}",
-                                                  style: AppStyles
-                                                      .logisticsStyle
-                                                      .copyWith(fontSize: 16),
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border(
-                                                    right: BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1),
-                                                  ),
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.symmetric(
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 12),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        right: BorderSide(
+                                                            color: Colors.white,
+                                                            width: 1),
+                                                      ),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                         horizontal: 8),
-                                                child: Text(
-                                                  "${challengeResults[i]['score']}",
-                                                  style: AppStyles
-                                                      .logisticsStyle
-                                                      .copyWith(fontSize: 16),
-                                                  textAlign: TextAlign.center,
+                                                    child: Text(
+                                                      "Challenge",
+                                                      style: AppStyles
+                                                          .logisticsStyle
+                                                          .copyWith(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
                                                 ),
+                                                Expanded(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        right: BorderSide(
+                                                            color: Colors.white,
+                                                            width: 1),
+                                                      ),
+                                                    ),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8),
+                                                    child: Text(
+                                                      "Score",
+                                                      style: AppStyles
+                                                          .logisticsStyle
+                                                          .copyWith(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: Text(
+                                                    "Time",
+                                                    style: AppStyles
+                                                        .logisticsStyle
+                                                        .copyWith(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          // Divider below header
+                                          Divider(
+                                            color: Colors.white,
+                                            thickness: 1,
+                                            height: 1,
+                                            indent: 15,
+                                            endIndent: 15,
+                                          ),
+                                          for (var i = 0;
+                                              i < challengeResults.length;
+                                              i++) ...[
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 12),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          right: BorderSide(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1),
+                                                        ),
+                                                      ),
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 8),
+                                                      child: Text(
+                                                        "Challenge ${challengeResults[i]["_id"]}",
+                                                        style: AppStyles
+                                                            .logisticsStyle
+                                                            .copyWith(
+                                                                fontSize: 16),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          right: BorderSide(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 1),
+                                                        ),
+                                                      ),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8),
+                                                      child: Text(
+                                                        "${challengeResults[i]['score']}",
+                                                        style: AppStyles
+                                                            .logisticsStyle
+                                                            .copyWith(
+                                                                fontSize: 16),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: Container(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8),
+                                                      child: Text(
+                                                        "${(challengeResults[i]['timeToComplete'] / 60.0).toInt()} minutes",
+                                                        style: AppStyles
+                                                            .logisticsStyle
+                                                            .copyWith(
+                                                                fontSize: 16),
+                                                        textAlign:
+                                                            TextAlign.right,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
-                                            Expanded(
-                                              child: Container(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8),
-                                                child: Text(
-                                                  "${(challengeResults[i]['timeToComplete'] / 60.0).toInt()} minutes",
-                                                  style: AppStyles
-                                                      .logisticsStyle
-                                                      .copyWith(fontSize: 16),
-                                                  textAlign: TextAlign.right,
-                                                ),
+                                            if (i < challengeResults.length - 1)
+                                              Divider(
+                                                color: Colors.white,
+                                                thickness: 1,
+                                                height: 1,
+                                                indent: 15,
+                                                endIndent: 15,
                                               ),
+                                          ]
+                                        ],
+                                      )
+                                    : ListTile(
+                                        leading: Container(
+                                          padding: const EdgeInsets.all(2.0),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: Colors
+                                                  .white, // Color of the ring
+                                              width:
+                                                  2.0, // Thickness of the ring
                                             ),
-                                          ],
+                                          ),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: Text("${index + 1}",
+                                                style: AppStyles.logisticsStyle
+                                                    .copyWith(fontSize: 24)),
+                                          ),
                                         ),
+                                        title: Text(
+                                          team['name'],
+                                          style: AppStyles.logisticsStyle
+                                              .copyWith(fontSize: 24),
+                                        ),
+                                        iconColor: Colors.white,
                                       ),
-                                      if (i <
-                                          challengeResults.length - 1)
-                                        Divider(
-                                          color: Colors.white,
-                                          thickness: 1,
-                                          height: 1,
-                                          indent: 15,
-                                          endIndent: 15,
-                                        ),
-                                    ]
-                                  ],
-                                ),
                               );
                             },
                           ),

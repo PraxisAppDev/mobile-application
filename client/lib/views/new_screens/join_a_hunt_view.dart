@@ -28,7 +28,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
 
     return Scaffold(
-      appBar: AppStyles.homeAppBarStyle("Hunts", context),
+      appBar: AppStyles.noLeaderboardAppBarStyle("Hunts", context),
       body: DecoratedBox(
         decoration: AppStyles.backgroundStyle,
         child: FutureBuilder<List<hunts_api.HuntResponseModel>>(
