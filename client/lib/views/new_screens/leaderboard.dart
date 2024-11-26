@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/apis/fetch_leaderboard.dart';
+import 'package:praxis_afterhours/provider/game_model.dart';
+import 'package:provider/provider.dart';
 
 class Leaderboard extends StatefulWidget {
   const Leaderboard({Key? key}) : super(key: key);
@@ -13,20 +15,22 @@ class Leaderboard extends StatefulWidget {
 
 class _LeaderboardState extends State<Leaderboard> {
   String formatDate(String dateString) {
-      String cleanDate = dateString.replaceAll(RegExp(r'\[UTC\]'), '');
-      DateTime dater = DateTime.parse(cleanDate);
-      return DateFormat('  MM/dd/yyyy ' ' h:mm a').format(dater);
+    String cleanDate = dateString.replaceAll(RegExp(r'\[UTC\]'), '');
+    DateTime dater = DateTime.parse(cleanDate);
+    return DateFormat('  MM/dd/yyyy   h:mm a').format(dater);
   }
 
   @override
   Widget build(BuildContext context) {
+    final model = Provider.of<HuntProgressModel>(context, listen: false);
+
     return Scaffold(
       appBar: AppStyles.noLeaderboardAppBarStyle("Leaderboard", context),
       body: DecoratedBox(
         decoration: AppStyles.backgroundStyle,
         child: Center(
           child: FutureBuilder<Map<String, dynamic>>(
-            future: fetchLeaderboard("1"),
+            future: fetchLeaderboard(model.huntId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const CircularProgressIndicator();
@@ -36,15 +40,12 @@ class _LeaderboardState extends State<Leaderboard> {
                   style: const TextStyle(color: Colors.red),
                 );
               } else if (snapshot.hasData) {
-                print(snapshot.data);
-
-                String huntName = snapshot.data?['huntName'];
-                // String huntVenue = snapshot.data?['venue'];
-                String formattedDate = formatDate(snapshot.data?['startDate']);
-
-                List<dynamic> teams = snapshot.data?['teamsChallengeResults'];
-                List<String> teamNames =
-                    teams.map((team) => team['teamName'] as String).toList();
+                final data = snapshot.data ?? {};
+                // print(data);
+                
+                String huntName = data['name'];
+                String formattedDate = formatDate(data['startDate']);
+                List<dynamic> teams = data['teams'] ?? [];
 
                 return DecoratedBox(
                   decoration: AppStyles.backgroundStyle,
@@ -90,6 +91,10 @@ class _LeaderboardState extends State<Leaderboard> {
                             itemCount: teams.length,
                             itemBuilder: (context, index) {
                               final team = teams[index];
+                              List<dynamic> challengeResults =
+                                  (team['challengeResults']
+                                          as List<dynamic>?) ??
+                                      [];
                               return Container(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 20),
@@ -113,7 +118,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                     ),
                                   ),
                                   title: Text(
-                                    team['teamName'],
+                                    team['name'],
                                     style: AppStyles.logisticsStyle
                                         .copyWith(fontSize: 24),
                                   ),
@@ -201,7 +206,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                       endIndent: 15,
                                     ),
                                     for (var i = 0;
-                                        i < team['challengeResults'].length;
+                                        i < challengeResults.length;
                                         i++) ...[
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -222,7 +227,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                                 padding: const EdgeInsets.only(
                                                     right: 8),
                                                 child: Text(
-                                                  team['challengeResults'][i]['name'],
+                                                  "Challenge ${challengeResults[i]["_id"]}",
                                                   style: AppStyles
                                                       .logisticsStyle
                                                       .copyWith(fontSize: 16),
@@ -242,7 +247,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 8),
                                                 child: Text(
-                                                  "${team['challengeResults'][i]['score']}",
+                                                  "${challengeResults[i]['score']}",
                                                   style: AppStyles
                                                       .logisticsStyle
                                                       .copyWith(fontSize: 16),
@@ -255,7 +260,7 @@ class _LeaderboardState extends State<Leaderboard> {
                                                 padding: const EdgeInsets.only(
                                                     left: 8),
                                                 child: Text(
-                                                  formatDate(team['challengeResults'][i]['timeToComplete']),
+                                                  "${(challengeResults[i]['timeToComplete'] / 60.0).toInt()} minutes",
                                                   style: AppStyles
                                                       .logisticsStyle
                                                       .copyWith(fontSize: 16),
@@ -266,7 +271,8 @@ class _LeaderboardState extends State<Leaderboard> {
                                           ],
                                         ),
                                       ),
-                                      if (i < team['challengeResults'].length - 1)
+                                      if (i <
+                                          challengeResults.length - 1)
                                         Divider(
                                           color: Colors.white,
                                           thickness: 1,
