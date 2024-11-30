@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
@@ -40,15 +41,16 @@ class ChallengeView extends StatefulWidget {
 }
 
 class _ChallengeViewState extends State<ChallengeView> {
-  int _totalSeconds = 0; // cumulative state var to track total seconds spent on current challenge + all previous challenges
-  
+  int _totalSeconds =
+      0; // cumulative state var to track total seconds spent on current challenge + all previous challenges
+
   @override
   void initState() {
     super.initState();
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
     _totalSeconds = huntProgressModel.previousSeconds;
   }
-
 
   // Callback func to update total seconds, will be called from HeaderWidget
   void _updateTotalSeconds(int seconds) {
@@ -57,10 +59,10 @@ class _ChallengeViewState extends State<ChallengeView> {
     });
   }
 
- 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
 
     return MaterialApp(
       home: Scaffold(
@@ -78,7 +80,8 @@ class _ChallengeViewState extends State<ChallengeView> {
                   challengeID: huntProgressModel.challengeId,
                   challengeNum: huntProgressModel.challengeNum,
                   previousSeconds: huntProgressModel.previousSeconds,
-                  onTimeUpdated: _updateTotalSeconds, // pass the callback to update total seconds
+                  onTimeUpdated:
+                      _updateTotalSeconds, // pass the callback to update total seconds
                 ),
               ),
               const SizedBox(height: 10),
@@ -91,7 +94,8 @@ class _ChallengeViewState extends State<ChallengeView> {
                   previousSeconds: huntProgressModel.previousSeconds,
                   previousPoints: huntProgressModel.previousPoints,
                   challengeNum: huntProgressModel.challengeNum,
-                  totalSeconds: _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
+                  totalSeconds:
+                      _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
                 ),
               ),
             ],
@@ -108,7 +112,8 @@ class HeaderWidget extends StatefulWidget {
   final String challengeID;
   final int challengeNum;
   final int previousSeconds;
-  final Function(int) onTimeUpdated; // Callback to send total seconds elasped on this challenge
+  final Function(int)
+      onTimeUpdated; // Callback to send total seconds elasped on this challenge
 
   const HeaderWidget({
     super.key,
@@ -135,13 +140,14 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     _startTimer();
     _fetchChallenge();
   }
-  
+
   // starts timer to count seconds spent on challenge
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _secondsSpent++;
-        widget.onTimeUpdated(totalSeconds); // Calls the callback function with updated total seconds
+        widget.onTimeUpdated(
+            totalSeconds); // Calls the callback function with updated total seconds
       });
     });
   }
@@ -149,7 +155,8 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
-      final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
+      final challengeData =
+          await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
       });
@@ -169,20 +176,29 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
       decoration: AppStyles.infoBoxStyle,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          
-          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                _challengeData['description'] ?? 'Challenge Description',
-                style: AppStyles.logisticsStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+              // Text(
+              //   _challengeData['description'] ?? 'Challenge Description',
+              //   style: AppStyles.logisticsStyle
+              //       .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+              // ),
+              Flexible(
+                child: Text(
+                  "Challenge ${huntProgressModel.challengeNum + 1}",
+                  style: AppStyles.logisticsStyle
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               ),
               Row(
                 children: [
@@ -237,7 +253,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
   int _hintIndex = -1; //Tracks the number of hints revealed
   int guessesLeft = 3; // initially starts out with 3 guesses
 
-
   @override
   void initState() {
     super.initState();
@@ -247,7 +262,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
   // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
     try {
-      final challengeData = await fetchChallenge(widget.huntID, widget.challengeID);
+      final challengeData =
+          await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
         _hints = challengeData['hints'] ?? []; // Initialize _hints here
@@ -262,12 +278,13 @@ class _ChallengeContentState extends State<ChallengeContent> {
   }
 
   void _submitAnswer() async {
-    // Decrement the guesses left 
+    // Decrement the guesses left
     guessesLeft--;
 
     try {
       // Call the solveChallenge API with the necessary parameters
-      final result = await solveChallenge(widget.huntID, widget.teamID, widget.challengeID, _answerController.text);
+      final result = await solveChallenge(widget.huntID, widget.teamID,
+          widget.challengeID, _answerController.text);
 
       bool isCorrect = result['challengeSolved'];
 
@@ -279,13 +296,16 @@ class _ChallengeContentState extends State<ChallengeContent> {
           builder: (BuildContext context) {
             Future.delayed(const Duration(seconds: 2), () {
               Navigator.pop(context); // Close the dialog
-              _navigateToHuntProgress(widget.totalSeconds); // end that challenge and return to hunt progress screen
+              _navigateToHuntProgress(widget
+                  .totalSeconds); // end that challenge and return to hunt progress screen
             });
 
-            return _buildResultDialog('The question was answered correctly! Your team is moving on to the next question.');
+            return _buildResultDialog(
+                'The question was answered correctly! Your team is moving on to the next question.');
           },
         );
-      } else if (!isCorrect && guessesLeft > 0) {// incorrect answer but more guesses left
+      } else if (!isCorrect && guessesLeft > 0) {
+        // incorrect answer but more guesses left
         // Show incorrect answer dialog with guesses left
         showDialog(
           context: context,
@@ -295,10 +315,12 @@ class _ChallengeContentState extends State<ChallengeContent> {
               Navigator.pop(context); // Close the dialog
             });
 
-            return _buildResultDialog('Incorrect! Try again! You have $guessesLeft guesses left.');
+            return _buildResultDialog(
+                'Incorrect! Try again! You have $guessesLeft guesses left.');
           },
         );
-      } else {// incorrect and no guesses left!
+      } else {
+        // incorrect and no guesses left!
         // No guesses left, show dialog and navigate back to Hunt Progress
         showDialog(
           context: context,
@@ -326,32 +348,33 @@ class _ChallengeContentState extends State<ChallengeContent> {
     int randomPoints = 50 * (random.nextInt(6) + 1);
     return randomPoints;
   }
-  
+
   void _navigateToHuntProgress(int totalSec) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
     int points = randomPoints();
 
     huntProgressModel.totalSeconds = totalSec;
     huntProgressModel.totalPoints = huntProgressModel.previousPoints + points;
-    huntProgressModel.secondsSpentThisRound = totalSec - huntProgressModel.previousSeconds;
+    huntProgressModel.secondsSpentThisRound =
+        totalSec - huntProgressModel.previousSeconds;
     huntProgressModel.pointsEarnedThisRound = points;
     huntProgressModel.currentChallenge = huntProgressModel.challengeNum + 1;
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        // builder: (context) => HuntProgressView(
-        //   huntName: widget.huntName,
-        //   huntID: widget.huntID,
-        //   teamID: widget.teamID,
-        //   totalSeconds: totalSec,
-        //   totalPoints: widget.previousPoints + points,
-        //   secondsSpentThisRound: totalSec - widget.previousSeconds,
-        //   pointsEarnedThisRound: points,
-        //   currentChallenge: widget.challengeNum + 1,
-        // ),
-        builder: (context) => HuntProgressView()
-      ),
+          // builder: (context) => HuntProgressView(
+          //   huntName: widget.huntName,
+          //   huntID: widget.huntID,
+          //   teamID: widget.teamID,
+          //   totalSeconds: totalSec,
+          //   totalPoints: widget.previousPoints + points,
+          //   secondsSpentThisRound: totalSec - widget.previousSeconds,
+          //   pointsEarnedThisRound: points,
+          //   currentChallenge: widget.challengeNum + 1,
+          // ),
+          builder: (context) => HuntProgressView()),
     );
   }
 
@@ -396,7 +419,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   //         builder: (context) => HuntProgressView(
   //           huntName: widget.huntID,
   //           huntID: widget.huntID,
-  //           teamID: widget.teamID, 
+  //           teamID: widget.teamID,
   //           totalSeconds: totalSeconds,
   //           totalPoints: widget.previousPoints,
   //           secondsSpentThisRound: _challengeData['secondsSpent'],
@@ -421,7 +444,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   }
 
   // opens dialog box for the hint
- void _showHintDialog(BuildContext context) {
+  void _showHintDialog(BuildContext context) {
     bool hasHints = _hintIndex < _hints.length;
 
     showDialog(
@@ -441,7 +464,9 @@ class _ChallengeContentState extends State<ChallengeContent> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    hasHints ? _hints[_hintIndex]['description'] : 'No more hints left!',
+                    hasHints
+                        ? _hints[_hintIndex]['description']
+                        : 'No more hints left!',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -494,136 +519,209 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
     // int hintsLeft = (_challengeData['hints']?.length ?? 0) - _hintIndex - 1;
 
-    return LayoutBuilder(
-      builder: (context, constraints){
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
+    return LayoutBuilder(builder: (context, constraints) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
+        child: Column(
+          children: [
+            // Question description and image section
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: AppStyles.redInfoBoxStyle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _challengeData['description'],
+                    style: AppStyles.logisticsStyle,
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                      child: _challengeData['url'] != null
+                          ? Image.network(
+                              _challengeData['url'],
+                              height: constraints.maxHeight * 0.2,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Text(
+                                  'clueUrl could not be displayed',
+                                  style: TextStyle(color: Colors.white),
+                                );
+                              },
+                            )
+                          //     : const Text(
+                          //   'Picture (if needed)',
+                          //   style: TextStyle(color: Colors.white),
+                          // ),
+                          : Image.asset("images/huntLogo.png",
+                              height: 50, width: 50)),
+                  /*const SizedBox(height: 10),
+                  Center(
+                    child: _challengeData['clueUrl'] != null
+                        ? Image.network(
+                            _challengeData['clueUrl'],
+                            height: constraints.maxHeight * 0.2,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'images/huntLogo.png',
+                                height: constraints.maxHeight * 0.2,
+                              );
+                            },
+                          )
+                        : const Text(
+                            'Picture (if needed)',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                  ),*/
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
 
-              // Question description and image section
-                  Flexible(
-                    flex: 4,
-                    child: Container(
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: AppStyles.infoBoxStyle,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'This is a question about something...',
-                            style: AppStyles.logisticsStyle,
-                          ),
-                          const SizedBox(height: 10),
-                          Expanded(
-                            child: Center(
-                              child: _challengeData['clueUrl'] != null
-                                  ? Image.network(
-                                      _challengeData['clueUrl'],
-                                      height: constraints.maxHeight * 0.2,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Image.asset(
-                                          'images/huntLogo.png',
-                                          height: constraints.maxHeight * 0.2,
-                                        );
-                                      },
-                                    )
-                                  : const Text(
-                                      'Picture (if needed)',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                            ),
-                          ),
-                        ],
+            // Team Answer header and input field
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Team Answer...',
+                  style: AppStyles.logisticsStyle
+                      .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 5),
+                Container(
+                  height: 33,
+                  decoration: AppStyles.textFieldStyle,
+                  child: TextField(
+                    controller: _answerController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter answer here...',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      border: InputBorder.none,
+                      suffixIcon: Icon(
+                        Icons.edit,
+                        color: Colors.grey,
                       ),
                     ),
-                  ),
-              const SizedBox(height: 20),
-
-              // Team Answer header and input field
-              Flexible(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Team Answer...',
-                      style: AppStyles.logisticsStyle.copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      decoration: AppStyles.textFieldStyle,
-                      child: TextField(
-                        controller: _answerController,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter answer here...',
-                          hintStyle: TextStyle(color: Colors.grey),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          suffixIcon: Icon(Icons.edit, color: Colors.grey),
-                        ),
-                        style: const TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Submit Button
-              Flexible(
-                flex: 1,
-                child: Container(
-                  decoration: AppStyles.confirmButtonStyle,
-                  child: ElevatedButton(
-                    onPressed: _submitAnswer,
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Submit', style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+              ],
+            ),
 
-              Flexible(// Hint and guesses left section
-                flex: 3,
-                child: Container(
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: AppStyles.infoBoxStyle,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+            const SizedBox(height: 20),
+
+            // Submit Button
+
+            Container(
+              height: 33,
+              width: 115,
+              decoration: AppStyles.confirmButtonStyle,
+              child: ElevatedButton(
+                onPressed: _submitAnswer,
+                style: AppStyles.elevatedButtonStyle,
+                child: const Text('Submit',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ),
+            const SizedBox(height: 10),
+            //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
+            if (_hintIndex > -1)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.15,
+                padding: const EdgeInsets.all(16.0),
+                decoration: AppStyles.infoBoxStyle,
+                child: CupertinoScrollbar(
+                  child: ListView(
                     children: [
                       Text(
-                        "Stuck? Reveal a hint...",
-                        style: AppStyles.logisticsStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                        "Hints...",
+                        style: AppStyles.logisticsStyle.copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 10),
-
-                      // Hint Button
-                      Container(
-                        decoration: AppStyles.challengeButtonStyle,
-                        child: ElevatedButton(
-                          onPressed: _revealHint,
-                          style: AppStyles.elevatedButtonStyle,
-                          child: const Text('Hint', style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-
-                      // Guesses Left Display
-                      const SizedBox(height: 10),
-                      Text(
-                        "Your team has $guessesLeft guesses left.",
-                        style: AppStyles.logisticsStyle.copyWith(color: Colors.amber),
-                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: _hints.length,
+                        itemBuilder: (context, index) {
+                          if (index < _hintIndex) {
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Hint ${index + 1}: ${_hints[index]['description']}",
+                                    style: AppStyles.logisticsStyle,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  if (_hints[index]['url'] != null)
+                                    Image.network(
+                                      _hints[index]['url'],
+                                      height: 100,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return const Text(
+                                          'Image not available',
+                                          style: TextStyle(color: Colors.white),
+                                        );
+                                      },
+                                    ),
+                                  SizedBox(height: 10),
+                                ]);
+                          } else {
+                            return null;
+                          }
+                        },
+                      )
                     ],
                   ),
-                  
                 ),
               ),
-            ],
-          ),
-        );
-    });
+            Expanded(
+              child: SizedBox(),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
+              decoration: AppStyles.infoBoxStyle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Stuck? Reveal a hint...",
+                    style: AppStyles.logisticsStyle
+                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
 
+                  // Hint Button
+                  Container(
+                    height: 33,
+                    decoration: AppStyles.hintBoxStyle,
+                    child: ElevatedButton(
+                      onPressed: _revealHint,
+                      style: AppStyles.elevatedButtonStyle,
+                      child: const Text('Hint',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+
+                  // Guesses Left Display
+                  const SizedBox(height: 5),
+                  Text(
+                    "Your team has $guessesLeft guesses left.",
+                    style:
+                        AppStyles.logisticsStyle.copyWith(color: Colors.amber),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            )
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -636,7 +734,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
 //   final int challengeNum;
 
 //   const ChallengeView({super.key, required this.huntName, required this.huntID, required this.previousSeconds, required this.previousPoints, required this.challengeID, required this.challengeNum});
-
 
 //   // Future<void> loadChallengeData() async {
 //   //   int huntId = 1; // or get this from the context/state as needed
@@ -817,7 +914,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
 //         _isLoading = false;
 //       });
 //     }
-//   } 
+//   }
 
 //   // Future<void> _fetchChallenge() async {
 //   //   String apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/1/challenges";
@@ -1065,12 +1162,12 @@ class _ChallengeContentState extends State<ChallengeContent> {
 //                     context,
 //                     MaterialPageRoute(
 //                       builder: (context) => HuntProgressView(
-//                         huntName: widget.huntName, 
-//                         huntID: widget.huntID, 
-//                         totalSeconds: widget.previousSeconds + seconds, 
-//                         totalPoints: widget.previousPoints + points, 
-//                         secondsSpentThisRound: seconds, 
-//                         pointsEarnedThisRound: points, 
+//                         huntName: widget.huntName,
+//                         huntID: widget.huntID,
+//                         totalSeconds: widget.previousSeconds + seconds,
+//                         totalPoints: widget.previousPoints + points,
+//                         secondsSpentThisRound: seconds,
+//                         pointsEarnedThisRound: points,
 //                         currentChallenge: widget.challengeNum + 1)),
 //                     );
 //                   },

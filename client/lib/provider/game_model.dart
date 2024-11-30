@@ -2,16 +2,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 class HuntProgressModel extends ChangeNotifier {
-  String _playerName = '';
-  
-  String get playerName => _playerName;
-  
-  set playerName(String name) {
-    _playerName = name;
-    notifyListeners();
-  }
   // Variables that were passed from screen to screen, may need to be used in
   // API calls
+
   late String huntName;
   late String venue;
   late String huntDate;
@@ -21,6 +14,8 @@ class HuntProgressModel extends ChangeNotifier {
   late String zipCode;
   late String teamId;
   late String teamName;
+  late String playerName;
+  late String playerId;
 
   // Hunt Progress Screen variables
   late int totalSeconds;
@@ -28,13 +23,17 @@ class HuntProgressModel extends ChangeNotifier {
   late int secondsSpentThisRound;
   late int pointsEarnedThisRound;
   late int currentChallenge;
+  late int totalChallenges; //holds total num of challenges 
 
   // Challenge Screen variables
   late int previousSeconds;
   late int previousPoints;
   late String challengeId;
   late int challengeNum;
+  late String challengeName;
 
+  late int currentHuntIndex;
+  final Set<int> pressedHunts = {}; // Track indexes of completed hunts
   List<int> secondsSpentList = [];
   List<int> pointsEarnedList = [];
   int secondsSpent = 0;
@@ -57,6 +56,11 @@ class HuntProgressModel extends ChangeNotifier {
   void resetTimer() {
     secondsSpent = 0;
     _timerStarted = false;
+    notifyListeners();
+  }
+
+  void markHuntCompleted(int index) {
+    pressedHunts.add(index);
     notifyListeners();
   }
 
@@ -83,6 +87,10 @@ class HuntProgressModel extends ChangeNotifier {
     _timer?.cancel();
     super.dispose();
   }
-}
 
+  void incrementCurrentChallenge() {
+    currentChallenge++;
+    notifyListeners(); // ensures UI or state dependent on this updates
+  }
+}
 

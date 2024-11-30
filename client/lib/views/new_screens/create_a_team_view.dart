@@ -54,9 +54,10 @@ class _CreateATeamViewState extends State<CreateATeamView> {
     );
   }
 
+  /*
   // Connect to WebSocket after team creation
   void connectWebSocket(WebSocketModel webSocketModel, String huntId, String teamName, String playerName) async {
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId&teamId=$teamName&playerName=$playerName&huntAlone=false';
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId?teamId=$teamName&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
@@ -64,7 +65,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
       final channel = webSocketModel.messages;
       channel.listen(
-        (message) {
+            (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
 
@@ -95,6 +96,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       showToast("Failed to connect to WebSocket: $e");
     }
   }
+  */
 
   // Create a team and navigate to the next screen
   void _createTeam(HuntProgressModel model, WebSocketModel webSocketModel) async {
@@ -102,6 +104,9 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       // Get user inputs
       final teamName = _teamNameController.text.trim();
       final playerName = _playerNameController.text.trim();
+
+      model.teamName = teamName;
+      model.playerName = playerName;
 
       // Validate inputs
       if (teamName.isEmpty) {
@@ -116,7 +121,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       model.teamId = response['teamId'];
 
       // Connect to WebSocket
-      connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
+      //connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
 
       // Navigate to the next view
       Navigator.push(
@@ -126,8 +131,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
             huntId: model.huntId,
             huntName: model.huntName,
             teamId: model.teamId,
-            teamName: teamName,
-            playerName: playerName,
+            teamName: model.teamName,
+            playerName: model.playerName,
           ),
         ),
       );
@@ -139,8 +144,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
     return MaterialApp(
       home: Scaffold(

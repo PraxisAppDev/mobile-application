@@ -14,25 +14,25 @@ void main() {
         ChangeNotifierProvider(create: (context) => WebSocketModel())
       ],
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            appBarTheme: const AppBarTheme(
-              iconTheme: IconThemeData(
-                color: Colors.white,
-              ),
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+            iconTheme: IconThemeData(
+              color: Colors.white,
             ),
-            expansionTileTheme: ExpansionTileThemeData(
-              backgroundColor: Colors.white70,
-              textColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            fontFamily: "Poppins",
           ),
-          home: const Splash(),
+          expansionTileTheme: ExpansionTileThemeData(
+            backgroundColor: Colors.white70,
+            textColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+          fontFamily: "Poppins",
         ),
+        home: const Splash(),
+      ),
     ),
   );
 }

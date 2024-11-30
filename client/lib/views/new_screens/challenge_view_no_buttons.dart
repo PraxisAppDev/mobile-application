@@ -1,11 +1,15 @@
 import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
+import 'package:praxis_afterhours/apis/fetch_challenges.dart';
 import 'package:praxis_afterhours/apis/post_solve_challenge.dart';
+import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
+import '../../provider/websocket_model.dart';
 
 import 'dart:convert';
 import 'package:intl/intl.dart';
@@ -14,88 +18,217 @@ import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 
 class ChallengeViewNoButtons extends StatefulWidget {
-  // final String huntName;
-  // final String huntID;
-  // final String teamID;
-  // final int previousSeconds;
-  // final int previousPoints;
-  // final String challengeID;
-  // final int challengeNum;
-  //
-  // const ChallengeViewNoButtons({
-  //   super.key,
-  //   required this.huntName,
-  //   required this.huntID,
-  //   required this.teamID,
-  //   required this.previousSeconds,
-  //   required this.previousPoints,
-  //   required this.challengeID,
-  //   required this.challengeNum,
-  // });
+  final int currentChallenge;
+  const ChallengeViewNoButtons(String challengeId,
+      {Key? key, required this.currentChallenge})
+      : super(key: key);
 
-  const ChallengeViewNoButtons({super.key});
   @override
   _ChallengeViewNoButtonsState createState() => _ChallengeViewNoButtonsState();
 }
 
 class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
-  int _totalSeconds =
-  0; // cumulative state var to track total seconds spent on current challenge + all previous challanges
+  late final StreamSubscription<dynamic> _webSocketSubscription;
+  late final huntProgressModel;
+  bool _isLoading = true;
+  int _incorrectResponseCount = 0;
+  List<dynamic> _challengeData = [];
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
-    _totalSeconds = huntProgressModel.previousSeconds;
+
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+    _webSocketSubscription =
+        webSocketModel.messages.listen(_handleWebSocketMessage);
   }
 
-  // Callback func to update total seconds, will be called from HeaderWidget
-  void _updateTotalSeconds(int seconds) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isInitialized) {
+      huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
+      _initializeChallenges();
+      _isInitialized = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _webSocketSubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> _initializeChallenges() async {
+    try {
+      final challenges = await fetchChallenges(huntProgressModel.huntId);
+      setState(() {
+        _challengeData = challenges;
+        _isLoading = false;
+      });
+
+      // Update total challenges in the progress model
+      huntProgressModel.totalChallenges = challenges.length;
+    } catch (e) {
+      print("Error fetching challenges: $e");
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _handleWebSocketMessage(dynamic message) {
+    try {
+      final data = message is String ? json.decode(message) : message;
+      if (data['eventType'] == 'CHALLENGE_RESPONSE') {
+        final challengeSolved = data['challengeSolved'] == "true";
+
+        if (!challengeSolved) {
+          // incorect answer submitted
+          _incorrectResponseCount++;
+
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   const SnackBar(content: Text('Incorrect response!')),
+          // );
+
+          if (_incorrectResponseCount >= 3) {
+            // Show popup for exceeding incorrect attempts
+            _showPopup(
+              "Out of Attempts",
+              "Your team leader has used all attempts. Moving to the next challenge.",
+              onClose: () {
+                _progressToNextChallenge(huntProgressModel);
+              },
+            );
+          } else {
+            // incorrect response, but more guesses left
+            // Show popup for incorrect answer
+            _showPopup(
+              "Your team leader submitted an Incorrect Answer",
+              "Try again! You have ${3 - _incorrectResponseCount} attempts left.",
+            );
+          }
+        } else {
+          // correct answer submitted
+          // Show popup for correct answer
+          _showPopup(
+            "Your team leader answered correctly!",
+            "Your team has answered correctly. Proceeding to the next challenge.",
+            onClose: () {
+              _progressToNextChallenge(huntProgressModel);
+            },
+          );
+        }
+      }
+    } catch (e) {
+      print("Error handling WebSocket message: $e");
+    }
+  }
+
+  void _progressToNextChallenge(HuntProgressModel huntProgressModel) {
     setState(() {
-      _totalSeconds = seconds;
+      _incorrectResponseCount = 0;
     });
+
+    // print("current challenge: ${widget.currentChallenge}");
+    // print("total challenges: ${huntProgressModel.totalChallenges}");
+
+    // Increment the challenge only if not the last one
+    if (widget.currentChallenge < huntProgressModel.totalChallenges) {
+      huntProgressModel.incrementCurrentChallenge();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChallengeViewNoButtons(
+                  huntProgressModel.challengeId,
+                  currentChallenge: widget.currentChallenge + 1,
+                )),
+      );
+    } else {
+      // Navigate to HuntProgressView or EndGameScreen if all challenges are completed
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => EndGameScreen()),
+      );
+    }
+  }
+
+  // Helper method to build a result dialog
+  void _showPopup(String title, String message, {VoidCallback? onClose}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title,
+              style:
+                  const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          content: Text(message, style: const TextStyle(fontSize: 16)),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                if (onClose != null) {
+                  onClose();
+                }
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppStyles.noBackArrowAppBarStyle("Hunt", context),
-        body: DecoratedBox(
-          decoration: AppStyles.backgroundStyle,
-          child: Column(
-            children: [
-              const SizedBox(height: 10), // Adds padding above the header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: HeaderWidget(
-                  huntName: huntProgressModel.huntName,
-                  huntID: huntProgressModel.huntId,
-                  challengeID: huntProgressModel.challengeId,
-                  challengeNum: huntProgressModel.challengeNum,
-                  previousSeconds: huntProgressModel.previousSeconds,
-                  onTimeUpdated:
-                  _updateTotalSeconds, // pass the callback to update total seconds
-                ),
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
+
+    return Scaffold(
+      appBar: AppStyles.noBackArrowAppBarStyle("Hunt", context),
+      body: DecoratedBox(
+        decoration: AppStyles.backgroundStyle,
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: HeaderWidget(
+                huntName: huntProgressModel.huntName,
+                huntID: huntProgressModel.huntId,
+                challengeID: huntProgressModel.challengeId,
+                challengeNum: widget.currentChallenge,
+                previousSeconds: huntProgressModel.previousSeconds,
+                onTimeUpdated: (seconds) {
+                  // Update total seconds in HuntProgressModel
+                  huntProgressModel.previousSeconds = seconds;
+                },
               ),
-              const SizedBox(height: 10),
-              Expanded(
-                child: ChallengeContent(
-                  huntName: huntProgressModel.huntName,
-                  huntID: huntProgressModel.huntId,
-                  challengeID: huntProgressModel.challengeId,
-                  teamID: huntProgressModel.teamId,
-                  previousSeconds: huntProgressModel.previousSeconds,
-                  previousPoints: huntProgressModel.previousPoints,
-                  challengeNum: huntProgressModel.challengeNum,
-                  totalSeconds:
-                  _totalSeconds, // pass totalSeconds to ChallengeContent to be used in submit algorithm
-                ),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ChallengeContent(
+                huntName: huntProgressModel.huntName,
+                huntID: huntProgressModel.huntId,
+                challengeID: huntProgressModel.challengeId,
+                teamID: huntProgressModel.teamId,
+                previousSeconds: huntProgressModel.previousSeconds,
+                previousPoints: huntProgressModel.previousPoints,
+                challengeNum: huntProgressModel.currentChallenge,
+                totalSeconds: huntProgressModel.previousSeconds,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -109,7 +242,7 @@ class HeaderWidget extends StatefulWidget {
   final int challengeNum;
   final int previousSeconds;
   final Function(int)
-  onTimeUpdated; // Callback to send total seconds elasped on this challenge
+      onTimeUpdated; // Callback to send total seconds elasped on this challenge
 
   const HeaderWidget({
     super.key,
@@ -152,7 +285,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   Future<void> _fetchChallenge() async {
     try {
       final challengeData =
-      await fetchChallenge(widget.huntID, widget.challengeID);
+          await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
       });
@@ -182,7 +315,8 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _challengeData['description'] ?? 'Challenge Description',
+                'Challenge ${widget.challengeNum}',
+                // _challengeData['description'] ?? 'Challenge Description',
                 style: AppStyles.logisticsStyle
                     .copyWith(fontSize: 20, fontWeight: FontWeight.bold),
               ),
@@ -249,7 +383,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   Future<void> _fetchChallenge() async {
     try {
       final challengeData =
-      await fetchChallenge(widget.huntID, widget.challengeID);
+          await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
         _hints = challengeData['hints'] ?? []; // Initialize _hints here
@@ -337,30 +471,31 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
   // Helper method to navigate to HuntProgressView
   void _navigateToHuntProgress(int totalSec) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+    final huntProgressModel =
+        Provider.of<HuntProgressModel>(context, listen: false);
     int points = randomPoints();
 
     huntProgressModel.totalSeconds = totalSec;
     huntProgressModel.totalPoints = huntProgressModel.previousPoints + points;
-    huntProgressModel.secondsSpentThisRound = totalSec - huntProgressModel.previousSeconds;
+    huntProgressModel.secondsSpentThisRound =
+        totalSec - huntProgressModel.previousSeconds;
     huntProgressModel.pointsEarnedThisRound = points;
     huntProgressModel.currentChallenge = huntProgressModel.challengeNum + 1;
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        // builder: (context) => HuntProgressView(
-        //   huntName: widget.huntName,
-        //   huntID: widget.huntID,
-        //   teamID: widget.teamID,
-        //   totalSeconds: totalSec,
-        //   totalPoints: widget.previousPoints + points,
-        //   secondsSpentThisRound: totalSec - widget.previousSeconds,
-        //   pointsEarnedThisRound: points,
-        //   currentChallenge: widget.challengeNum + 1,
-        // ),
-        builder: (context) => HuntProgressView()
-      ),
+          // builder: (context) => HuntProgressView(
+          //   huntName: widget.huntName,
+          //   huntID: widget.huntID,
+          //   teamID: widget.teamID,
+          //   totalSeconds: totalSec,
+          //   totalPoints: widget.previousPoints + points,
+          //   secondsSpentThisRound: totalSec - widget.previousSeconds,
+          //   pointsEarnedThisRound: points,
+          //   currentChallenge: widget.challengeNum + 1,
+          // ),
+          builder: (context) => HuntProgressView()),
     );
   }
 
@@ -420,82 +555,73 @@ class _ChallengeContentState extends State<ChallengeContent> {
   //   }
   // }
 
-  void _revealHint() {
-    setState(() {
-      if (_hintIndex < _challengeData['hints'].length - 1) {
-        _hintIndex++;
-      }
-    });
-    _showHintDialog(context);
-  }
-
   // opens dialog box for the hint
-  void _showHintDialog(BuildContext context) {
-    bool hasHints = _hintIndex < _hints.length;
+  // void _showHintDialog(BuildContext context) {
+  //   bool hasHints = _hintIndex < _hints.length;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Center(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    hasHints
-                        ? _hints[_hintIndex]['description']
-                        : 'No more hints left!',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  if (hasHints && _hints[_hintIndex]['url'] != null)
-                    Image.network(
-                      _hints[_hintIndex]['url'],
-                      height: 100,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Text(
-                          'Image not available',
-                          style: TextStyle(color: Colors.white),
-                        );
-                      },
-                    ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      if (hasHints) {
-                        setState(() {
-                          _hintIndex++;
-                        });
-                      }
-                    },
-                    style: AppStyles.elevatedButtonStyle,
-                    child: const Text(
-                      'Close',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         backgroundColor: Colors.transparent,
+  //         child: Center(
+  //           child: Container(
+  //             padding: const EdgeInsets.all(20),
+  //             decoration: BoxDecoration(
+  //               color: Colors.black.withOpacity(0.7),
+  //               borderRadius: BorderRadius.circular(10),
+  //             ),
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               children: [
+  //                 Text(
+  //                   hasHints
+  //                       ? _hints[_hintIndex]['description']
+  //                       : 'No more hints left!',
+  //                   style: const TextStyle(
+  //                     fontSize: 20,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.white,
+  //                   ),
+  //                   textAlign: TextAlign.center,
+  //                 ),
+  //                 const SizedBox(height: 20),
+  //                 if (hasHints && _hints[_hintIndex]['url'] != null)
+  //                   Image.network(
+  //                     _hints[_hintIndex]['url'],
+  //                     height: 100,
+  //                     errorBuilder: (context, error, stackTrace) {
+  //                       return const Text(
+  //                         'Image not available',
+  //                         style: TextStyle(color: Colors.white),
+  //                       );
+  //                     },
+  //                   ),
+  //                 const SizedBox(height: 20),
+  //                 ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.pop(context);
+  //                     if (hasHints) {
+  //                       setState(() {
+  //                         _hintIndex++;
+  //                       });
+  //                     }
+  //                   },
+  //                   style: AppStyles.elevatedButtonStyle,
+  //                   child: const Text(
+  //                     'Close',
+  //                     style: TextStyle(fontWeight: FontWeight.bold),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -521,6 +647,25 @@ class _ChallengeContentState extends State<ChallengeContent> {
                     'This is a question about something...',
                     style: AppStyles.logisticsStyle,
                   ),
+                  const SizedBox(height: 10),
+                  Center(
+                      child: _challengeData['url'] != null
+                          ? Image.network(
+                              _challengeData['url'],
+                              height: constraints.maxHeight * 0.2,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Text(
+                                  'clueUrl could not be displayed',
+                                  style: TextStyle(color: Colors.white),
+                                );
+                              },
+                            )
+                          //     : const Text(
+                          //   'Picture (if needed)',
+                          //   style: TextStyle(color: Colors.white),
+                          // ),
+                          : Image.asset("images/huntLogo.png",
+                              height: 150, width: 150)),
                   /*const SizedBox(height: 10),
                   Center(
                     child: _challengeData['clueUrl'] != null
@@ -546,69 +691,90 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
             // Team Answer header and input field
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Team Answer...',
-                  style: AppStyles.logisticsStyle
-                      .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  decoration: AppStyles.textFieldStyle,
-                  child: TextField(
-                    controller: _answerController,
-                    readOnly: true,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter answer here...',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
             // Submit Button
 
-            Container(
-              decoration: AppStyles.confirmButtonStyle,
-              child: ElevatedButton(
-                //onPressed: _submitAnswer,
-                onPressed: null,
-                style: AppStyles.elevatedButtonStyle,
-                child: const Text('Submit',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex >= 0)
+            if (_hintIndex > -1)
               Container(
+                height: MediaQuery.of(context).size.height * 0.20,
                 padding: const EdgeInsets.all(16.0),
                 decoration: AppStyles.infoBoxStyle,
-                child: ListView(
-                  children: [
-                    Text(
-                      "Hints",
-                      style: AppStyles.logisticsStyle
-                          .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text("Hint 1.... \n Hint 2.....")
-                  ],
+                child: CupertinoScrollbar(
+                  child: ListView(
+                    children: [
+                      Text(
+                        "Hints...",
+                        style: AppStyles.logisticsStyle.copyWith(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: _hints.length,
+                        itemBuilder: (context, index) {
+                          if (index < _hintIndex) {
+                            return Column(children: [
+                              Text(
+                                _hints[index]['description'],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Image.network(
+                                _hints[index]['url'],
+                                height: 100,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text(
+                                    'Image not available',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 10),
+                            ]);
+                          } else {
+                            return null;
+                          }
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ),
+
+            Expanded(
+              child: SizedBox(),
+            ),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
+              decoration: AppStyles.infoBoxStyle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Stuck? Ask the team leader to reveal a hint...",
+                    style: AppStyles.logisticsStyle
+                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 5),
+
+                  // Guesses Left Display
+                  const SizedBox(height: 5),
+                ],
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "Your team has $guessesLeft guesses left.",
+              style: AppStyles.logisticsStyle.copyWith(color: Colors.amber),
+            ),
+            SizedBox(
+              height: 15,
+            )
           ],
         ),
       );
