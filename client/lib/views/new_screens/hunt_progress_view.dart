@@ -318,13 +318,13 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                       if (index < huntProgressModel.currentChallenge) ...[
                                                         // Display points from the HuntProgressModel for completed challenges
                                                         Text(
-                                                          "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index+1]}/300 points",
+                                                          "${Provider.of<HuntProgressModel>(context).pointsEarnedList[index+1]} points",
                                                           style: AppStyles.logisticsStyle,
                                                         ),
                                                       ] else if (index == huntProgressModel.currentChallenge) ...[
                                                         // Display "Not yet started" for the current challenge
                                                         Text(
-                                                          "300 points possible",
+                                                          "- points possible",
                                                           style: AppStyles.logisticsStyle,
                                                         ),
                                                       ],

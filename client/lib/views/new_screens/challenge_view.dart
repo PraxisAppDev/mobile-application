@@ -14,6 +14,7 @@ import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:provider/provider.dart';
+import '../../provider/websocket_model.dart';
 
 class ChallengeView extends StatefulWidget {
   // final String huntName;
@@ -253,11 +254,72 @@ class _ChallengeContentState extends State<ChallengeContent> {
   int _hintIndex = -1; //Tracks the number of hints revealed
   int guessesLeft = 3; // initially starts out with 3 guesses
 
+  int? _finalPoints; // Points received from WebSocket
+  late WebSocketModel _webSocketModel;
+
   @override
   void initState() {
     super.initState();
+    _webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
     _fetchChallenge();
+    // _connectWebSocket();
   }
+
+  @override
+  void dispose() {
+    _webSocketModel.disconnect(); // Disconnect WebSocket when widget is disposed
+    _answerController.dispose();
+    super.dispose();
+  }
+
+  // Connect to WebSocket and listen for messages
+  // COMMENTED OUT FOR NOW AS POINTS FIELD NOT IN WEB SOCKET MESSAGE
+  // void _connectWebSocket() {
+  //   final wsUrl =
+  //       'ws://afterhours.praxiseng.com/ws/hunt?huntId=${widget.huntID}&teamId=${widget.teamID}&playerName=YourPlayerName';
+  //   try {
+  //     print('Connecting to WebSocket at: $wsUrl');
+  //     _webSocketModel.connect(wsUrl);
+  //     print('WebSocket connected successfully.');
+
+  //     _webSocketModel.messages.listen(
+  //       (message) {
+  //          //for debugging purposes
+
+  //         final Map<String, dynamic> data = json.decode(message);
+  //         final String eventType = data['eventType'];
+
+  //         if (eventType == "CHALLENGE_RESPONSE") {
+  //           print("JEFF CHEKC: $message");
+  //           setState(() {
+  //             _finalPoints = data['pointsEarned'];
+  //           });
+  //           ScaffoldMessenger.of(context).showSnackBar(
+  //             SnackBar(content: Text("Challenge Complete! Points Earned: $_finalPoints")),
+  //           );
+  //         }
+  //       },
+  //       onError: (error) {
+  //         print('WebSocket error: $error');
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text("WebSocket Error: $error")),
+  //         );
+  //       },
+  //       onDone: () {
+  //         print('WebSocket closed');
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text("WebSocket connection closed")),
+  //         );
+  //       },
+  //       cancelOnError: true,
+  //     );
+  //   } catch (e) {
+  //     print('Failed to connect to WebSocket: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text("Failed to connect to WebSocket: $e")),
+  //     );
+  //   }
+  // }
 
   // fetches specific challenge data from API
   Future<void> _fetchChallenge() async {
@@ -289,11 +351,13 @@ class _ChallengeContentState extends State<ChallengeContent> {
       bool isCorrect = result['challengeSolved'];
 
       if (isCorrect) {
+        
         // Show correct answer dialog
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) {
+            _finalPoints = 300; // hardcoded for now, will take out when websocket message updated;
             Future.delayed(const Duration(seconds: 2), () {
               Navigator.pop(context); // Close the dialog
               _navigateToHuntProgress(widget
@@ -322,6 +386,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
       } else {
         // incorrect and no guesses left!
         // No guesses left, show dialog and navigate back to Hunt Progress
+
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -343,16 +408,17 @@ class _ChallengeContentState extends State<ChallengeContent> {
     }
   }
 
-  int randomPoints() {
-    Random random = Random();
-    int randomPoints = 50 * (random.nextInt(6) + 1);
-    return randomPoints;
-  }
+  // int randomPoints() {
+  //   Random random = Random();
+  //   int randomPoints = 50 * (random.nextInt(6) + 1);
+  //   return randomPoints;
+  // }
 
+  
   void _navigateToHuntProgress(int totalSec) {
     final huntProgressModel =
         Provider.of<HuntProgressModel>(context, listen: false);
-    int points = randomPoints();
+    final int points = _finalPoints ?? 0; // defaults to 0 if not recieved.
 
     huntProgressModel.totalSeconds = totalSec;
     huntProgressModel.totalPoints = huntProgressModel.previousPoints + points;
@@ -433,6 +499,36 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
   //   }
   // }
+
+  // Show a confirmation dialog before giving up
+  void _showGiveUpDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Are you sure?'),
+          content: const Text(
+            'If you give up, you will receive 0 points for this challenge.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Close the dialog
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _finalPoints = 0; // Set points to 0
+                _navigateToHuntProgress(widget.totalSeconds); // Navigate to the progress screen
+              },
+              child: const Text('Confirm'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _revealHint() {
     setState(() {
@@ -624,6 +720,25 @@ class _ChallengeContentState extends State<ChallengeContent> {
               ),
             ),
             const SizedBox(height: 10),
+
+
+            // I Give Up Button
+            Container(
+              height: 33,
+              width: 115,
+              decoration: AppStyles.cancelButtonStyle,
+              child: ElevatedButton(
+                onPressed: _showGiveUpDialog,
+                style: AppStyles.elevatedButtonStyle,
+                child: const Text(
+                  'I Give Up',
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
             //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
             if (_hintIndex > -1)
               Container(
