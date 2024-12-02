@@ -194,17 +194,14 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   }
 
   Future<void> makeTeam() async {
+    final model = Provider.of<HuntProgressModel>(context, listen: false);
     String teamName = _teamNameController.text.trim();
     if (teamName.isEmpty) {
       throw Exception("Team name cannot be empty");
     }
-
     try {
-      final postResponse = await createTeam(
-          widget.huntId, widget.teamName, widget.playerName, true);
-      _updatedTeamId =
-          postResponse['teamId']; // new team ID returned when team was created
-      await startHunt(widget.huntId, _updatedTeamId!);
+      createTeam(model.huntId, model.teamName, model.playerName, true);
+      await startHunt(model.huntId, model.teamId);
     } catch (e) {
       throw e;
     }
@@ -452,9 +449,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                     }).toList(),
                   ),
                 ),
-                for (var member in _members)
-                  Text(member.toString(),
-                      style: TextStyle(fontSize: 12, color: Colors.white)),
+                // for (var member in _members)
+                //   Text(member.toString(),
+                //       style: TextStyle(fontSize: 12, color: Colors.white)),
                 const SizedBox(height: 20),
                 Container(
                   height: 50,
@@ -473,24 +470,22 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                if (showDeleteButton)
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.cancelButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ShowDeleteConfirmationDialog(
-                            context, widget.huntId, widget.teamId);
-                      },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text(
-                        'Delete Team',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.cancelButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ShowDeleteConfirmationDialog(
+                          context, widget.huntId, widget.teamId);
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text(
+                      'Delete Team',
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-
+                ),
                 const SizedBox(height: 20),
               ],
             ),

@@ -55,10 +55,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
   }
 
   // Connect to WebSocket after team creation
-  void connectWebSocket(WebSocketModel webSocketModel, String huntId,
-      String teamName, String playerName) async {
-    final wsUrl =
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId&teamId=$teamName&playerName=$playerName&huntAlone=false';
+  void connectWebSocket(WebSocketModel webSocketModel, String huntId, String teamName, String playerName) async {
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId&teamId=$teamName&playerName=$playerName&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
@@ -66,7 +64,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
       final channel = webSocketModel.messages;
       channel.listen(
-        (message) {
+            (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
 
@@ -99,8 +97,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
   }
 
   // Create a team and navigate to the next screen
-  void _createTeam(
-      HuntProgressModel model, WebSocketModel webSocketModel) async {
+  void _createTeam(HuntProgressModel model, WebSocketModel webSocketModel) async {
     try {
       // Get user inputs
       final teamName = _teamNameController.text.trim();
@@ -118,8 +115,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       }
 
       // Create team
-      final response =
-          await createTeam(model.huntId, teamName, playerName, false);
+      final response = await createTeam(model.huntId, teamName, playerName, false);
       model.teamId = response['teamId'];
 
       // Connect to WebSocket
@@ -133,8 +129,8 @@ class _CreateATeamViewState extends State<CreateATeamView> {
             huntId: model.huntId,
             huntName: model.huntName,
             teamId: model.teamId,
-            teamName: teamName,
-            playerName: playerName,
+            teamName: model.teamName,
+            playerName: model.playerName,
           ),
         ),
       );
@@ -146,8 +142,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel =
-        Provider.of<HuntProgressModel>(context, listen: true);
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
     final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
     return MaterialApp(
@@ -208,8 +203,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                               borderSide: BorderSide(color: Colors.white),
                             ),
                             labelText: 'Enter name here...',
-                            labelStyle:
-                                TextStyle(color: Colors.white, fontSize: 14),
+                            labelStyle: TextStyle(color: Colors.white, fontSize: 14),
                             filled: true,
                             fillColor: Colors.grey,
                           ),
@@ -226,11 +220,9 @@ class _CreateATeamViewState extends State<CreateATeamView> {
                   width: 175,
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
-                    onPressed: () =>
-                        _createTeam(huntProgressModel, webSocketModel),
+                    onPressed: () => _createTeam(huntProgressModel, webSocketModel),
                     style: AppStyles.elevatedButtonStyle,
-                    child: const Text('Create',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text('Create', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
