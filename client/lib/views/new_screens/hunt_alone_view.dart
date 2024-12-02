@@ -198,9 +198,6 @@ _HuntAloneViewState createState() => _HuntAloneViewState();
 // }
 
 class _HuntAloneViewState extends State<HuntAloneView> {
-  late TextEditingController _playerNameController;
-  late FocusNode _focusNode;
-  bool _isEditing = false;
   bool _showPopup = false;
   int _countdown = 3;
   Timer? _timer;
@@ -211,32 +208,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
   late String venue;
 
   @override
-  void initState() {
-    super.initState();
-    _playerNameController = TextEditingController();
-    _focusNode = FocusNode();
-    // huntName = widget.huntName;
-    // venue = widget.venue;
-
-    _focusNode.addListener(() {
-      setState(() {
-        _isEditing = _focusNode.hasFocus;
-      });
-    });
-  }
-
-  @override
   void dispose() {
-    _playerNameController.dispose();
-    _focusNode.dispose();
     _timer?.cancel();
     super.dispose();
-  }
-
-  void _unfocusTextField() {
-    if (_focusNode.hasFocus) {
-      _focusNode.unfocus();
-    }
   }
 
   // void showSnackbarMessage(String message) {
@@ -268,7 +242,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
       BuildContext context,
       HuntProgressModel huntProgressModel,
       WebSocketModel webSocketModel) async {
-    final playerName = _playerNameController.text.trim();
+    final playerName = huntProgressModel.playerName;
     if (playerName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Player name cannot be empty')),
@@ -319,35 +293,10 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     }
   }
 
-  Future<void> makeTeam(HuntProgressModel model) async {
-    String playerName = _playerNameController.text.trim();
-    if (playerName.isEmpty) {
-      showNoPlayerNameDialog(context);
-      throw Exception("Player name cannot be empty");
-    }
-
-    try {
-      final postResponse =
-          await createTeam(model.huntId, model.teamName, playerName, true);
-      _updatedTeamId =
-          postResponse['teamId']; // new team ID returned when team was created
-      model.teamId = postResponse['teamId'];
-      await startHunt(model.huntId, _updatedTeamId!);
-    } catch (e) {
-      throw e;
-    }
-  }
-
   void _startHunt(HuntProgressModel huntProgressModel) async {
-    String playerName = _playerNameController.text.trim();
-    if (playerName.isEmpty) {
-      showNoPlayerNameDialog(context);
-      return;
-    }
     try {
       final huntProgressModel =
           Provider.of<HuntProgressModel>(context, listen: false);
-      await makeTeam(huntProgressModel);
 
       setState(() {
         _showPopup = true;
@@ -462,161 +411,115 @@ class _HuntAloneViewState extends State<HuntAloneView> {
         Provider.of<HuntProgressModel>(context, listen: false);
     final webSocketModel = Provider.of<WebSocketModel>(context, listen: true);
 
-    return GestureDetector(
-      onTap: _unfocusTextField,
-      child: Scaffold(
-        appBar: AppStyles.appBarStyle("Hunt Alone", context),
-        body: DecoratedBox(
-          decoration: AppStyles.backgroundStyle,
-          child: Column(
-            children: [
-              SizedBox(height: 50),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  width: 350,
-                  height: 150,
-                  padding: EdgeInsets.all(16),
-                  decoration: AppStyles.infoBoxStyle,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            huntProgressModel.huntName,
-                            textAlign: TextAlign.left,
-                            style: AppStyles.logisticsStyle,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Icon(Icons.location_pin, color: Colors.white),
-                          Text(
-                            huntProgressModel.venue,
-                            style: AppStyles.logisticsStyle,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_month, color: Colors.white),
-                          Text(
-                            huntProgressModel.huntDate,
-                            style: AppStyles.logisticsStyle,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+    return Scaffold(
+      appBar: AppStyles.appBarStyle("Hunt Alone", context),
+      body: DecoratedBox(
+        decoration: AppStyles.backgroundStyle,
+        child: Column(
+          children: [
+            SizedBox(height: 50),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                width: 350,
+                height: 150,
+                padding: EdgeInsets.all(16),
+                decoration: AppStyles.infoBoxStyle,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          huntProgressModel.huntName,
+                          textAlign: TextAlign.left,
+                          style: AppStyles.logisticsStyle,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Icon(Icons.location_pin, color: Colors.white),
+                        Text(
+                          huntProgressModel.venue,
+                          style: AppStyles.logisticsStyle,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Icon(Icons.calendar_month, color: Colors.white),
+                        Text(
+                          huntProgressModel.huntDate,
+                          style: AppStyles.logisticsStyle,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 30),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Text(
-                  "You are currently hunting in team: ${huntProgressModel.teamName}",
-                  style: AppStyles.logisticsStyle,
-                ),
+            ),
+            const SizedBox(height: 30),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "You are currently hunting in team: ${huntProgressModel.teamName}",
+                style: AppStyles.logisticsStyle,
               ),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Divider(thickness: 2)),
-              Padding(
+            ),
+            Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
+                child: Divider(thickness: 2)),
+            const SizedBox(height: 30),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: AppStyles.infoBoxStyle,
-                  child: Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.white),
-                      const SizedBox(width: 5),
-                      SizedBox(
-                        width: 205,
-                        child: TextField(
-                          controller: _playerNameController,
-                          focusNode: _focusNode,
-                          decoration: InputDecoration(
-                            suffixIcon: Icon(Icons.check, color: Colors.white),
-                            border: UnderlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide(color: Colors.white),
-                            ),
-                            hintText: _isEditing ? null : "Enter Player Name",
-                            labelStyle: const TextStyle(
-                                color: Colors.white, fontSize: 14),
-                            filled: true,
-                            fillColor: Colors.grey,
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Icon(Icons.lock, color: Colors.white),
-                      const SizedBox(width: 5),
-                      Text(
-                        "(Solo)",
-                        style: AppStyles.logisticsStyle,
-                      ),
-                    ],
+                  child: FutureBuilder<Map<String, dynamic>>(
+                    future: fetchTeamsFromHunt(huntProgressModel.huntId),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      } else if (snapshot.hasData) {
+                        // If the data was successfully retrieved, display it
+                        List<dynamic> teams = snapshot.data!['teams'];
+                        print(snapshot.data);
+                        return Text(
+                          "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",
+                          style:
+                              AppStyles.logisticsStyle.copyWith(fontSize: 16),
+                        );
+                      } else {
+                        return const Center(child: Text('No data available.'));
+                      }
+                    },
+                  )),
+            ),
+            SizedBox(height: 30),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 50,
+                  width: 175,
+                  decoration: AppStyles.confirmButtonStyle,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      connectWebSocket(
+                          context, huntProgressModel, webSocketModel);
+                      _startHunt(huntProgressModel);
+                    },
+                    style: AppStyles.elevatedButtonStyle,
+                    child: const Text('Start Hunt',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: AppStyles.infoBoxStyle,
-                    child: FutureBuilder<Map<String, dynamic>>(
-                      future: fetchTeamsFromHunt(huntProgressModel.huntId),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else if (snapshot.hasData) {
-                          // If the data was successfully retrieved, display it
-                          List<dynamic> teams = snapshot.data!['teams'];
-                          print(snapshot.data);
-                          return Text(
-                            "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",
-                            style:
-                                AppStyles.logisticsStyle.copyWith(fontSize: 16),
-                          );
-                        } else {
-                          return const Center(
-                              child: Text('No data available.'));
-                        }
-                      },
-                    )),
-              ),
-              SizedBox(height: 30),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.confirmButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        connectWebSocket(
-                            context, huntProgressModel, webSocketModel);
-                        _startHunt(huntProgressModel);
-                      },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Start Hunt',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                  SizedBox(height: 15),
-                  /*Container(
+                SizedBox(height: 15),
+                /*Container(
                     height: 50,
                     width: 175,
                     decoration: AppStyles.cancelButtonStyle,
@@ -630,10 +533,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),*/
-                ],
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     );
