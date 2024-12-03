@@ -40,6 +40,7 @@ class MyTeamCreateView extends StatefulWidget {
 
 class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   late TextEditingController _teamNameController;
+  bool showDeleteButton = true;
   late FocusNode _focusNode;
   bool _isEditing = false;
   bool _showPopup = false;
@@ -83,9 +84,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     super.didChangeDependencies();
     if (!_isWebSocketConnected) {
       final huntProgressModel =
-      Provider.of<HuntProgressModel>(context, listen: false);
+          Provider.of<HuntProgressModel>(context, listen: false);
       final webSocketModel =
-      Provider.of<WebSocketModel>(context, listen: false);
+          Provider.of<WebSocketModel>(context, listen: false);
       connectWebSocket(context, huntProgressModel, webSocketModel);
       _isWebSocketConnected = true;
     }
@@ -142,7 +143,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       print('WebSocket connected successfully.');
       final channel = webSocketModel.messages;
       channel.listen(
-            (message) {
+        (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
 
@@ -152,17 +153,21 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                 'name': data['playerName'],
                 'teamLeader': false,
               };
+
+              showDeleteButton = false; //hide delete team button
+
               // print("Condition: ${_members.any((member) => member['name'] == newPlayer['name'])}");
               if (!_members
                   .any((member) => member['name'] == newPlayer['name'])) {
                 _members.add(newPlayer);
               }
             });
+            print("SHOW DELETE BUTTON: $showDeleteButton");
             showToast("${data['playerName']} joined team");
           } else if (eventType == "PLAYER_LEFT_TEAM") {
             setState(() {
               _members.removeWhere(
-                      (member) => member['name'] == data['playerName']);
+                  (member) => member['name'] == data['playerName']);
             });
             showToast("${data['playerName']} left team");
           } else if (eventType == "HUNT_STARTED") {
@@ -205,7 +210,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   void _startHunt() async {
     try {
       final huntProgressModel =
-      Provider.of<HuntProgressModel>(context, listen: false);
+          Provider.of<HuntProgressModel>(context, listen: false);
       await makeTeam();
 
       setState(() {
@@ -420,7 +425,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                           children: [
                             Icon(Icons.person,
                                 color:
-                                memberColors[index % memberColors.length]),
+                                    memberColors[index % memberColors.length]),
                             const SizedBox(width: 10),
                             Text(
                               member['name'],

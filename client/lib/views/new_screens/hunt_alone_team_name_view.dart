@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
@@ -21,30 +22,76 @@ class HuntAloneTeamNameView extends StatefulWidget {
 
 class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
   final TextEditingController _teamNameController = TextEditingController();
+  final TextEditingController _playerNameController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  bool _isFocused = false;
+  final FocusNode _playerFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(() {
-      setState(() {
-        _isFocused = _focusNode.hasFocus;
-      });
-    });
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
+    _playerFocusNode.dispose();
     _teamNameController.dispose();
+    _playerNameController.dispose();
     super.dispose();
   }
 
-  void _unfocusTextField() {
+  void _unfocusBothTextFields() {
+    if (_playerFocusNode.hasFocus) {
+      _playerFocusNode.unfocus();
+    }
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
     }
+  }
+
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  Future<void> makeTeam(HuntProgressModel model) async {
+    String teamName = _teamNameController.text.trim();
+    String playerName = _playerNameController.text.trim();
+
+    if (teamName.isEmpty || playerName.isEmpty) {
+      ShowEmptyTeamDialog(context);
+      throw Exception("Player name cannot be empty");
+    }
+
+    try {
+      final postResponse =
+          await createTeam(model.huntId, teamName, playerName, true);
+      // new team ID returned when team was created
+      model.teamId = postResponse['teamId'];
+    } catch (e) {
+      showToast("Failed to create team: $e");
+      throw e;
+    }
+
+    model.teamName = _teamNameController.text.trim();
+    model.playerName = _playerNameController.text.trim();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            // builder: (context) => HuntAloneView(
+            //  teamName: _teamNameController.text,
+            //  huntId: huntProgressModel.huntId,
+            //  huntName: huntProgressModel.huntName,
+            //  venue: huntProgressModel.venue,
+            //  huntDate: huntProgressModel.huntDate),
+            builder: (context) => HuntAloneView()));
   }
 
   @override
@@ -54,7 +101,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
     huntProgressModel.teamName = _teamNameController.text;
 
     return GestureDetector(
-      onTap: _unfocusTextField,
+      onTap: _unfocusBothTextFields,
       child: Scaffold(
         appBar: AppStyles.appBarStyle("Hunt Alone", context),
         body: DecoratedBox(
@@ -120,7 +167,6 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                 SizedBox(
                   width: 250,
                   child: TextField(
-                    onChanged: (value) {},
                     controller: _teamNameController,
                     focusNode: _focusNode,
                     style: const TextStyle(color: Colors.grey),
@@ -128,7 +174,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Colors.white,
-                      hintText: _isFocused ? null : 'Enter your team name here',
+                      hintText: 'Enter your team name here',
                       hintStyle: const TextStyle(color: Colors.grey),
                       border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -144,7 +190,34 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 250,
+                  child: TextField(
+                    controller: _playerNameController,
+                    focusNode: _playerFocusNode,
+                    style: const TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintText: 'Enter your player name here',
+                      hintStyle: const TextStyle(color: Colors.grey),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.green),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
                 SizedBox(
                   width: 200,
                   height: 60,
@@ -156,23 +229,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                       ElevatedButton(
                         style: AppStyles.elevatedButtonStyle,
                         onPressed: () {
-                          if (_teamNameController.text.trim().isEmpty) {
-                            ShowEmptyTeamDialog(context);
-                          } else {
-                            huntProgressModel.teamName =
-                                _teamNameController.text.trim();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  // builder: (context) => HuntAloneView(
-                                  //  teamName: _teamNameController.text,
-                                  //  huntId: huntProgressModel.huntId,
-                                  //  huntName: huntProgressModel.huntName,
-                                  //  venue: huntProgressModel.venue,
-                                  //  huntDate: huntProgressModel.huntDate),
-                                  builder: (context) => HuntAloneView()),
-                            );
-                          }
+                          makeTeam(huntProgressModel);
                         },
                         child: const Center(
                           child: Text('Continue',
@@ -245,7 +302,7 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                       ),
                       Flexible(
                         child: Text(
-                          'Your team name cannot be empty!',
+                          'Both team name and player cannot be empty!',
                           style: AppStyles.titleStyle.copyWith(fontSize: 20),
                           textAlign: TextAlign.center,
                         ),
