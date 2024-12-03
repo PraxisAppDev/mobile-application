@@ -709,8 +709,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
             // Submit Button
 
             Container(
-              height: 33,
-              width: 115,
+              height: 50,
+              width: 150,
               decoration: AppStyles.confirmButtonStyle,
               child: ElevatedButton(
                 onPressed: _submitAnswer,
@@ -724,8 +724,8 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
             // I Give Up Button
             Container(
-              height: 33,
-              width: 115,
+              height: 50,
+              width: 150,
               decoration: AppStyles.cancelButtonStyle,
               child: ElevatedButton(
                 onPressed: _showGiveUpDialog,
