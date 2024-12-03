@@ -134,8 +134,11 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     // final wsUrl =
     //     'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
     // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt/${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&playerId=oijf654dfe&huntAlone=false';
-    final wsUrl =
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&huntAlone=false';
+    
+    print(huntProgressModel.huntId);
+    print(widget.teamName);
+    
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
 
     try {
       print('Connecting to WebSocket at: $wsUrl');

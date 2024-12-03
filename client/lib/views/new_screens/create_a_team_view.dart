@@ -54,9 +54,10 @@ class _CreateATeamViewState extends State<CreateATeamView> {
     );
   }
 
+  /*
   // Connect to WebSocket after team creation
   void connectWebSocket(WebSocketModel webSocketModel, String huntId, String teamName, String playerName) async {
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId&teamId=$teamName&playerName=$playerName&huntAlone=false';
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=$huntId?teamId=$teamName&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
@@ -95,6 +96,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       showToast("Failed to connect to WebSocket: $e");
     }
   }
+  */
 
   // Create a team and navigate to the next screen
   void _createTeam(HuntProgressModel model, WebSocketModel webSocketModel) async {
@@ -119,7 +121,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       model.teamId = response['teamId'];
 
       // Connect to WebSocket
-      connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
+      //connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
 
       // Navigate to the next view
       Navigator.push(

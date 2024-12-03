@@ -94,4 +94,3 @@ class HuntProgressModel extends ChangeNotifier {
   }
 }
 
-

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_team.dart';
+import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view_no_buttons.dart';
@@ -15,13 +16,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:praxis_afterhours/provider/websocket_model.dart';
 
 class MyTeamView extends StatelessWidget {
-  final String playerName; // Add this line to store the player's name
-
-  // final String teamID;
-  // final String huntID;
-  // late String teamName;
-  //
-  // MyTeamView({super.key, required this.huntID, required this.teamID});
+  final String playerName;
 
   MyTeamView({super.key, required this.playerName});
 
@@ -29,8 +24,7 @@ class MyTeamView extends StatelessWidget {
   Future<void> _showLeaveTeamConfirmation(BuildContext context) async {
     return showDialog<void>(
       context: context,
-      barrierDismissible:
-          true, // user can dismiss the dialog by tapping outside
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -86,8 +80,7 @@ class MyTeamView extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () async {
                           Navigator.of(context).pop(); // Close the dialog
-                          await leaveTeamAndUpdateView(
-                              context); // Call the leave team function, handling the API calls
+                          await leaveTeamAndUpdateView(context);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -167,90 +160,35 @@ class MyTeamView extends StatelessWidget {
               child: Column(
                 children: [
                   FutureBuilder<Map<String, dynamic>>(
-                    future: fetchTeam(
-                        huntProgressModel.huntId, huntProgressModel.teamId),
+                    future: fetchTeamsFromHunt(huntProgressModel.huntId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
-                        // Add the player name to the members list
-                        List<dynamic> members = snapshot.data!['players'];
-                        if (!members
-                            .any((member) => member['name'] == playerName)) {
-                          members
-                              .add({'name': playerName, 'teamLeader': false});
+                        // Find the specific team the user is in
+                        List<dynamic> teams = snapshot.data!['teams'];
+                        var userTeam = teams.firstWhere(
+                          (team) => team['id'] == huntProgressModel.teamId,
+                          orElse: () => null,
+                        );
+
+                        if (userTeam == null) {
+                          return Center(
+                              child: Text('Could not find your team details'));
                         }
 
                         return TeamTile(
-                          isLocked: snapshot.data!['lockStatus'],
-                          teamName: snapshot.data!['name'],
-                          members: members,
+                          isLocked: userTeam['lockStatus'],
+                          teamName: userTeam['name'],
+                          members: userTeam['players'],
                         );
                       } else {
                         return const Center(child: Text('No data available.'));
                       }
                     },
                   ),
-                  // Padding(
-                  //     padding: const EdgeInsets.only(top: 30.0),
-                  //     child: Container(
-                  //       height: 50,
-                  //       width: 175,
-                  //       decoration: AppStyles.confirmButtonStyle,
-                  //       child: ElevatedButton(
-                  //         onPressed: () {
-                  //           huntProgressModel.totalSeconds = 0;
-                  //           huntProgressModel.totalPoints = 0;
-                  //           huntProgressModel.secondsSpentThisRound = 0;
-                  //           huntProgressModel.pointsEarnedThisRound = 0;
-                  //           huntProgressModel.currentChallenge = 0;
-                  //
-                  //
-                  //           Navigator.pushReplacement(
-                  //               context,
-                  //               MaterialPageRoute(
-                  //                   builder: (context) =>
-                  //                       HuntProgressViewNoButtons()));
-                  //         },
-                  //         style: AppStyles.elevatedButtonStyle,
-                  //         child: const Text('Progress NB'),
-                  //       ),
-                  //     )),
-                  // Padding(
-                  //     padding: const EdgeInsets.only(top: 30.0),
-                  //     child: Container(
-                  //       height: 50,
-                  //       width: 175,
-                  //       decoration: AppStyles.confirmButtonStyle,
-                  //       child: ElevatedButton(
-                  //         onPressed: () {
-                  //           huntProgressModel.totalSeconds = 0;
-                  //           huntProgressModel.totalPoints = 0;
-                  //           huntProgressModel.secondsSpentThisRound = 0;
-                  //           huntProgressModel.pointsEarnedThisRound = 0;
-                  //           huntProgressModel.currentChallenge = 0;
-                  //           huntProgressModel.previousSeconds =
-                  //               huntProgressModel.totalSeconds;
-                  //           huntProgressModel.previousPoints =
-                  //               huntProgressModel.totalPoints;
-                  //           huntProgressModel.challengeId = "1";
-                  //           huntProgressModel.challengeNum = 0;
-                  //           //huntProgressModel.challengeId = challengeResponse[index]['id'];
-                  //           //huntProgressModel.challengeNum = index;
-                  //
-                  //
-                  //           Navigator.pushReplacement(
-                  //               context,
-                  //               MaterialPageRoute(
-                  //                   builder: (context) =>
-                  //                       ChallengeViewNoButtons(huntProgressModel.challengeId, currentChallenge: huntProgressModel.challengeNum)));
-                  //         },
-                  //         style: AppStyles.elevatedButtonStyle,
-                  //         child: const Text('Challenge NB'),
-                  //       ),
-                  //     )),
                   Padding(
                       padding: const EdgeInsets.only(top: 30.0),
                       child: Container(
@@ -341,9 +279,7 @@ class _TeamTileState extends State<TeamTile> {
       return;
     }
 
-// rays hardcoded for now, needs to be changed for actual team id.
-    final wsUrl =
-        'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
+    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
     try {
       print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
