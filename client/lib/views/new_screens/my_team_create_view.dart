@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
@@ -116,85 +117,102 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
       fontSize: 16.0,
     );
   }
+void connectWebSocket(
+    BuildContext context,
+    HuntProgressModel huntProgressModel,
+    WebSocketModel webSocketModel) async {
+  final playerName = huntProgressModel.playerName;
 
-  void connectWebSocket(
-      BuildContext context,
-      HuntProgressModel huntProgressModel,
-      WebSocketModel webSocketModel) async {
-    final playerName = huntProgressModel.playerName;
-
-    if (playerName.isEmpty) {
-      print("My Team Create View Player name is empty.");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Player name cannot be empty')),
-      );
-      return;
-    }
-
-    // final wsUrl =
-    //     'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${"rays"}&playerName=$playerName&huntAlone=false';
-    // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt/${huntProgressModel.huntId}?teamId=${huntProgressModel.teamId}&playerId=oijf654dfe&huntAlone=false';
-    
-    print(huntProgressModel.huntId);
-    print(widget.teamName);
-    
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
-
-    try {
-      print('Connecting to WebSocket at: $wsUrl');
-      webSocketModel.connect(wsUrl);
-      print('WebSocket connected successfully.');
-      final channel = webSocketModel.messages;
-      channel.listen(
-        (message) {
-          final Map<String, dynamic> data = json.decode(message);
-          final String eventType = data['eventType'];
-
-          if (eventType == "PLAYER_JOINED_TEAM") {
-            setState(() {
-              final newPlayer = {
-                'name': data['playerName'],
-                'teamLeader': false,
-              };
-
-              showDeleteButton = false; //hide delete team button
-
-              // print("Condition: ${_members.any((member) => member['name'] == newPlayer['name'])}");
-              if (!_members
-                  .any((member) => member['name'] == newPlayer['name'])) {
-                _members.add(newPlayer);
-              }
-            });
-            print("SHOW DELETE BUTTON: $showDeleteButton");
-            showToast("${data['playerName']} joined team");
-          } else if (eventType == "PLAYER_LEFT_TEAM") {
-            setState(() {
-              _members.removeWhere(
-                  (member) => member['name'] == data['playerName']);
-            });
-            showToast("${data['playerName']} left team");
-          } else if (eventType == "HUNT_STARTED") {
-            showToast("Hunt started");
-          } else if (eventType == "HUNT_ENDED") {
-            showToast("Hunt ended");
-          } else if (eventType == "CHALLENGE_RESPONSE") {
-            showToast("Challenge response");
-          }
-        },
-        onError: (error) {
-          print('WebSocket error: $error');
-          showToast("WebSocket error: $error");
-        },
-        onDone: () {
-          print('WebSocket closed');
-          showToast("Websocket closed");
-        },
-        cancelOnError: true,
-      );
-    } catch (e) {
-      print('Failed to connect to WebSocket: $e');
-    }
+  if (playerName.isEmpty) {
+    print("My Team Create View Player name is empty.");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Player name cannot be empty')),
+    );
+    return;
   }
+
+  print(huntProgressModel.huntId);
+  print(widget.teamName);
+
+  final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
+
+  // Timer to periodically send pings
+  Timer? pingTimer;
+
+  // Function to attempt reconnect if the WebSocket disconnects
+  Future<void> reconnectWebSocket() async {
+    print("Attempting to reconnect...");
+    connectWebSocket(context, huntProgressModel, webSocketModel);
+  }
+
+  try {
+    print('Connecting to WebSocket at: $wsUrl');
+    webSocketModel.connect(wsUrl);
+    print('WebSocket connected successfully.');
+
+    final channel = webSocketModel.messages;
+
+    // Listen for messages from the WebSocket
+    channel.listen(
+      (message) {
+        final Map<String, dynamic> data = json.decode(message);
+        final String eventType = data['eventType'];
+
+        if (eventType == "PLAYER_JOINED_TEAM") {
+          setState(() {
+            final newPlayer = {
+              'name': data['playerName'],
+              'teamLeader': false,
+            };
+
+            showDeleteButton = false; // hide delete team button
+
+            if (!_members.any((member) => member['name'] == newPlayer['name'])) {
+              _members.add(newPlayer);
+            }
+          });
+          print("SHOW DELETE BUTTON: $showDeleteButton");
+          showToast("${data['playerName']} joined team");
+        } else if (eventType == "PLAYER_LEFT_TEAM") {
+          setState(() {
+            _members.removeWhere((member) => member['name'] == data['playerName']);
+          });
+          showToast("${data['playerName']} left team");
+        } else if (eventType == "HUNT_STARTED") {
+          showToast("Hunt started");
+        } else if (eventType == "HUNT_ENDED") {
+          showToast("Hunt ended");
+        } else if (eventType == "CHALLENGE_RESPONSE") {
+          showToast("Challenge response");
+        }
+      },
+      onError: (error) {
+        print('WebSocket error: $error');
+        showToast("WebSocket error: $error");
+        // Try to reconnect if error occurs
+        reconnectWebSocket();
+      },
+      onDone: () {
+        print('WebSocket closed');
+        showToast("WebSocket closed");
+        // Try to reconnect when WebSocket is closed
+        reconnectWebSocket();
+      },
+      cancelOnError: true,
+    );
+
+    // Send periodic pings every 30 seconds to keep the WebSocket alive
+    pingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+        print("Ping sent to keep WebSocket alive");
+    });
+
+  } catch (e) {
+    print('Failed to connect to WebSocket: $e');
+    showToast("Failed to connect to WebSocket: $e");
+    // Try to reconnect if WebSocket connection fails
+    reconnectWebSocket();
+  }
+}
 
   Future<void> makeTeam() async {
     final model = Provider.of<HuntProgressModel>(context, listen: false);
