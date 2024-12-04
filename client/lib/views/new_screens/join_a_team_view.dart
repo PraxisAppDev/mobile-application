@@ -101,6 +101,7 @@ class _TeamTileState extends State<TeamTile> {
       huntProgressModel.teamId = widget.teamID;
       // Store the player name in the model
       huntProgressModel.playerName = playerName; // Add this line
+      print("Player name: $playerName");
 
       Navigator.pushReplacement(
         context,

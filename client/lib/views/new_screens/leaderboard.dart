@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/apis/fetch_leaderboard.dart';
@@ -17,7 +18,9 @@ class _LeaderboardState extends State<Leaderboard> {
   String formatDate(String dateString) {
     String cleanDate = dateString.replaceAll(RegExp(r'\[UTC\]'), '');
     DateTime dater = DateTime.parse(cleanDate);
-    return DateFormat('  MM/dd/yyyy   h:mm a').format(dater);
+    final estLocation = tz.getLocation('America/New_York');
+    tz.TZDateTime estDateTime = tz.TZDateTime.from(dater, estLocation);
+    return DateFormat('  MM/dd/yyyy   h:mm a').format(estDateTime);
   }
 
   @override

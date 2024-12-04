@@ -284,7 +284,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
         },
         onDone: () {
           print('WebSocket closed');
-          showToast("Websocket closed");
+          //showToast("Websocket closed");
         },
         cancelOnError: true,
       );

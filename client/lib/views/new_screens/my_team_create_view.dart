@@ -194,7 +194,7 @@ void connectWebSocket(
       },
       onDone: () {
         print('WebSocket closed');
-        showToast("WebSocket closed");
+        //showToast("WebSocket closed");
         // Try to reconnect when WebSocket is closed
         reconnectWebSocket();
       },

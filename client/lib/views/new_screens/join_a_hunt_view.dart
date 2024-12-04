@@ -174,11 +174,12 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
   }
 
   String truncatedDate(String startDate) {
-    String cleanedUtcString = startDate.replaceAll('[UTC]', '');
+    String cleanedUtcString = startDate.replaceAll('[UTC]', '').trim();
     DateTime utcDateTime = DateTime.parse(cleanedUtcString);
     final estLocation = tz.getLocation('America/New_York');
     tz.TZDateTime estDateTime = tz.TZDateTime.from(utcDateTime, estLocation);
-    String formattedEst = DateFormat('MM-dd-yyyy hh:mm a').format(estDateTime);
+
+    String formattedEst = DateFormat('MM/dd/yyyy h:mm a').format(estDateTime);
     return formattedEst;
   }
 }

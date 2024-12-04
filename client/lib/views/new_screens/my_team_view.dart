@@ -79,8 +79,11 @@ class MyTeamView extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () async {
+                          print("Pressed confirm");
                           Navigator.of(context).pop(); // Close the dialog
+                          print("Popped?");
                           await leaveTeamAndUpdateView(context);
+                          print("left?");
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -112,8 +115,7 @@ class MyTeamView extends StatelessWidget {
       final huntProgressModel =
           Provider.of<HuntProgressModel>(context, listen: false);
       // Call the leaveTeam API
-      await leaveTeam(huntProgressModel.huntId, huntProgressModel.teamId,
-          "placeholder"); // TODO: Fix
+      await leaveTeam(huntProgressModel.huntId, huntProgressModel.teamName, playerName);
       // Show a success message or refresh the view
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Successfully left the team')),
