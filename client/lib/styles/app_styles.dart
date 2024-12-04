@@ -176,20 +176,6 @@ class AppStyles {
             );
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.leaderboard),
-            color: Colors.white, // Uses the leaderboard icon
-            onPressed: () {
-              // Define the action for when the icon is tapped
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const leaderboard.Leaderboard()),
-              );
-            },
-          ),
-        ],
         centerTitle: true,
         flexibleSpace: Align(
           alignment: Alignment.center,

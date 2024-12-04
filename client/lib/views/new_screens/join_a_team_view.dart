@@ -35,6 +35,10 @@ class JoinATeamView extends StatelessWidget {
                   return ListView.builder(
                     itemCount: teams.length,
                     itemBuilder: (context, index) {
+                      if (teams[index]['name'] == null || teams[index]['name'].isEmpty) {
+                        return SizedBox.shrink(); // Return an empty widget if the name is null or empty
+                      }
+
                       return TeamTile(
                           teamID: teams[index]['id'],
                           huntID: huntProgressModel.huntId,

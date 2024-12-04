@@ -500,31 +500,136 @@ class _ChallengeContentState extends State<ChallengeContent> {
   //   }
   // }
 
+  final DotDivider = Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Container(
+        width: 5.0,
+        height: 5.0,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+      ),
+      SizedBox(
+        width: 5,
+      ),
+      Container(
+        width: 5.0,
+        height: 5.0,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+      ),
+      SizedBox(
+        width: 5,
+      ),
+      Container(
+        width: 5.0,
+        height: 5.0,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+      ),
+    ],
+  );
+
   // Show a confirmation dialog before giving up
   void _showGiveUpDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // User must tap a button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Are you sure?'),
-          content: const Text(
-            'If you give up, you will receive 0 points for this challenge.',
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(), // Close the dialog
-              child: const Text('Cancel'),
+          backgroundColor: Colors.black,
+          contentPadding: const EdgeInsets.all(0),
+          content: DecoratedBox(
+            decoration: AppStyles.popupStyle(),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // Top Divider with Close Button
+                  SizedBox(
+                    height: 45,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        const SizedBox(width: 32),
+                        Expanded(child: DotDivider),
+                        SizedBox(
+                          width: 32,
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close dialog
+                            },
+                            icon: const Icon(Icons.close, color: Colors.white),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  const Flexible(
+                    child: Text(
+                      'Are you sure?\n',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  // Dialog Content
+                  const Flexible(
+                    child: Text(
+                      'If you give up, you will receive 0 points for this challenge.',
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Action Buttons
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Cancel Button
+                      Container(
+                        width: 130,
+                        height: 50,
+                        decoration: AppStyles.cancelButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                      // Confirm Button
+                      Container(
+                        width: 130,
+                        height: 50,
+                        decoration: AppStyles.confirmButtonStyle,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Close dialog
+                            _finalPoints = 0; // Set points to 0
+                            _navigateToHuntProgress(widget.totalSeconds); // Navigate to the progress screen
+                          },
+                          style: AppStyles.elevatedButtonStyle,
+                          child: const Text(
+                            'Confirm',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Bottom Divider
+                  SizedBox(height: 45, child: DotDivider),
+                ],
+              ),
             ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                _finalPoints = 0; // Set points to 0
-                _navigateToHuntProgress(widget.totalSeconds); // Navigate to the progress screen
-              },
-              child: const Text('Confirm'),
-            ),
-          ],
+          ),
         );
       },
     );

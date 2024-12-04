@@ -95,6 +95,12 @@ class _LeaderboardState extends State<Leaderboard> {
                                   (team['challengeResults']
                                           as List<dynamic>?) ??
                                       [];
+
+                              // Check if team['name'] is null or an empty string before displaying the container
+                              if (team['name'] == null || team['name'] == '') {
+                                return Container(); // If name is null or empty, return an empty container
+                              }
+
                               return Container(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: 8, horizontal: 20),
@@ -120,9 +126,8 @@ class _LeaderboardState extends State<Leaderboard> {
                                           ),
                                         ),
                                         title: Text(
-                                          team['name'],
-                                          style: AppStyles.logisticsStyle
-                                              .copyWith(fontSize: 24),
+                                          team['name'] as String? ?? '',
+                                          style: AppStyles.logisticsStyle.copyWith(fontSize: 24),
                                         ),
                                         backgroundColor: Colors.transparent,
                                         collapsedBackgroundColor:

@@ -28,7 +28,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: true);
 
     return Scaffold(
-      appBar: AppStyles.noLeaderboardAppBarStyle("Hunts", context),
+      appBar: AppStyles.homeAppBarStyle("Hunts", context),
       body: DecoratedBox(
         decoration: AppStyles.backgroundStyle,
         child: FutureBuilder<List<hunts_api.HuntResponseModel>>(
@@ -55,18 +55,6 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                       if (index == 0) SizedBox(height: 20),
                       Stack(
                         children: [
-                          // Blur effect when button is pressed
-                          if (isPressed)
-                            Positioned.fill( // Ensures it spans the entire container
-                              child: ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
-                                  ),
-                                ),
-                              ),
-                            ),
                           Container(
                             height: 150,
                             width: 375,
@@ -156,6 +144,19 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
                               ],
                             ),
                           ),
+
+                          // Blur effect when button is pressed
+                          if (isPressed)
+                            Positioned.fill( // Ensures it spans the entire container
+                              child: ClipRect(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 1.5, sigmaY: 1.5),
+                                  child: Container(
+                                    decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 20), // Adding space between containers
