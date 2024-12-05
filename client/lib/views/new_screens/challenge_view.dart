@@ -809,19 +809,19 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(right: 8.0),
-                      decoration: AppStyles.cancelButtonStyle,
+                      decoration: AppStyles.cancelButtonStyle, // Use AppStyles for decoration
                       child: ElevatedButton(
                         onPressed: _showGiveUpDialog,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
+                          backgroundColor: Colors.transparent, // Make button background transparent
+                          shadowColor: Colors.transparent, // Remove shadow
                         ),
-                        child: const Text(
+                        child: Text(
                           'I Quit',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppStyles.logisticsStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ), // Ensure font consistency
                         ),
                       ),
                     ),
@@ -829,19 +829,19 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   Expanded(
                     child: Container(
                       margin: const EdgeInsets.only(left: 8.0),
-                      decoration: AppStyles.confirmButtonStyle,
+                      decoration: AppStyles.confirmButtonStyle, // Use AppStyles for decoration
                       child: ElevatedButton(
                         onPressed: _submitAnswer,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
+                          backgroundColor: Colors.transparent, // Make button background transparent
+                          shadowColor: Colors.transparent, // Remove shadow
                         ),
-                        child: const Text(
+                        child: Text(
                           'Submit',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: AppStyles.logisticsStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ), // Ensure font consistency
                         ),
                       ),
                     ),
@@ -906,18 +906,21 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
                       // Reveal Hint Button
                       Center(
-                        child: ElevatedButton(
-                          onPressed: _revealHint,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
+                        child: Container(
+                          decoration: AppStyles.infoBoxStyle, // Use AppStyles for decoration
+                          child: ElevatedButton(
+                            onPressed: _revealHint,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent, // Make button background transparent
+                              shadowColor: Colors.transparent, // Remove shadow
                             ),
-                          ),
-                          child: const Text(
-                            'Reveal Hint',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            child: Text(
+                              'Reveal Hint',
+                              style: AppStyles.logisticsStyle.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ), // Ensure font consistency
+                            ),
                           ),
                         ),
                       ),
