@@ -902,7 +902,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
                       // Reveal Hint Button
                       Center(
                         child: Container(
-                          decoration: AppStyles.infoBoxStyle, // Use AppStyles for decoration
+                          decoration: AppStyles.hintBoxStyle, // Use AppStyles for decoration
                           child: ElevatedButton(
                             onPressed: _revealHint,
                             style: ElevatedButton.styleFrom(
@@ -919,6 +919,13 @@ class _ChallengeContentState extends State<ChallengeContent> {
                           ),
                         ),
                       ),
+                      Center(
+                        child: Text(
+                            "Your team has $guessesLeft guesses left.",
+                            style:
+                            AppStyles.logisticsStyle.copyWith(color: Colors.amber),
+                          ),
+                      )
                     ],
                   ),
                 ),
