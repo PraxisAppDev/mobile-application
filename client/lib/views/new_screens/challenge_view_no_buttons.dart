@@ -404,7 +404,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
     try {
       // Call the solveChallenge API with the necessary parameters
       final result = await solveChallenge(widget.huntID, widget.teamID,
-          widget.challengeID, _answerController.text);
+          widget.challengeID, 3 - guessesLeft, widget.totalSeconds - widget.previousSeconds, _hintIndex, _answerController.text);
 
       bool isCorrect = result['challengeSolved'];
 

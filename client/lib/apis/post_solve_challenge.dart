@@ -1,10 +1,15 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String challengeId, String answerText) async {
+Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String challengeId, int attemptNumber, int timeSinceChallengeStarted, int numHintsUsed, String answerText) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/$challengeId/solve";
 
   try {
+    print("Attempt Number: $attemptNumber");
+    print("Time Since Challenge Started: $timeSinceChallengeStarted");
+    print("Num Hints Used: $numHintsUsed");
+    print("Answer Text: $answerText");
+
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -12,9 +17,9 @@ Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String
         "Content-Type": "application/json"
       },
       body: jsonEncode({
-        "attemptNumber": 3,
-        "timeSinceChallengeStarted": 10000,
-        "numberOfHintsUsed": 0,
+        "attemptNumber": attemptNumber,
+        "timeSinceChallengeStarted": timeSinceChallengeStarted,
+        "numberOfHintsUsed": numHintsUsed,
         "answer": answerText
       }),
     );

@@ -98,7 +98,7 @@ class _StartHuntView2State extends State<StartHuntView2> {
   }
 
   Future<void> solveChallengeData() async {
-    var data = await solveChallenge("1", "23453", "123", "bob");
+    var data = await solveChallenge("1", "23453", "123", 3, 10000, 1, "bob");
     setState(() {
       solveData = data;
       isLoading = false;
