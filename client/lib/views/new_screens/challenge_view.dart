@@ -250,6 +250,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
   bool _isLoading = true;
   Map<String, dynamic> _challengeData = {};
   late final List<dynamic> _hints; // Load hints from the challenge data
+  late final String _clueImage; // Load clue image from the challenge data
 
   int _hintIndex = -1; //Tracks the number of hints revealed
   int guessesLeft = 3; // initially starts out with 3 guesses
@@ -328,6 +329,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
           await fetchChallenge(widget.huntID, widget.challengeID);
       setState(() {
         _challengeData = challengeData;
+        _clueImage = challengeData['clue'] ?? '';
         _hints = challengeData['hints'] ?? []; // Initialize _hints here
         _isLoading = false;
       });
@@ -718,231 +720,253 @@ class _ChallengeContentState extends State<ChallengeContent> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // int hintsLeft = (_challengeData['hints']?.length ?? 0) - _hintIndex - 1;
-
-    return LayoutBuilder(builder: (context, constraints) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
-        child: Column(
-          children: [
-            // Question description and image section
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: AppStyles.redInfoBoxStyle,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _challengeData['description'],
-                    style: AppStyles.logisticsStyle,
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                      child: _challengeData['url'] != null
-                          ? Image.network(
-                              _challengeData['url'],
-                              height: constraints.maxHeight * 0.2,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Text(
-                                  'clueUrl could not be displayed',
-                                  style: TextStyle(color: Colors.white),
-                                );
-                              },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Question description and image section
+              Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: AppStyles.redInfoBoxStyle,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _challengeData['description'] ?? 'No description available',
+                      style: AppStyles.logisticsStyle,
+                    ),
+                    const SizedBox(height: 10),
+                    // Clue Image Section
+                    Center(
+                      child: _clueImage.isNotEmpty
+                          ? GestureDetector(
+                              onTap: () => _showFullScreenHintImage(context, _clueImage),
+                              child: Image.network(
+                                _clueImage,
+                                height: constraints.maxHeight * 0.25,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Text(
+                                    'Clue image could not be displayed',
+                                    style: TextStyle(color: Colors.white),
+                                  );
+                                },
+                              ),
                             )
-                          //     : const Text(
-                          //   'Picture (if needed)',
-                          //   style: TextStyle(color: Colors.white),
-                          // ),
-                          : Image.asset("images/huntLogo.png",
-                              height: 50, width: 50)),
-                  /*const SizedBox(height: 10),
-                  Center(
-                    child: _challengeData['clueUrl'] != null
-                        ? Image.network(
-                            _challengeData['clueUrl'],
-                            height: constraints.maxHeight * 0.2,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'images/huntLogo.png',
-                                height: constraints.maxHeight * 0.2,
-                              );
-                            },
-                          )
-                        : const Text(
-                            'Picture (if needed)',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                  ),*/
-                ],
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            // Team Answer header and input field
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Team Answer...',
-                  style: AppStyles.logisticsStyle
-                      .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                          : Image.asset(
+                              "images/huntLogo.png",
+                              height: 100,
+                              width: 100,
+                            ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 5),
-                Container(
-                  height: 33,
-                  decoration: AppStyles.textFieldStyle,
-                  child: TextField(
-                    controller: _answerController,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter answer here...',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      border: InputBorder.none,
-                      suffixIcon: Icon(
-                        Icons.edit,
-                        color: Colors.grey,
+              ),
+              const SizedBox(height: 20),
+
+              // Team Answer section
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16.0),
+                decoration: AppStyles.infoBoxStyle,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Team Answer...',
+                      style: AppStyles.logisticsStyle
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 5),
+                    Container(
+                      height: 50,
+                      decoration: AppStyles.textFieldStyle,
+                      child: TextField(
+                        controller: _answerController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter answer here...',
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none,
+                          suffixIcon: Icon(
+                            Icons.edit,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        style: const TextStyle(color: Colors.black),
                       ),
                     ),
-                    style: const TextStyle(color: Colors.black),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // "I Quit" and "Submit" buttons in a row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8.0),
+                      decoration: AppStyles.cancelButtonStyle, // Use AppStyles for decoration
+                      child: ElevatedButton(
+                        onPressed: _showGiveUpDialog,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Make button background transparent
+                          shadowColor: Colors.transparent, // Remove shadow
+                        ),
+                        child: Text(
+                          'I Quit',
+                          style: AppStyles.logisticsStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ), // Ensure font consistency
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // Submit Button
-
-            Container(
-              height: 50,
-              width: 150,
-              decoration: AppStyles.confirmButtonStyle,
-              child: ElevatedButton(
-                onPressed: _submitAnswer,
-                style: AppStyles.elevatedButtonStyle,
-                child: const Text('Submit',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 8.0),
+                      decoration: AppStyles.confirmButtonStyle, // Use AppStyles for decoration
+                      child: ElevatedButton(
+                        onPressed: _submitAnswer,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent, // Make button background transparent
+                          shadowColor: Colors.transparent, // Remove shadow
+                        ),
+                        child: Text(
+                          'Submit',
+                          style: AppStyles.logisticsStyle.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ), // Ensure font consistency
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-
-            // I Give Up Button
-            Container(
-              height: 50,
-              width: 150,
-              decoration: AppStyles.cancelButtonStyle,
-              child: ElevatedButton(
-                onPressed: _showGiveUpDialog,
-                style: AppStyles.elevatedButtonStyle,
-                child: const Text(
-                  'I Give Up',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            //SHOW HINTS CONTAINER IF AT LEAST ONE HINT IS REVEALED
-            if (_hintIndex > -1)
-              Container(
-                height: MediaQuery.of(context).size.height * 0.15,
-                padding: const EdgeInsets.all(16.0),
-                decoration: AppStyles.infoBoxStyle,
-                child: CupertinoScrollbar(
-                  child: ListView(
+              // Hint section with reveal button
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: AppStyles.infoBoxStyle,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Hints...",
-                        style: AppStyles.logisticsStyle.copyWith(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                        "Hints",
+                        style: AppStyles.logisticsStyle
+                            .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: _hints.length,
-                        itemBuilder: (context, index) {
-                          if (index < _hintIndex) {
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _hintIndex + 1,
+                          itemBuilder: (context, index) {
                             return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Hint ${index + 1}: ${_hints[index]['description']}",
-                                    style: AppStyles.logisticsStyle,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  if (_hints[index]['url'] != null)
-                                    Image.network(
-                                      _hints[index]['url'],
-                                      height: 100,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return const Text(
-                                          'Image not available',
-                                          style: TextStyle(color: Colors.white),
-                                        );
-                                      },
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Hint ${index + 1}: ${_hints[index]['description'] ?? 'No description available'}",
+                                  style: AppStyles.logisticsStyle,
+                                ),
+                                const SizedBox(height: 10),
+                                if (_hints[index]['hint'] != null)
+                                  GestureDetector(
+                                    onTap: () => _showFullScreenHintImage(
+                                      context,
+                                      _hints[index]['hint'],
                                     ),
-                                  SizedBox(height: 10),
-                                ]);
-                          } else {
-                            return null;
-                          }
-                        },
-                      )
+                                    child: Center(
+                                      child: Image.network(
+                                        _hints[index]['hint'] ?? '',
+                                        height: 150,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return const Text(
+                                            'Image not available',
+                                            style: TextStyle(color: Colors.white),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                const SizedBox(height: 20),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Reveal Hint Button
+                      Center(
+                        child: Container(
+                          decoration: AppStyles.infoBoxStyle, // Use AppStyles for decoration
+                          child: ElevatedButton(
+                            onPressed: _revealHint,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent, // Make button background transparent
+                              shadowColor: Colors.transparent, // Remove shadow
+                            ),
+                            child: Text(
+                              'Reveal Hint',
+                              style: AppStyles.logisticsStyle.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ), // Ensure font consistency
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-            Expanded(
-              child: SizedBox(),
-            ),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 5, horizontal: 16.0),
-              decoration: AppStyles.infoBoxStyle,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "Stuck? Reveal a hint...",
-                    style: AppStyles.logisticsStyle
-                        .copyWith(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 5),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-                  // Hint Button
-                  Container(
-                    height: 33,
-                    decoration: AppStyles.hintBoxStyle,
-                    child: ElevatedButton(
-                      onPressed: _revealHint,
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Hint',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
+  
+  void _showFullScreenHintImage(BuildContext context, String imageUrl) {
+    if (imageUrl.isEmpty) return;
 
-                  // Guesses Left Display
-                  const SizedBox(height: 5),
-                  Text(
-                    "Your team has $guessesLeft guesses left.",
-                    style:
-                        AppStyles.logisticsStyle.copyWith(color: Colors.amber),
-                  ),
-                ],
+    showDialog(
+      context: context,
+      barrierDismissible: true, // Allows user to dismiss by tapping outside
+      builder: (context) {
+        return GestureDetector(
+          onTap: () => Navigator.pop(context), // Close popup on tap
+          child: Scaffold(
+            backgroundColor: Colors.black, // Full-screen background
+            body: Center(
+              child: InteractiveViewer( // Allow zoom and pan
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Text(
+                      'Image could not be displayed',
+                      style: TextStyle(color: Colors.white),
+                    );
+                  },
+                ),
               ),
             ),
-            SizedBox(
-              height: 15,
-            )
-          ],
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
   }
+
 }
 
 // class ChallengeView extends StatelessWidget {
