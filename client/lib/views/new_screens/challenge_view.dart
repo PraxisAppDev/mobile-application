@@ -639,16 +639,16 @@ class _ChallengeContentState extends State<ChallengeContent> {
 
   void _revealHint() {
     setState(() {
-      if (_hintIndex < _challengeData['hints'].length - 1) {
+      if (_hintIndex < _hints.length) {
         _hintIndex++;
       }
     });
     _showHintDialog(context);
   }
 
-  // opens dialog box for the hint
+  // Opens dialog box for the hint
   void _showHintDialog(BuildContext context) {
-    bool hasHints = _hintIndex < _hints.length;
+    bool hasHints = _hintIndex >= 0 && _hintIndex < _hints.length;
 
     showDialog(
       context: context,
@@ -693,11 +693,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      if (hasHints) {
-                        setState(() {
-                          _hintIndex++;
-                        });
-                      }
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
