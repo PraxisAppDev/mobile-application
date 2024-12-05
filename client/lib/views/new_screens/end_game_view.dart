@@ -10,7 +10,7 @@ class EndGameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppStyles.noIconsAppBarStyle("End of Game!", context),
+        appBar: AppStyles.noIconsAppBarStyle("End of Hunt!", context),
         body: DecoratedBox(
           decoration: AppStyles.backgroundStyle,
           child: Center(
