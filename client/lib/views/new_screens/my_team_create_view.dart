@@ -1,20 +1,39 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/dashboard/join_hunt_view.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
-import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_mode_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
+import 'package:praxis_afterhours/apis/put_start_hunt.dart';
+import 'package:praxis_afterhours/apis/delete_team.dart';
+import 'package:praxis_afterhours/apis/patch_update_team.dart';
+import 'package:praxis_afterhours/apis/post_join_team.dart';
+import '../../apis/post_create_teams.dart';
+import 'package:provider/provider.dart';
+import '../../provider/game_model.dart';
+import '../../provider/websocket_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MyTeamCreateView extends StatefulWidget {
+  final String huntId;
+  final String huntName;
+  final String teamId;
   final String teamName;
-  final String individualName;
+  final String playerName;
 
   const MyTeamCreateView({
-    Key? key,
+    super.key,
+    required this.huntId,
+    required this.huntName,
+    required this.teamId,
     required this.teamName,
-    required this.individualName,
-  }) : super(key: key);
+    required this.playerName,
+  });
 
   @override
   _MyTeamCreateViewState createState() => _MyTeamCreateViewState();
@@ -22,8 +41,24 @@ class MyTeamCreateView extends StatefulWidget {
 
 class _MyTeamCreateViewState extends State<MyTeamCreateView> {
   late TextEditingController _teamNameController;
+  bool showDeleteButton = true;
   late FocusNode _focusNode;
   bool _isEditing = false;
+  bool _showPopup = false;
+  int _countdown = 3;
+  Timer? _timer;
+  final List<Color> memberColors = [
+    Colors.blue,
+    Colors.green,
+    Colors.purple,
+    Colors.red
+  ];
+
+  // Add member list tracking
+  List<Map<String, dynamic>> _members = [];
+  bool _isWebSocketConnected = false;
+
+  String? _updatedTeamId;
 
   @override
   void initState() {
@@ -35,6 +70,27 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
         _isEditing = _focusNode.hasFocus;
       });
     });
+
+    // Initialize members list with team leader
+    _members = [
+      {
+        'name': widget.playerName,
+        'teamLeader': true,
+      }
+    ];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isWebSocketConnected) {
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
+      final webSocketModel =
+          Provider.of<WebSocketModel>(context, listen: false);
+      connectWebSocket(context, huntProgressModel, webSocketModel);
+      _isWebSocketConnected = true;
+    }
   }
 
   @override
@@ -50,10 +106,268 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
     }
   }
 
+  void showToast(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 5,
+      backgroundColor: Colors.grey[800],
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+void connectWebSocket(
+    BuildContext context,
+    HuntProgressModel huntProgressModel,
+    WebSocketModel webSocketModel) async {
+  final playerName = huntProgressModel.playerName;
+
+  if (playerName.isEmpty) {
+    print("My Team Create View Player name is empty.");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Player name cannot be empty')),
+    );
+    return;
+  }
+
+  print(huntProgressModel.huntId);
+  print(widget.teamName);
+
+  final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
+
+  // Timer to periodically send pings
+  Timer? pingTimer;
+
+  // Function to attempt reconnect if the WebSocket disconnects
+  Future<void> reconnectWebSocket() async {
+    print("Attempting to reconnect...");
+    connectWebSocket(context, huntProgressModel, webSocketModel);
+  }
+
+  try {
+    print('Connecting to WebSocket at: $wsUrl');
+    webSocketModel.connect(wsUrl);
+    print('WebSocket connected successfully.');
+
+    final channel = webSocketModel.messages;
+
+    // Listen for messages from the WebSocket
+    channel.listen(
+      (message) {
+        final Map<String, dynamic> data = json.decode(message);
+        final String eventType = data['eventType'];
+
+        if (eventType == "PLAYER_JOINED_TEAM") {
+          setState(() {
+            final newPlayer = {
+              'name': data['playerName'],
+              'teamLeader': false,
+            };
+
+            showDeleteButton = false; // hide delete team button
+
+            if (!_members.any((member) => member['name'] == newPlayer['name'])) {
+              _members.add(newPlayer);
+            }
+          });
+          print("SHOW DELETE BUTTON: $showDeleteButton");
+          showToast("${data['playerName']} joined team");
+        } else if (eventType == "PLAYER_LEFT_TEAM") {
+          setState(() {
+            _members.removeWhere((member) => member['name'] == data['playerName']);
+          });
+          showToast("${data['playerName']} left team");
+        } else if (eventType == "HUNT_STARTED") {
+          showToast("Hunt started");
+        } else if (eventType == "HUNT_ENDED") {
+          showToast("Hunt ended");
+        } else if (eventType == "CHALLENGE_RESPONSE") {
+          showToast("Challenge response");
+        }
+      },
+      onError: (error) {
+        print('WebSocket error: $error');
+        showToast("WebSocket error: $error");
+        // Try to reconnect if error occurs
+        reconnectWebSocket();
+      },
+      onDone: () {
+        print('WebSocket closed');
+        //showToast("WebSocket closed");
+        // Try to reconnect when WebSocket is closed
+        reconnectWebSocket();
+      },
+      cancelOnError: true,
+    );
+
+    // Send periodic pings every 30 seconds to keep the WebSocket alive
+    pingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
+        print("Ping sent to keep WebSocket alive");
+    });
+
+  } catch (e) {
+    print('Failed to connect to WebSocket: $e');
+    showToast("Failed to connect to WebSocket: $e");
+    // Try to reconnect if WebSocket connection fails
+    reconnectWebSocket();
+  }
+}
+
+  Future<void> makeTeam() async {
+    final model = Provider.of<HuntProgressModel>(context, listen: false);
+    String teamName = _teamNameController.text.trim();
+    if (teamName.isEmpty) {
+      throw Exception("Team name cannot be empty");
+    }
+    try {
+      createTeam(model.huntId, model.teamName, model.playerName, true);
+      await startHunt(model.huntId, model.teamId);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  void _startHunt() async {
+    try {
+      final huntProgressModel =
+          Provider.of<HuntProgressModel>(context, listen: false);
+      await makeTeam();
+
+      setState(() {
+        _showPopup = true;
+      });
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+            builder: (context, setState) {
+              _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+                setState(() {
+                  if (_countdown > 1) {
+                    _countdown--;
+                  } else {
+                    timer.cancel();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      _showPopup = false;
+
+                      huntProgressModel.totalSeconds = 0;
+                      huntProgressModel.totalPoints = 0;
+                      huntProgressModel.secondsSpentThisRound = 0;
+                      huntProgressModel.pointsEarnedThisRound = 0;
+                      huntProgressModel.currentChallenge = 0;
+                      Navigator.pushReplacement(
+                          context,
+                          // MaterialPageRoute(builder: (context) => HuntProgressView(
+                          //   huntName: widget.huntName,
+                          //   huntID: widget.huntId,
+                          //   teamID: _updatedTeamId ?? widget.teamId, // use updated team id from api call
+                          //   totalSeconds: 0,
+                          //   totalPoints: 0,
+                          //   secondsSpentThisRound: 0,
+                          //   pointsEarnedThisRound: 0,
+                          //   currentChallenge: 0
+                          // )),
+                          MaterialPageRoute(
+                              builder: (context) => HuntProgressView()));
+                    });
+                  }
+                });
+              });
+
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'You have started the hunt!',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Game will begin in',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          '$_countdown',
+                          style: const TextStyle(
+                            fontSize: 48,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'seconds',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to start hunt: $e')),
+      );
+    }
+  }
+
+  Future<void> _updateTeamName() async {
+    String newTeamName = _teamNameController.text.trim();
+    if (newTeamName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Team name cannot be empty')),
+      );
+      return;
+    }
+
+    try {
+      await updateTeam(widget.huntId, widget.teamId, newTeamName);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Team name updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update team: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final webSocketModel = Provider.of<WebSocketModel>(context, listen: false);
+
     return GestureDetector(
-      onTap: _unfocusTextField,  // Unfocus when tapping outside the TextField
+      onTap: _unfocusTextField,
       child: Scaffold(
         appBar: AppStyles.appBarStyle("My Team", context),
         body: DecoratedBox(
@@ -67,6 +381,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(height: 20),
                 Text(
                   "Team Name",
                   style: AppStyles.logisticsStyle,
@@ -87,7 +402,10 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                           controller: _teamNameController,
                           focusNode: _focusNode,
                           decoration: InputDecoration(
-                            suffixIcon: Icon(Icons.edit, color: Colors.white),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.check, color: Colors.white),
+                              onPressed: _updateTeamName,
+                            ),
                             border: UnderlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: Colors.white),
@@ -98,6 +416,9 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                             filled: true,
                             fillColor: Colors.grey,
                           ),
+                          onSubmitted: (value) {
+                            _updateTeamName();
+                          },
                           style: const TextStyle(color: Colors.white),
                         ),
                       ),
@@ -105,31 +426,53 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                Text(
+                  "Team Members (${_members.length}/4)",
+                  style: AppStyles.logisticsStyle,
+                ),
+                const SizedBox(width: 350, child: Divider(thickness: 2)),
+                // Member List
                 Container(
-                  height: 75,
                   width: 325,
-                  padding: const EdgeInsets.all(16),
                   decoration: AppStyles.infoBoxStyle,
-                  child: Row(
-                    children: [
-                      Icon(FontAwesomeIcons.crown, color: Color(0xFFFFD700)),
-                      const SizedBox(width: 5),
-                      Icon(Icons.person, color: Colors.green),
-                      const SizedBox(width: 5),
-                      SizedBox(
-                        child: Text(
-                          widget.individualName,
-                          style: AppStyles.logisticsStyle,
+                  child: Column(
+                    children: _members.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      Map<String, dynamic> member = entry.value;
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Row(
+                          children: [
+                            Icon(Icons.person,
+                                color:
+                                    memberColors[index % memberColors.length]),
+                            const SizedBox(width: 10),
+                            Text(
+                              member['name'],
+                              style: AppStyles.logisticsStyle,
+                            ),
+                            const Spacer(),
+                            if (member['teamLeader'])
+                              Icon(FontAwesomeIcons.crown,
+                                  color: Color(0xFFFFD700)),
+                            if (member['name'] == widget.playerName)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  "(Me)",
+                                  style: AppStyles.logisticsStyle,
+                                ),
+                              ),
+                          ],
                         ),
-                      ),
-                      Spacer(),
-                      Text(
-                        "(Me)",
-                        style: AppStyles.logisticsStyle,
-                      ),
-                    ],
+                      );
+                    }).toList(),
                   ),
                 ),
+                // for (var member in _members)
+                //   Text(member.toString(),
+                //       style: TextStyle(fontSize: 12, color: Colors.white)),
                 const SizedBox(height: 20),
                 Container(
                   height: 50,
@@ -137,14 +480,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.confirmButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ShowGameStartDialog(context).then((_) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ChallengeView(),
-                          ),
-                        );
-                      });
+                      _startHunt();
+                      _updateTeamName();
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -160,7 +497,8 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                   decoration: AppStyles.cancelButtonStyle,
                   child: ElevatedButton(
                     onPressed: () {
-                      ShowDeleteConfirmationDialog(context);
+                      ShowDeleteConfirmationDialog(
+                          context, widget.huntId, widget.teamId);
                     },
                     style: AppStyles.elevatedButtonStyle,
                     child: const Text(
@@ -169,6 +507,7 @@ class _MyTeamCreateViewState extends State<MyTeamCreateView> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -323,7 +662,9 @@ final DotDivider = Row(
   ],
 );
 
-Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
+Future<void> ShowDeleteConfirmationDialog(
+    BuildContext context, String huntId, String teamId) async {
+  // print(context.widget);
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap a button!
@@ -379,7 +720,8 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                         onPressed: () {
                           Navigator.of(context).pop(); // Close dialog
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'No',
                           style: TextStyle(fontWeight: FontWeight.bold),
@@ -391,15 +733,15 @@ Future<void> ShowDeleteConfirmationDialog(BuildContext context) async {
                       decoration: AppStyles.confirmButtonStyle,
                       child: ElevatedButton(
                         onPressed: () {
+                          deleteTeam(huntId, teamId);
                           Navigator.of(context).pop(); // Close dialog
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const JoinHuntView(),
-                            ),
-                          ); // Navigate back to hunt mode screen
+                          Navigator.of(context)
+                              .pop(); // Navigate back to hunt mode screen
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
                         },
-                        style: AppStyles.elevatedButtonStyle, // Applying elevatedButtonStyle
+                        style: AppStyles
+                            .elevatedButtonStyle, // Applying elevatedButtonStyle
                         child: const Text(
                           'Yes',
                           style: TextStyle(fontWeight: FontWeight.bold),

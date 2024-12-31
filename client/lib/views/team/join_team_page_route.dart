@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+/*import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../reusables/hunt_structure.dart';
 
@@ -35,4 +35,4 @@ class JoinTeamPageRoute extends MaterialPageRoute {
     });
     return super.didPop(result);
   }
-}
+}*/

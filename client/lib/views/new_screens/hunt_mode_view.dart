@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_alone_team_name_view.dart';
-import 'package:praxis_afterhours/views/new_screens/hunt_alone_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
+import 'package:provider/provider.dart';
+
+import '../../provider/game_model.dart';
 
 class HuntModeView extends StatelessWidget {
-  //const HuntModeView({super.key});
-  final String huntName;
-  final String venue;
-  final String huntDate;
-  const HuntModeView({super.key, required this.huntName, required this.venue, required this.huntDate});
-
+  // final String huntId;
+  // final String huntName;
+  // final String venue;
+  // final String huntDate;
+  // const HuntModeView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
+  const HuntModeView({super.key});
+  
   //@override
   //_HuntModeViewState createState() => _HuntModeViewState();
 
   @override
   Widget build(BuildContext context) {
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
+
     return MaterialApp(
       home: Scaffold(
         appBar: AppStyles.appBarStyle("Hunt Mode", context),
@@ -40,7 +45,7 @@ class HuntModeView extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              huntName,
+                              huntProgressModel.huntName,
                               textAlign: TextAlign.left,
                               style: AppStyles.logisticsStyle,
                             ),
@@ -51,7 +56,7 @@ class HuntModeView extends StatelessWidget {
                           children: [
                             Icon(Icons.location_pin, color: Colors.white),
                             Text(
-                              venue,
+                              huntProgressModel.venue,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -61,7 +66,7 @@ class HuntModeView extends StatelessWidget {
                           children: [
                             Icon(Icons.calendar_month, color: Colors.white),
                             Text(
-                              huntDate,
+                              huntProgressModel.huntDate,
                               style: AppStyles.logisticsStyle,
                             ),
                           ],
@@ -83,7 +88,8 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntAloneTeamNameView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            // builder: (context) => HuntAloneTeamNameView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
+                            builder: (context) => HuntAloneTeamNameView())
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -102,7 +108,8 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HuntWithTeamView(huntName: huntName, venue: venue, huntDate: huntDate)),
+                            // builder: (context) => HuntWithTeamView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
+                          builder: (context) => HuntWithTeamView())
                       );
                     },
                     style: AppStyles.elevatedButtonStyle,
@@ -119,12 +126,3 @@ class HuntModeView extends StatelessWidget {
     );
   }
 }
-
-// class _HuntModeViewState extends State<HuntModeView>{
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-//
-// }
