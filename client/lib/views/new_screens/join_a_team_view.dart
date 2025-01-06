@@ -7,8 +7,6 @@ import '../../provider/game_model.dart';
 import 'my_team_view.dart';
 
 class JoinATeamView extends StatelessWidget {
-  // final String huntID;
-  // const JoinATeamView({super.key, required this.huntID});
   const JoinATeamView({super.key});
 
   @override
@@ -31,7 +29,7 @@ class JoinATeamView extends StatelessWidget {
                 } else if (snapshot.hasData) {
                   // If the data was successfully retrieved, display it
                   List<dynamic> teams = snapshot.data!['teams'];
-                  print(snapshot.data);
+                  // print(snapshot.data);
                   return ListView.builder(
                     itemCount: teams.length,
                     itemBuilder: (context, index) {
@@ -100,8 +98,7 @@ class _TeamTileState extends State<TeamTile> {
           Provider.of<HuntProgressModel>(context, listen: false);
       huntProgressModel.teamId = widget.teamID;
       // Store the player name in the model
-      huntProgressModel.playerName = playerName; // Add this line
-      print("Player name: $playerName");
+      huntProgressModel.playerName = playerName;
 
       Navigator.pushReplacement(
         context,
@@ -219,38 +216,6 @@ class _TeamTileState extends State<TeamTile> {
                             ? null // Disable button if team is locked
                             : () {
                                 _handleJoinTeam(context);
-
-                                // joinTeam(widget.huntID, widget.teamName);
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //       builder: (context) => MyTeamView(
-                                //             huntID: widget.huntID,
-                                //             teamID: widget.teamID,
-                                //           )),
-                                // );
-
-                                // Join team functionality
-                                /*
-                               /*
-                               ScaffoldMessenger.of(context).showSnackBar(
-                                 SnackBar(
-                                     content:
-                                         Text('Joined ${widget.teamName}')),
-                               );
-                               */
-                               Navigator.push(
-                                 context,
-                                 MaterialPageRoute(
-                                     builder: (context) => MyTeamView()),
-                               );
-                               */
-
-                                // *****************
-                                // setState(() {
-                                //   widget.members.add("CURRENT USER NAME");
-                                // });
-                                // **************
                               },
                         style: AppStyles.elevatedButtonStyle,
                         child: const Text('Join Team!'),
@@ -310,7 +275,9 @@ class _TeamTileState extends State<TeamTile> {
                                       Navigator.of(context).pop();
                                     },
                                     icon:
-                                        Icon(Icons.close, color: Colors.white)))
+                                        Icon(Icons.close, color: Colors.white)
+                                )
+                            )
                           ],
                         ),
                       ),
@@ -324,7 +291,9 @@ class _TeamTileState extends State<TeamTile> {
                       SizedBox(height: 45, child: DotDivider)
                     ],
                   ),
-                )));
+                )
+            )
+        );
       },
     );
   }

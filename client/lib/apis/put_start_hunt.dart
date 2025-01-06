@@ -3,7 +3,7 @@ import 'dart:convert';
 
 Future<Map<String, dynamic>> startHunt(String huntId, String teamId) async {
   var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/start";
-  print(apiUrl);
+
   try {
     final response = await http.put(
       Uri.parse(apiUrl),
@@ -11,14 +11,11 @@ Future<Map<String, dynamic>> startHunt(String huntId, String teamId) async {
         //"authorization": "Bearer $token",
         "Content-Type": "application/json"
       },
-      // body: jsonEncode({
-      //   "teamName": teamName,
-      // }),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
-      print("Start hunt data: $jsonResponse");
+      // print("Start hunt data: $jsonResponse");
       return jsonResponse;
     } else {
       throw Exception("Failed to start hunt. Status code: ${response.statusCode}");

@@ -7,11 +7,6 @@ import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
 
 class HuntWithTeamView extends StatelessWidget {
-  // final String huntId;
-  // final String huntName;
-  // final String venue;
-  // final String huntDate;
-  // const HuntWithTeamView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
   const HuntWithTeamView({super.key});
 
   @override
@@ -95,7 +90,6 @@ class HuntWithTeamView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            // builder: (context) => CreateATeamView(huntId: huntId, huntName: huntName)),
                             builder: (context) => CreateATeamView())
                       );
                     },

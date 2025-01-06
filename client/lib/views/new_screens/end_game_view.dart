@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/leaderboard.dart';
 
-
 class EndGameScreen extends StatelessWidget {
   const EndGameScreen({Key? key}) : super(key: key);
 

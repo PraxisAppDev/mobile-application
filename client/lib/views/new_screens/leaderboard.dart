@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/intl.dart';
@@ -68,12 +66,6 @@ class _LeaderboardState extends State<Leaderboard> {
                                 style: AppStyles.logisticsStyle,
                               ),
                               const SizedBox(height: 10),
-                              // Text(
-                              //   huntVenue,
-                              //   style: AppStyles.logisticsStyle
-                              //       .copyWith(fontSize: 14),
-                              // ),
-                              // const SizedBox(height: 10),
                               Row(
                                 children: [
                                   const Icon(Icons.calendar_month,

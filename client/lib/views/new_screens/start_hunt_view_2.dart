@@ -1,5 +1,3 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:praxis_afterhours/apis/patch_update_team.dart';
 import 'package:praxis_afterhours/apis/post_create_teams.dart';
@@ -8,9 +6,6 @@ import 'package:praxis_afterhours/apis/post_join_team.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/apis/post_solve_challenge.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
-import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
-import 'package:praxis_afterhours/apis/fetch_challenges.dart';
-import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 
@@ -22,8 +17,6 @@ class StartHuntView2 extends StatefulWidget {
 }
 
 class _StartHuntView2State extends State<StartHuntView2> {
-  // List<dynamic> challenges = [];
-  // List<dynamic> hunts = [];
   late Map<String, dynamic> teams = {};
   late Map<String, dynamic> createData = {};
   late Map<String, dynamic> joinData = {};
@@ -37,9 +30,6 @@ class _StartHuntView2State extends State<StartHuntView2> {
   @override
   void initState() {
     super.initState();
-    // fetchChallengesData();
-    // fetchHuntsData();
-    // fetchTeamsData();
     createTeamData();
     joinTeamData();
     updateTeamData();
@@ -220,24 +210,6 @@ class _StartHuntView2State extends State<StartHuntView2> {
                   ),
                 ),
                 Text("\nEnd", style: TextStyle(fontSize: 12)),
-                // const SizedBox(height: 20),
-                // Container(
-                //   height: 50,
-                //   width: 175,
-                //   decoration: AppStyles.confirmButtonStyle,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //             builder: (context) => ChallengeView()),
-                //       );
-                //     },
-                //     style: AppStyles.elevatedButtonStyle,
-                //     child: const Text('Start Hunt 3',
-                //         style: TextStyle(fontWeight: FontWeight.bold)),
-                //   ),
-                // ),
               ],
             ),
           ),

@@ -11,12 +11,12 @@ Future<Map<String, dynamic>> fetchLeaderboard(String huntID) async {
       var data = jsonDecode(response.body) as Map<String, dynamic>;
       return data;
     } else {
-      print("Failed to load teams: ${response.statusCode}");
+      // print("Failed to load teams: ${response.statusCode}");
       throw Exception(
           "Failed to get teams. Status code: ${response.statusCode}");
     }
   } catch (e) {
-    print("Error occurred: $e");
+    // print("Error occurred: $e");
     throw Exception("Error occurred during the update team request: $e");
   }
 }

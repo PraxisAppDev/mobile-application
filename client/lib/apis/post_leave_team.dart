@@ -18,7 +18,7 @@ Future<Map<String, dynamic>> leaveTeam(String huntId, String teamName, String pl
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
-      print("Leave team data: $jsonResponse");
+      // print("Leave team data: $jsonResponse");
       return jsonResponse;
     } else {
       throw Exception("Failed to leave team. Status code: ${response.statusCode}");

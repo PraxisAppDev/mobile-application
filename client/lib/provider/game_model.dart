@@ -23,7 +23,12 @@ class HuntProgressModel extends ChangeNotifier {
   late int secondsSpentThisRound;
   late int pointsEarnedThisRound;
   late int currentChallenge;
-  late int totalChallenges; //holds total num of challenges 
+  late int totalChallenges;
+  List<int> secondsSpentList = [];
+  List<int> pointsEarnedList = [];
+  int secondsSpent = 0;
+  Timer? _timer;
+  bool _timerStarted = false;
 
   // Challenge Screen variables
   late int previousSeconds;
@@ -32,13 +37,9 @@ class HuntProgressModel extends ChangeNotifier {
   late int challengeNum;
   late String challengeName;
 
+  // Keep track of completed hunts
   late int currentHuntIndex;
-  final Set<int> pressedHunts = {}; // Track indexes of completed hunts
-  List<int> secondsSpentList = [];
-  List<int> pointsEarnedList = [];
-  int secondsSpent = 0;
-  Timer? _timer;
-  bool _timerStarted = false;
+  final Set<int> pressedHunts = {};
 
   void startTimer() {
     if (_timerStarted) return; // Start the timer only once

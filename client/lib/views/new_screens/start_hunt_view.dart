@@ -1,7 +1,4 @@
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/views/new_screens/challenge_view.dart';
 import 'package:praxis_afterhours/apis/fetch_challenges.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';

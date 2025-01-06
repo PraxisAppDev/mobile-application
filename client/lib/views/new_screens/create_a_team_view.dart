@@ -120,9 +120,6 @@ class _CreateATeamViewState extends State<CreateATeamView> {
       final response = await createTeam(model.huntId, teamName, playerName, false);
       model.teamId = response['teamId'];
 
-      // Connect to WebSocket
-      //connectWebSocket(webSocketModel, model.huntId, teamName, playerName);
-
       // Navigate to the next view
       Navigator.push(
         context,
@@ -137,7 +134,7 @@ class _CreateATeamViewState extends State<CreateATeamView> {
         ),
       );
     } catch (e) {
-      print("Failed to create team: $e");
+      // print("Failed to create team: $e");
       showToast("Failed to create team: $e");
     }
   }

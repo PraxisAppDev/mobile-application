@@ -18,7 +18,7 @@ Future<Map<String, dynamic>> updateTeam(String huntId, String teamId, String new
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
-      print("Update team data: $jsonResponse");
+      // print("Update team data: $jsonResponse");
       return jsonResponse;
     } else {
       throw Exception("Failed to update team. Status code: ${response.statusCode}");

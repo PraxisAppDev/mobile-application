@@ -7,15 +7,7 @@ import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
 
 class HuntModeView extends StatelessWidget {
-  // final String huntId;
-  // final String huntName;
-  // final String venue;
-  // final String huntDate;
-  // const HuntModeView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
   const HuntModeView({super.key});
-  
-  //@override
-  //_HuntModeViewState createState() => _HuntModeViewState();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +80,6 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            // builder: (context) => HuntAloneTeamNameView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                             builder: (context) => HuntAloneTeamNameView())
                       );
                     },
@@ -108,7 +99,6 @@ class HuntModeView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            // builder: (context) => HuntWithTeamView(huntId: huntId, huntName: huntName, venue: venue, huntDate: huntDate)),
                           builder: (context) => HuntWithTeamView())
                       );
                     },

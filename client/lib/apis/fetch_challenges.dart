@@ -9,14 +9,14 @@ Future<List<dynamic>> fetchChallenges(String huntID) async {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print("Challenges data: $data");
+      // print("Challenges data: $data");
       return data;  // Return the data instead of printing it
     } else {
-      print("Failed to load challenges: ${response.statusCode}");
+      // print("Failed to load challenges: ${response.statusCode}");
       return []; // Return an empty list on failure
     }
   } catch (e) {
-    print("Error occurred: $e");
+    // print("Error occurred: $e");
     return []; // Return an empty list on error
   }
 }

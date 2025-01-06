@@ -8,15 +8,6 @@ import 'package:confetti/confetti.dart';
 import '../../provider/game_model.dart';
 
 class HuntProgressView extends StatefulWidget {
-  /*final String huntName;
-  final String huntID;
-  final String teamID;
-  final int totalSeconds;
-  final int totalPoints;
-  final int secondsSpentThisRound;
-  final int pointsEarnedThisRound;
-  final int currentChallenge;*/
-
    const HuntProgressView({super.key});
 
   @override
@@ -283,15 +274,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                                               Navigator.push(
                                                                 context,
                                                                 MaterialPageRoute(
-                                                                  // builder: (context) => ChallengeView(
-                                                                  //   huntName: widget.huntName,
-                                                                  //   huntID: widget.huntID,
-                                                                  //   teamID: widget.teamID,
-                                                                  //   previousSeconds: widget.totalSeconds,
-                                                                  //   previousPoints: widget.totalPoints,
-                                                                  //   challengeID: challengeResponse[index]['id'], // Pass the correct challenge ID
-                                                                  //   challengeNum: index,
-                                                                  // ),
                                                                   builder: (context) => ChallengeView()
                                                                 ),
                                                               );
@@ -364,7 +346,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     );
   }
 
-
   void _showCompletionDialog(BuildContext context) {
     final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
 
@@ -423,7 +404,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
                                 setState(() {
                                   huntProgressModel.markHuntCompleted(huntProgressModel.currentHuntIndex);
                                   huntProgressModel.totalPoints = 0;
-                                  // TODO: Reset fields for next challenge
                                 });
 
                                 Navigator.push(
@@ -460,8 +440,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
       },
     );
   }
-
-
 
   String secondsToMinutes(int numSeconds) {
     int minutes = numSeconds ~/ 60;

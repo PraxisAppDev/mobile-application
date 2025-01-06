@@ -32,7 +32,8 @@ class AppStyles {
         ],
         stops: [0.0, 0.5, 1.0],
       ),
-      borderRadius: BorderRadius.circular(10));
+      borderRadius: BorderRadius.circular(10)
+  );
 
   static BoxDecoration redInfoBoxStyle = BoxDecoration(
       gradient: const LinearGradient(
@@ -45,7 +46,22 @@ class AppStyles {
         ],
         stops: [0.0, 0.5, 1.0],
       ),
-      borderRadius: BorderRadius.circular(10));
+      borderRadius: BorderRadius.circular(10)
+  );
+
+  static BoxDecoration hintBoxStyle = BoxDecoration(
+      gradient: const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[
+          Color(0xFF6A553D),
+          Color(0xFF9D7E5A),
+          Color(0xFF6A553D)
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      borderRadius: BorderRadius.circular(10)
+  );
 
   static BoxDecoration textFieldStyle = BoxDecoration(
       color: Colors.white, borderRadius: BorderRadius.circular(10));
@@ -310,17 +326,4 @@ class AppStyles {
           borderRadius: BorderRadius.circular(10));
     }
   }
-
-  static BoxDecoration hintBoxStyle = BoxDecoration(
-      gradient: const LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: <Color>[
-          Color(0xFF6A553D),
-          Color(0xFF9D7E5A),
-          Color(0xFF6A553D)
-        ],
-        stops: [0.0, 0.5, 1.0],
-      ),
-      borderRadius: BorderRadius.circular(10));
 }

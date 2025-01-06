@@ -10,16 +10,16 @@ Future<Map<String, dynamic>> fetchTeam(String huntID, String teamID) async {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body) as Map<String, dynamic>;
-      print("fetch_team TEAM ID: $teamID");
-      print("fetch_team TEAM DATA: ${data['teams'][0]}");
+      // print("fetch_team TEAM ID: $teamID");
+      // print("fetch_team TEAM DATA: ${data['teams'][0]}");
       return data['teams'][0];
     } else {
-      print("Failed to load teams: ${response.statusCode}");
+      // print("Failed to load teams: ${response.statusCode}");
       throw Exception(
           "Failed to get teams. Status code: ${response.statusCode}");
     }
   } catch (e) {
-    print("Error occurred: $e");
+    // print("Error occurred: $e");
     throw Exception("Error occurred during the update team request: $e");
   }
 }

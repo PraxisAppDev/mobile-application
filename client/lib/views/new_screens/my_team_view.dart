@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:praxis_afterhours/apis/fetch_hunts.dart';
-import 'package:praxis_afterhours/apis/fetch_team.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/apis/post_leave_team.dart';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/challenge_view_no_buttons.dart';
 import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
-import 'package:praxis_afterhours/views/new_screens/join_a_team_view.dart';
 import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:praxis_afterhours/provider/websocket_model.dart';
@@ -79,11 +75,11 @@ class MyTeamView extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () async {
-                          print("Pressed confirm");
+                          // print("Pressed confirm");
                           Navigator.of(context).pop(); // Close the dialog
-                          print("Popped?");
+                          // print("Popped?");
                           await leaveTeamAndUpdateView(context);
-                          print("left?");
+                          // print("left?");
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -129,25 +125,6 @@ class MyTeamView extends StatelessWidget {
       );
     }
   }
-
-  // // Auxiliary function to handle leave team POST API call and handle view updates
-  // Future<void> leaveTeamAndUpdateView(BuildContext context) async {
-  //   try {
-  //     // Call the leaveTeam API
-  //     await leaveTeam(huntID, teamID, "placeholder"); // TODO: Fix
-  //     // Show a success message or refresh the view
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Successfully left the team')),
-  //     );
-  //     // Navigate back after leaving the team
-  //     Navigator.pop(context);
-  //   } catch (error) {
-  //     // Handle any errors from the leaveTeam call
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error leaving the team: $error')),
-  //     );
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +184,9 @@ class MyTeamView extends StatelessWidget {
                         ),
                       )),
                 ],
-              ))),
+              )
+          )
+      ),
     );
   }
 }
@@ -274,7 +253,7 @@ class _TeamTileState extends State<TeamTile> {
     final playerName = huntProgressModel.playerName;
 
     if (playerName.isEmpty) {
-      print("My Team View Player name is empty.");
+      // print("My Team View Player name is empty.");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Player name cannot be empty')),
       );
@@ -283,9 +262,9 @@ class _TeamTileState extends State<TeamTile> {
 
     final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
     try {
-      print('Connecting to WebSocket at: $wsUrl');
+      // print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
-      print('WebSocket connected successfully.');
+      // print('WebSocket connected successfully.');
       final channel = webSocketModel.messages;
       channel.listen(
         (message) {
@@ -347,19 +326,19 @@ class _TeamTileState extends State<TeamTile> {
                       currentChallenge: huntProgressModel.challengeNum)),
             );
           }
-          print('Received message: $message');
+          // print('Received message: $message');
         },
         onError: (error) {
-          print('WebSocket error: $error');
+          // print('WebSocket error: $error');
         },
         onDone: () {
-          print('WebSocket connection closed.');
-          showToast("WebSocket connection closed");
+          // print('WebSocket connection closed.');
+          // showToast("WebSocket connection closed");
         },
         cancelOnError: true,
       );
     } catch (e) {
-      print('Failed to connect to WebSocket: $e');
+      // print('Failed to connect to WebSocket: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to connect to WebSocket: $e')),
       );
@@ -509,7 +488,9 @@ Future<void> ShowTeamFullDialog(context) async {
                     SizedBox(height: 45, child: DotDivider)
                   ],
                 ),
-              )));
+              )
+          )
+      );
     },
   );
 }
@@ -573,7 +554,9 @@ Future<void> ShowGameStartDialog(context) async {
                     SizedBox(height: 45, child: DotDivider)
                   ],
                 ),
-              )));
+              )
+          )
+      );
     },
   );
 }

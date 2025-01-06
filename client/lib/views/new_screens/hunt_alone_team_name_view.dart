@@ -9,11 +9,6 @@ import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
 
 class HuntAloneTeamNameView extends StatefulWidget {
-  // final String huntId;
-  // final String huntName;
-  // final String venue;
-  // final String huntDate;
-  // const HuntAloneTeamNameView({super.key, required this.huntId, required this.huntName, required this.venue, required this.huntDate});
   const HuntAloneTeamNameView({super.key});
 
   @override
@@ -85,12 +80,6 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            // builder: (context) => HuntAloneView(
-            //  teamName: _teamNameController.text,
-            //  huntId: huntProgressModel.huntId,
-            //  huntName: huntProgressModel.huntName,
-            //  venue: huntProgressModel.venue,
-            //  huntDate: huntProgressModel.huntDate),
             builder: (context) => HuntAloneView()));
   }
 
@@ -310,7 +299,9 @@ class _HuntAloneTeamViewState extends State<HuntAloneTeamNameView> {
                       SizedBox(height: 45, child: DotDivider)
                     ],
                   ),
-                )));
+                )
+            )
+        );
       },
     );
   }

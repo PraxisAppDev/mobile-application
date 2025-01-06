@@ -9,14 +9,14 @@ Future<List<dynamic>> fetchHunts() async {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print("Hunts data: $data");
+      // print("Hunts data: $data");
       return data;
     } else {
-      print("Failed to load hunts: ${response.statusCode}");
+      // print("Failed to load hunts: ${response.statusCode}");
       return [];
     }
   } catch (e) {
-    print("Error occurred: $e");
+    // print("Error occurred: $e");
     return [];
   }
 }

@@ -253,9 +253,9 @@ class _HuntAloneViewState extends State<HuntAloneView> {
     final wsUrl =
         'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${huntProgressModel.teamName}&playerName=$playerName&huntAlone=true';
     try {
-      print('Connecting to WebSocket at: $wsUrl');
+      // print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
-      print('Connected to WebSocket. Awaiting messages...');
+      // print('Connected to WebSocket. Awaiting messages...');
       final channel = webSocketModel.messages;
       channel.listen(
         (message) {
@@ -276,20 +276,20 @@ class _HuntAloneViewState extends State<HuntAloneView> {
           } catch (e) {
             print(e);
           }
-          print('Received message: $message');
+          // print('Received message: $message');
         },
         onError: (error) {
-          print('WebSocket error: $error');
-          showToast("WebSocket error: $error");
+          // print('WebSocket error: $error');
+          // showToast("WebSocket error: $error");
         },
         onDone: () {
-          print('WebSocket closed');
+          // print('WebSocket closed');
           //showToast("Websocket closed");
         },
         cancelOnError: true,
       );
     } catch (e) {
-      print('Failed to connect to WebSocket: $e');
+      // print('Failed to connect to WebSocket: $e');
     }
   }
 
@@ -324,16 +324,6 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       huntProgressModel.currentChallenge = 0;
                       Navigator.pushReplacement(
                           context,
-                          // MaterialPageRoute(builder: (context) => HuntProgressView(
-                          //   huntName: huntName,
-                          //   huntID: huntProgressModel.huntId,
-                          //   teamID: _updatedTeamId!, // team id is id returned from create team api call
-                          //   totalSeconds: 0,
-                          //   totalPoints: 0,
-                          //   secondsSpentThisRound: 0,
-                          //   pointsEarnedThisRound: 0,
-                          //   currentChallenge: 0
-                          // )),
                           MaterialPageRoute(
                               builder: (context) => HuntProgressView()));
                     });
@@ -487,7 +477,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                       } else if (snapshot.hasData) {
                         // If the data was successfully retrieved, display it
                         List<dynamic> teams = snapshot.data!['teams'];
-                        print(snapshot.data);
+                        // print(snapshot.data);
                         return Text(
                           "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",
                           style:
@@ -519,20 +509,6 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                   ),
                 ),
                 SizedBox(height: 15),
-                /*Container(
-                    height: 50,
-                    width: 175,
-                    decoration: AppStyles.cancelButtonStyle,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ShowDeleteConfirmationDialog(context,
-                            huntProgressModel.huntId, huntProgressModel.teamId);
-                      },
-                      style: AppStyles.elevatedButtonStyle,
-                      child: const Text('Delete Team',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ),*/
               ],
             ),
           ],
@@ -795,7 +771,9 @@ Future<void> showNoPlayerNameDialog(context) async {
                     SizedBox(height: 45, child: DotDivider)
                   ],
                 ),
-              )));
+              )
+          )
+      );
     },
   );
 }

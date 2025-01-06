@@ -124,15 +124,15 @@ void connectWebSocket(
   final playerName = huntProgressModel.playerName;
 
   if (playerName.isEmpty) {
-    print("My Team Create View Player name is empty.");
+    // print("My Team Create View Player name is empty.");
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Player name cannot be empty')),
     );
     return;
   }
 
-  print(huntProgressModel.huntId);
-  print(widget.teamName);
+  // print(huntProgressModel.huntId);
+  // print(widget.teamName);
 
   final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
 
@@ -141,14 +141,14 @@ void connectWebSocket(
 
   // Function to attempt reconnect if the WebSocket disconnects
   Future<void> reconnectWebSocket() async {
-    print("Attempting to reconnect...");
+    // print("Attempting to reconnect...");
     connectWebSocket(context, huntProgressModel, webSocketModel);
   }
 
   try {
-    print('Connecting to WebSocket at: $wsUrl');
+    // print('Connecting to WebSocket at: $wsUrl');
     webSocketModel.connect(wsUrl);
-    print('WebSocket connected successfully.');
+    // print('WebSocket connected successfully.');
 
     final channel = webSocketModel.messages;
 
@@ -171,7 +171,7 @@ void connectWebSocket(
               _members.add(newPlayer);
             }
           });
-          print("SHOW DELETE BUTTON: $showDeleteButton");
+          // print("SHOW DELETE BUTTON: $showDeleteButton");
           showToast("${data['playerName']} joined team");
         } else if (eventType == "PLAYER_LEFT_TEAM") {
           setState(() {
@@ -187,13 +187,13 @@ void connectWebSocket(
         }
       },
       onError: (error) {
-        print('WebSocket error: $error');
-        showToast("WebSocket error: $error");
+        // print('WebSocket error: $error');
+        // showToast("WebSocket error: $error");
         // Try to reconnect if error occurs
         reconnectWebSocket();
       },
       onDone: () {
-        print('WebSocket closed');
+        // print('WebSocket closed');
         //showToast("WebSocket closed");
         // Try to reconnect when WebSocket is closed
         reconnectWebSocket();
@@ -203,12 +203,12 @@ void connectWebSocket(
 
     // Send periodic pings every 30 seconds to keep the WebSocket alive
     pingTimer = Timer.periodic(Duration(seconds: 30), (timer) {
-        print("Ping sent to keep WebSocket alive");
+        // print("Ping sent to keep WebSocket alive");
     });
 
   } catch (e) {
-    print('Failed to connect to WebSocket: $e');
-    showToast("Failed to connect to WebSocket: $e");
+    // print('Failed to connect to WebSocket: $e');
+    // showToast("Failed to connect to WebSocket: $e");
     // Try to reconnect if WebSocket connection fails
     reconnectWebSocket();
   }

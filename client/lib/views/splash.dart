@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:praxis_afterhours/views/authentication/sign_in_view.dart';
-//import 'package:praxis_afterhours/storage/secure_storage.dart';
 import 'package:praxis_afterhours/views/new_screens/join_a_hunt_view.dart';
 
 class Splash extends StatefulWidget {
@@ -19,10 +17,6 @@ class _SplashState extends State<Splash> {
 
   _navigate(BuildContext context) async {
     await Future.delayed(const Duration(seconds: 2));
-    //var token = await storage.containsKey(key: 'token');
-    //var exp = await storage.read(key: 'exp');
-    //var hasValidToken =
-    //    token && exp != null && DateTime.now().isBefore(DateTime.parse(exp));
     if (context.mounted) {
       Navigator.pushReplacement(
           context,

@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:http/http.dart' as http;
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
 import 'package:praxis_afterhours/apis/fetch_challenges.dart';
 import 'package:praxis_afterhours/apis/post_solve_challenge.dart';
@@ -10,9 +8,7 @@ import 'package:praxis_afterhours/views/new_screens/end_game_view.dart';
 import 'package:provider/provider.dart';
 import '../../provider/game_model.dart';
 import '../../provider/websocket_model.dart';
-
 import 'dart:convert';
-import 'package:intl/intl.dart';
 import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
@@ -73,7 +69,7 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
       // Update total challenges in the progress model
       huntProgressModel.totalChallenges = challenges.length;
     } catch (e) {
-      print("Error fetching challenges: $e");
+      // print("Error fetching challenges: $e");
       setState(() {
         _isLoading = false;
       });
@@ -87,7 +83,7 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
         final challengeSolved = data['challengeSolved'] == "true";
 
         if (!challengeSolved) {
-          // incorect answer submitted
+          // incorrect answer submitted
           _incorrectResponseCount++;
 
           // ScaffoldMessenger.of(context).showSnackBar(
@@ -124,7 +120,7 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
         }
       }
     } catch (e) {
-      print("Error handling WebSocket message: $e");
+      // print("Error handling WebSocket message: $e");
     }
   }
 
@@ -290,7 +286,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         _challengeData = challengeData;
       });
     } catch (e) {
-      print("Error loading challenge data: $e");
+      // print("Error loading challenge data: $e");
     }
   }
 
@@ -300,7 +296,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     super.dispose();
   }
 
-  // helper function to get total seconds ellipsed when submit is clicked
+  // helper function to get total seconds elapsed when submit is clicked
   int get totalSeconds => widget.previousSeconds + _secondsSpent;
 
   @override
@@ -390,7 +386,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
         _isLoading = false;
       });
     } catch (e) {
-      print("Error loading challenge data: $e");
+      // print("Error loading challenge data: $e");
       setState(() {
         _isLoading = false;
       });
@@ -485,16 +481,6 @@ class _ChallengeContentState extends State<ChallengeContent> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          // builder: (context) => HuntProgressView(
-          //   huntName: widget.huntName,
-          //   huntID: widget.huntID,
-          //   teamID: widget.teamID,
-          //   totalSeconds: totalSec,
-          //   totalPoints: widget.previousPoints + points,
-          //   secondsSpentThisRound: totalSec - widget.previousSeconds,
-          //   pointsEarnedThisRound: points,
-          //   currentChallenge: widget.challengeNum + 1,
-          // ),
           builder: (context) => HuntProgressView()),
     );
   }
@@ -528,108 +514,12 @@ class _ChallengeContentState extends State<ChallengeContent> {
       ),
     );
   }
-  // void _submitAnswer() {
-  //   /*** update this  */
-  //   int totalSeconds = widget.previousSeconds;
-  //   guessesLeft--; // decrements the amount of guesses left
-
-  //   if(guessesLeft == 0) {// no more guesses left, take you back to HuntProgressView
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => HuntProgressView(
-  //           huntName: widget.huntID,
-  //           huntID: widget.huntID,
-  //           teamID: widget.teamID,
-  //           totalSeconds: totalSeconds,
-  //           totalPoints: widget.previousPoints,
-  //           secondsSpentThisRound: _challengeData['secondsSpent'],
-  //           pointsEarnedThisRound: 0,
-  //           currentChallenge: widget.challengeNum + 1,
-  //         ),
-  //       ),
-  //     );
-  //   } else { // more guesses left, just open up a dialog box
-  //     /** NEED TO IMPLEMENT HOW TO CHECK ANSWER, API DOESN'T PROVIDE ANY QUESTIONS OR ANSWERS */
-
-  //   }
-  // }
-
-  // opens dialog box for the hint
-  // void _showHintDialog(BuildContext context) {
-  //   bool hasHints = _hintIndex < _hints.length;
-
-  //   showDialog(
-  //     context: context,
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context) {
-  //       return Dialog(
-  //         backgroundColor: Colors.transparent,
-  //         child: Center(
-  //           child: Container(
-  //             padding: const EdgeInsets.all(20),
-  //             decoration: BoxDecoration(
-  //               color: Colors.black.withOpacity(0.7),
-  //               borderRadius: BorderRadius.circular(10),
-  //             ),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 Text(
-  //                   hasHints
-  //                       ? _hints[_hintIndex]['description']
-  //                       : 'No more hints left!',
-  //                   style: const TextStyle(
-  //                     fontSize: 20,
-  //                     fontWeight: FontWeight.bold,
-  //                     color: Colors.white,
-  //                   ),
-  //                   textAlign: TextAlign.center,
-  //                 ),
-  //                 const SizedBox(height: 20),
-  //                 if (hasHints && _hints[_hintIndex]['url'] != null)
-  //                   Image.network(
-  //                     _hints[_hintIndex]['url'],
-  //                     height: 100,
-  //                     errorBuilder: (context, error, stackTrace) {
-  //                       return const Text(
-  //                         'Image not available',
-  //                         style: TextStyle(color: Colors.white),
-  //                       );
-  //                     },
-  //                   ),
-  //                 const SizedBox(height: 20),
-  //                 ElevatedButton(
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                     if (hasHints) {
-  //                       setState(() {
-  //                         _hintIndex++;
-  //                       });
-  //                     }
-  //                   },
-  //                   style: AppStyles.elevatedButtonStyle,
-  //                   child: const Text(
-  //                     'Close',
-  //                     style: TextStyle(fontWeight: FontWeight.bold),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-
-    // int hintsLeft = (_challengeData['hints']?.length ?? 0) - _hintIndex - 1;
 
     return LayoutBuilder(builder: (context, constraints) {
       return Padding(
@@ -660,30 +550,9 @@ class _ChallengeContentState extends State<ChallengeContent> {
                                 );
                               },
                             )
-                          //     : const Text(
-                          //   'Picture (if needed)',
-                          //   style: TextStyle(color: Colors.white),
-                          // ),
                           : Image.asset("images/huntLogo.png",
-                              height: 150, width: 150)),
-                  /*const SizedBox(height: 10),
-                  Center(
-                    child: _challengeData['clueUrl'] != null
-                        ? Image.network(
-                            _challengeData['clueUrl'],
-                            height: constraints.maxHeight * 0.2,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                'images/huntLogo.png',
-                                height: constraints.maxHeight * 0.2,
-                              );
-                            },
-                          )
-                        : const Text(
-                            'Picture (if needed)',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                  ),*/
+                              height: 150, width: 150)
+                  ),
                 ],
               ),
             ),

@@ -9,7 +9,7 @@ Future<Map<String, dynamic>> fetchChallenge(String huntId, String challengeId) a
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-      print("Challenge data: $data");
+      // print("Challenge data: $data");
       return data; // Return the data as a Map for specific challenge details
     } else {
       print("Failed to load challenge: ${response.statusCode}");

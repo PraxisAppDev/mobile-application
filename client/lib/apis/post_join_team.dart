@@ -16,11 +16,9 @@ Future<Map<String, dynamic>> joinTeam(String huntId, String teamName, String pla
       }),
     );
 
-    // print("Join Team Player Name: $playerName");
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
-      print("Join team data: $jsonResponse");
+      // print("Join team data: $jsonResponse");
       return jsonResponse;
     } else {
       throw Exception("Failed to join team. Status code: ${response.statusCode}");

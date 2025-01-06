@@ -20,7 +20,7 @@ Future<Map<String, dynamic>> createTeam(String huntId, String teamName, String p
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       var jsonResponse = jsonDecode(response.body);
-      print("Create teams data: $jsonResponse");
+      // print("Create teams data: $jsonResponse");
       return jsonResponse;
     } else {
       throw Exception("Failed to create team. Status code: ${response.statusCode}");
