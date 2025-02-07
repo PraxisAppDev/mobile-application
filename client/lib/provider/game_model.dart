@@ -40,6 +40,7 @@ class HuntProgressModel extends ChangeNotifier {
   // Keep track of completed hunts
   late int currentHuntIndex;
   final Set<int> pressedHunts = {};
+  final Set<String> completedChallenges = {}; //track completed challenges
 
   void startTimer() {
     if (_timerStarted) return; // Start the timer only once
@@ -50,13 +51,16 @@ class HuntProgressModel extends ChangeNotifier {
     });
   }
 
+  
   void stopTimer() {
     _timer?.cancel();
+    _timerStarted = false;
   }
 
+ 
   void resetTimer() {
+    stopTimer();
     secondsSpent = 0;
-    _timerStarted = false;
     notifyListeners();
   }
 
@@ -79,19 +83,31 @@ class HuntProgressModel extends ChangeNotifier {
     return index >= 0 && index < secondsSpentList.length ? secondsSpentList[index] : 0;
   }
 
+
   int getPointsEarned(int index) {
     return index >= 0 && index < pointsEarnedList.length ? pointsEarnedList[index] : 0;
   }
 
+  void incrementCurrentChallenge() {
+    if (!completedChallenges.contains(challengeId)) {
+      completedChallenges.add(challengeId);
+      currentChallenge++;
+      notifyListeners();
+    }
+  }
+
+  
+  void updateChallengeState(String newChallengeId, int newChallengeNum) {
+    if (newChallengeId != challengeId) {
+      challengeId = newChallengeId;
+      challengeNum = newChallengeNum;
+      incrementCurrentChallenge();
+    }
+  }
+
   @override
   void dispose() {
-    _timer?.cancel();
+    stopTimer();
     super.dispose();
   }
-
-  void incrementCurrentChallenge() {
-    currentChallenge++;
-    notifyListeners(); // ensures UI or state dependent on this updates
-  }
 }
-
