@@ -9,6 +9,8 @@ import 'package:praxis_afterhours/views/new_screens/leaderboard.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
 import 'package:praxis_afterhours/apis/fetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
+import 'package:praxis_afterhours/apis/fetch_challenge.dart';
+import 'package:praxis_afterhours/apis/fetch_challenge_hint.dart';
 import 'package:praxis_afterhours/apis/post_create_teams.dart';
 import 'package:praxis_afterhours/apis/put_start_hunt.dart';
 import 'package:praxis_afterhours/apis/delete_team.dart';
@@ -17,6 +19,7 @@ import '../../provider/game_model.dart';
 import 'package:provider/provider.dart';
 import '../../provider/websocket_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 
 class HuntAloneView extends StatefulWidget {
   // String teamName;
@@ -262,7 +265,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
           try {
             final Map<String, dynamic> data = json.decode(message);
             final String eventType = data['eventType'];
-            if (eventType == "PLAYER_JOIN_TEAM") {
+            if (eventType == "PLAYER_JOINED_TEAM") {
               showToast("${data['playerName']} joined team");
             } else if (eventType == "PLAYER_LEFT_TEAM") {
               showToast("${data['playerName']} left team");
@@ -270,8 +273,16 @@ class _HuntAloneViewState extends State<HuntAloneView> {
               showToast("Hunt started");
             } else if (eventType == "HUNT_ENDED") {
               showToast("Hunt ended");
+            } else if (eventType == "CHALLENGE_STARTED") {
+              var challengeName = fetchChallenge(data['huntId'], data['challengeId']);
+              showToast("Challenge $challengeName started");
             } else if (eventType == "CHALLENGE_RESPONSE") {
               showToast("Challenge response");
+            } else if (eventType == "TEAM_UPDATED") {
+              showToast("${data['teamName']} Team updated");
+            } else if (eventType == "SHOW_CHALLENGE_HINT") {
+              var hint = fetchChallengeHint(data['huntId'], data['challengeId'], data['hintId']);
+              showToast("$hint");
             }
           } catch (e) {
             print(e);
