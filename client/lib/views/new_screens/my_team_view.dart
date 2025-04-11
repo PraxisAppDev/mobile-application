@@ -138,7 +138,7 @@ class MyTeamView extends StatelessWidget {
               decoration: AppStyles.backgroundStyle,
               child: Column(
                 children: [
-                  FutureBuilder<Map<String, dynamic>>(
+                  FutureBuilder<List<dynamic>>(
                     future: fetchTeamsFromHunt(huntProgressModel.huntId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -147,9 +147,9 @@ class MyTeamView extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         // Find the specific team the user is in
-                        List<dynamic> teams = snapshot.data!['teams'];
+                        List<dynamic> teams = snapshot.data!;
                         var userTeam = teams.firstWhere(
-                          (team) => team['id'] == huntProgressModel.teamId,
+                          (team) => team['teamId'] == huntProgressModel.teamId,
                           orElse: () => null,
                         );
 

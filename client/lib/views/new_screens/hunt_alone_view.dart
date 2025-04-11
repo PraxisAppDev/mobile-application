@@ -478,7 +478,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
               child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: AppStyles.infoBoxStyle,
-                  child: FutureBuilder<Map<String, dynamic>>(
+                  child: FutureBuilder<List<dynamic>>(
                     future: fetchTeamsFromHunt(huntProgressModel.huntId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -487,7 +487,7 @@ class _HuntAloneViewState extends State<HuntAloneView> {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         // If the data was successfully retrieved, display it
-                        List<dynamic> teams = snapshot.data!['teams'];
+                        List<dynamic> teams = snapshot.data!;
                         // print(snapshot.data);
                         return Text(
                           "There are ${teams.length} teams hunting. Select \"Start Hunt\" when you are ready to begin.",

@@ -17,7 +17,7 @@ class StartHuntView extends StatefulWidget {
 class _StartHuntViewState extends State<StartHuntView> {
   List<dynamic> challenges = [];
   List<dynamic> hunts = [];
-  late Map<String, dynamic> teams = {};
+  late List<dynamic> teams = [];
   bool isLoading = true; // Loading state
 
   @override
@@ -45,7 +45,7 @@ class _StartHuntViewState extends State<StartHuntView> {
   }
 
   Future<void> fetchTeamsData() async {
-    var data = await fetchTeams(); // Call the imported fetchChallenges function
+    var data = await fetchTeamsFromHunt(widget.huntID); // Call the imported fetchTeamsFromHunt function
     setState(() {
       teams = data;  // Update the challenges list
       isLoading = false;  // Update loading state
@@ -70,7 +70,7 @@ class _StartHuntViewState extends State<StartHuntView> {
                 Flexible(  // Use Expanded to prevent ListView from causing layout overflow
                   child: ListView(
                     shrinkWrap: true,
-                    children: teams.entries.map((team) {
+                    children: teams.map((team) {
                       String key = team.key;
                       dynamic value = team.value;
                       return Text(

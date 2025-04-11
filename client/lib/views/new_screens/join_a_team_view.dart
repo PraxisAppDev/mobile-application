@@ -19,7 +19,7 @@ class JoinATeamView extends StatelessWidget {
         appBar: AppStyles.appBarStyle("Join A Team", context),
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
-            child: FutureBuilder<Map<String, dynamic>>(
+            child: FutureBuilder<List<dynamic>>(
               future: fetchTeamsFromHunt(huntProgressModel.huntId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -28,7 +28,7 @@ class JoinATeamView extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   // If the data was successfully retrieved, display it
-                  List<dynamic> teams = snapshot.data!['teams'];
+                  List<dynamic> teams = snapshot.data!;
                   // print(snapshot.data);
                   return ListView.builder(
                     itemCount: teams.length,
