@@ -7,6 +7,25 @@ import 'package:timezone/data/latest.dart' as tz;
 
 void main() {
   tz.initializeTimeZones();
+
+  // Set the default error widget to a easier to read one
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Container(
+      color: Colors.black, // Background color
+      padding: const EdgeInsets.all(16),
+      child: SingleChildScrollView(
+        child: Text(
+          details.exceptionAsString(),
+          style: const TextStyle(
+            color: Colors.white, // Make text white
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  };
+
+
   runApp(
     MultiProvider(
       providers: [

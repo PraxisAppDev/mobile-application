@@ -32,7 +32,7 @@ class _JoinAHuntViewState extends State<JoinAHuntView> {
         child: FutureBuilder<List<hunts_api.HuntResponseModel>>(
           future: hunts_api.getHunts(
             startdate: '2024-10-01',
-            enddate: '2024-10-31',
+            enddate: '2025-3-31',
             limit: 4,
           ),
           builder: (context, snapshot) {
