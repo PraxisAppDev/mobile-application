@@ -3,7 +3,7 @@ import 'dart:convert';
 
 Future<Map<String, dynamic>> fetchTeam(String huntID, String teamID) async {
   var apiUrl =
-      "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID/teams/$teamID";
+      "https://scavengerhunt.afterhoursdev.com/api/v1/hunts/$huntID/teams/$teamID";
 
   try {
     final response = await http.get(Uri.parse(apiUrl));

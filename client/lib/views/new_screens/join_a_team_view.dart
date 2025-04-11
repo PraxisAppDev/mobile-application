@@ -146,7 +146,7 @@ class _TeamTileState extends State<TeamTile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.members.asMap().entries.map((entry) {
                   int index = entry.key;
-                  String member = entry.value['name'];
+                  String member = (entry.value['name'] as String?) ?? 'Unknown';
                   bool teamLeader = entry.value['teamLeader'];
                   return Column(children: [
                     Divider(

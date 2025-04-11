@@ -49,7 +49,7 @@ class HuntResponseModel {
 
 Future<List<HuntResponseModel>> getHunts(
     {String? startdate, String? enddate, int? limit}) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts";
+  var apiUrl = "https://scavengerhunt.afterhoursdev.com/api/v1/hunts";
 
   final queryParams = {
     if (startdate != null) 'startDate': startdate else 'startDate': "Bob",

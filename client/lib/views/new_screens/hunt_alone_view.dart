@@ -7,7 +7,7 @@ import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
 import 'package:praxis_afterhours/views/new_screens/hunt_with_team_view.dart';
 import 'package:praxis_afterhours/views/new_screens/leaderboard.dart';
 import 'package:praxis_afterhours/views/new_screens/start_hunt_view.dart';
-import 'package:praxis_afterhours/apis/fetch_hunts.dart';
+import 'package:praxis_afterhours/apis/DEPRECATEDfetch_hunts.dart';
 import 'package:praxis_afterhours/apis/fetch_teams.dart';
 import 'package:praxis_afterhours/apis/fetch_challenge.dart';
 import 'package:praxis_afterhours/apis/fetch_challenge_hint.dart';

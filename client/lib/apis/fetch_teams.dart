@@ -24,7 +24,7 @@ Future<List<dynamic>> fetchTeamsFromHunt(String huntID) async {
 */
 
 Future<List<dynamic>> fetchTeamsFromHunt(String huntID) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID/teams";
+  var apiUrl = "https://scavengerhunt.afterhoursdev.com/api/v1/hunts/$huntID/teams";
 
   try {
     final response = await http.get(Uri.parse(apiUrl));

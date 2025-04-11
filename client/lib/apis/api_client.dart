@@ -5,5 +5,5 @@ import 'package:praxis_afterhours/apis/api_utils/get_http_client/get_http_client
     as get_http_client;
 
 //var apiUrl = "http://localhost:8001";
-var apiUrl = "http://afterhours.praxiseng.com";
+var apiUrl = "https://scavengerhunt.afterhoursdev.com";
 var client = get_http_client.getHttpClient();

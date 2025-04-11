@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<Map<String, dynamic>> solveChallenge(String huntId, String teamId, String challengeId, int attemptNumber, int timeSinceChallengeStarted, int numHintsUsed, String answerText) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams/$teamId/challenges/$challengeId/solve";
+  var apiUrl = "https://scavengerhunt.afterhoursdev.com/api/v1/hunts/$huntId/teams/$teamId/challenges/$challengeId/solve";
 
   try {
     final response = await http.post(

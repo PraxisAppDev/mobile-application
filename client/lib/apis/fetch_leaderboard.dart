@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<Map<String, dynamic>> fetchLeaderboard(String huntID) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntID/leaderboard";
+  var apiUrl = "https://scavengerhunt.afterhoursdev.com/api/v1/hunts/$huntID/leaderboard";
 
   try {
     final response = await http.get(Uri.parse(apiUrl));
