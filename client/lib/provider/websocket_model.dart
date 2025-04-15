@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../utils/safe_change_notifier.dart';
 
-class WebSocketModel with ChangeNotifier {
+class WebSocketModel extends SafeChangeNotifier {
   WebSocketChannel? _channel;
   late Stream<dynamic> _broadcastStream;
   bool _isConnected = false;

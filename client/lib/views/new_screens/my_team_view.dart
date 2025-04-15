@@ -251,7 +251,7 @@ class _TeamTileState extends State<TeamTile> {
       HuntProgressModel huntProgressModel,
       WebSocketModel webSocketModel) async {
     final playerName = huntProgressModel.playerName;
-
+    
     if (playerName.isEmpty) {
       // print("My Team View Player name is empty.");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -259,17 +259,18 @@ class _TeamTileState extends State<TeamTile> {
       );
       return;
     }
-
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
+    final wsUrl = 'wss://scavengerhunt.afterhoursdev.com/ws/scavengerhunt?huntId=${huntProgressModel.huntId}&teamId=${huntProgressModel.teamId}&playerName=$playerName&huntAlone=false';
+    // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
     try {
-      // print('Connecting to WebSocket at: $wsUrl');
+      print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
-      // print('WebSocket connected successfully.');
+      print('WebSocket connected successfully.');
       final channel = webSocketModel.messages;
       channel.listen(
         (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
+          print("Incoming web socket message: {$data}");
 
           if (eventType == "PLAYER_JOINED_TEAM") {
             setState(() {

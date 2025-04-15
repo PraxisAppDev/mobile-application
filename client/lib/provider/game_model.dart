@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import '../utils/safe_change_notifier.dart';
 
-class HuntProgressModel extends ChangeNotifier {
+class HuntProgressModel extends SafeChangeNotifier {
   // Variables that were passed from screen to screen, may need to be used in
   // API calls
 

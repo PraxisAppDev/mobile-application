@@ -29,6 +29,7 @@ class JoinATeamView extends StatelessWidget {
                 } else if (snapshot.hasData) {
                   // If the data was successfully retrieved, display it
                   List<dynamic> teams = snapshot.data!;
+                  // print(teams);
                   // print(snapshot.data);
                   return ListView.builder(
                     itemCount: teams.length,
@@ -38,7 +39,7 @@ class JoinATeamView extends StatelessWidget {
                       }
 
                       return TeamTile(
-                          teamID: teams[index]['id'],
+                          teamID: teams[index]['teamId'],
                           huntID: huntProgressModel.huntId,
                           isLocked: teams[index]['lockStatus'],
                           teamName: teams[index]['name'],
@@ -92,7 +93,8 @@ class _TeamTileState extends State<TeamTile> {
       // Get the entered name
       String playerName = _newMemberController.text.trim();
 
-      await joinTeam(widget.huntID, widget.teamName, playerName);
+      await joinTeam(widget.huntID, widget.teamID, playerName);
+
 
       final huntProgressModel =
           Provider.of<HuntProgressModel>(context, listen: false);
