@@ -19,7 +19,7 @@ class JoinATeamView extends StatelessWidget {
         appBar: AppStyles.appBarStyle("Join A Team", context),
         body: DecoratedBox(
             decoration: AppStyles.backgroundStyle,
-            child: FutureBuilder<Map<String, dynamic>>(
+            child: FutureBuilder<List<dynamic>>(
               future: fetchTeamsFromHunt(huntProgressModel.huntId),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -28,7 +28,8 @@ class JoinATeamView extends StatelessWidget {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (snapshot.hasData) {
                   // If the data was successfully retrieved, display it
-                  List<dynamic> teams = snapshot.data!['teams'];
+                  List<dynamic> teams = snapshot.data!;
+                  // print(teams);
                   // print(snapshot.data);
                   return ListView.builder(
                     itemCount: teams.length,
@@ -38,7 +39,7 @@ class JoinATeamView extends StatelessWidget {
                       }
 
                       return TeamTile(
-                          teamID: teams[index]['id'],
+                          teamID: teams[index]['teamId'],
                           huntID: huntProgressModel.huntId,
                           isLocked: teams[index]['lockStatus'],
                           teamName: teams[index]['name'],
@@ -92,7 +93,8 @@ class _TeamTileState extends State<TeamTile> {
       // Get the entered name
       String playerName = _newMemberController.text.trim();
 
-      await joinTeam(widget.huntID, widget.teamName, playerName);
+      await joinTeam(widget.huntID, widget.teamID, playerName);
+
 
       final huntProgressModel =
           Provider.of<HuntProgressModel>(context, listen: false);
@@ -146,7 +148,7 @@ class _TeamTileState extends State<TeamTile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: widget.members.asMap().entries.map((entry) {
                   int index = entry.key;
-                  String member = entry.value['name'];
+                  String member = (entry.value['name'] as String?) ?? 'Unknown';
                   bool teamLeader = entry.value['teamLeader'];
                   return Column(children: [
                     Divider(

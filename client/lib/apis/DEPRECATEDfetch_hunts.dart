@@ -1,8 +1,15 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+
+
+// DEPRECATED: This API is deprecated and will be removed in a future version.
+// This API is deprecated and will be removed in a future version.
+
+
+
 Future<List<dynamic>> fetchHunts() async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts";
+  var apiUrl = "https://afterhours.praxiseng.com/afterhours/v1/hunts";
 
   try {
     final response = await http.get(Uri.parse(apiUrl));
