@@ -95,13 +95,13 @@ class _StartHuntView2State extends State<StartHuntView2> {
     });
   }
 
-  Future<void> fetchTeamsData() async {
-    var data = await fetchTeams();
-    setState(() {
-      teams = data;
-      isLoading = false;
-    });
-  }
+  // Future<void> fetchTeamsData() async {
+  //   var data = await fetchTeamsFromHunt(widget.huntID);
+  //   setState(() {
+  //     teams = data;
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -138,7 +138,7 @@ class MyTeamView extends StatelessWidget {
               decoration: AppStyles.backgroundStyle,
               child: Column(
                 children: [
-                  FutureBuilder<Map<String, dynamic>>(
+                  FutureBuilder<List<dynamic>>(
                     future: fetchTeamsFromHunt(huntProgressModel.huntId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -147,9 +147,9 @@ class MyTeamView extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else if (snapshot.hasData) {
                         // Find the specific team the user is in
-                        List<dynamic> teams = snapshot.data!['teams'];
+                        List<dynamic> teams = snapshot.data!;
                         var userTeam = teams.firstWhere(
-                          (team) => team['id'] == huntProgressModel.teamId,
+                          (team) => team['teamId'] == huntProgressModel.teamId,
                           orElse: () => null,
                         );
 
@@ -251,7 +251,7 @@ class _TeamTileState extends State<TeamTile> {
       HuntProgressModel huntProgressModel,
       WebSocketModel webSocketModel) async {
     final playerName = huntProgressModel.playerName;
-
+    
     if (playerName.isEmpty) {
       // print("My Team View Player name is empty.");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -259,17 +259,18 @@ class _TeamTileState extends State<TeamTile> {
       );
       return;
     }
-
-    final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
+    final wsUrl = 'wss://scavengerhunt.afterhoursdev.com/ws/scavengerhunt?huntId=${huntProgressModel.huntId}&teamId=${huntProgressModel.teamId}&playerName=$playerName&huntAlone=false';
+    // final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
     try {
-      // print('Connecting to WebSocket at: $wsUrl');
+      print('Connecting to WebSocket at: $wsUrl');
       webSocketModel.connect(wsUrl);
-      // print('WebSocket connected successfully.');
+      print('WebSocket connected successfully.');
       final channel = webSocketModel.messages;
       channel.listen(
         (message) {
           final Map<String, dynamic> data = json.decode(message);
           final String eventType = data['eventType'];
+          print("Incoming web socket message: {$data}");
 
           if (eventType == "PLAYER_JOINED_TEAM") {
             setState(() {

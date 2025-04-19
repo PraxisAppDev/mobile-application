@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 Future<Map<String, dynamic>> createTeam(String huntId, String teamName, String playerName, bool huntAlone) async {
-  var apiUrl = "http://afterhours.praxiseng.com/afterhours/v1/hunts/$huntId/teams";
+  var apiUrl = "https://scavengerhunt.afterhoursdev.com/api/v1/hunts/$huntId/teams";
 
   try {
     final response = await http.post(
@@ -14,14 +14,13 @@ Future<Map<String, dynamic>> createTeam(String huntId, String teamName, String p
       body: jsonEncode({
         "teamName": teamName,
         "playerName": playerName,
-        "huntAlone": huntAlone.toString()
+        "huntAlone": huntAlone //updated to be boolean instead of string
       }),
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      var jsonResponse = jsonDecode(response.body);
       // print("Create teams data: $jsonResponse");
-      return jsonResponse;
+      return jsonDecode(response.body);
     } else {
       throw Exception("Failed to create team. Status code: ${response.statusCode}");
     }
@@ -29,7 +28,6 @@ Future<Map<String, dynamic>> createTeam(String huntId, String teamName, String p
     throw Exception("Error occurred during the create teams request: $e");
   }
 }
-
 void main() {
   createTeam("1", "Eagles", "Andy", true);
 }
