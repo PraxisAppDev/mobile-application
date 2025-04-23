@@ -268,6 +268,8 @@ class _HeaderWidgetState extends State<HeaderWidget> {
 
   // starts timer to count seconds spent on challenge
   void _startTimer() {
+    if (_timer != null && _timer!.isActive) return; // Prevent multiple timers
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       setState(() {
         _secondsSpent++;

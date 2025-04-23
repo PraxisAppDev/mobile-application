@@ -269,8 +269,8 @@ class _TeamTileState extends State<TeamTile> {
       channel.listen(
         (message) {
           final Map<String, dynamic> data = json.decode(message);
-          final String eventType = data['eventType'];
           print("Incoming web socket message: {$data}");
+          final eventType = data['messageType'];
 
           if (eventType == "PLAYER_JOINED_TEAM") {
             setState(() {
@@ -330,11 +330,11 @@ class _TeamTileState extends State<TeamTile> {
           // print('Received message: $message');
         },
         onError: (error) {
-          // print('WebSocket error: $error');
+          print('WebSocket error: $error');
         },
         onDone: () {
-          // print('WebSocket connection closed.');
-          // showToast("WebSocket connection closed");
+          print('WebSocket connection closed.');
+          showToast("WebSocket connection closed");
         },
         cancelOnError: true,
       );
