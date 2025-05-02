@@ -327,6 +327,15 @@ class _TeamTileState extends State<TeamTile> {
                       currentChallenge: huntProgressModel.challengeNum)),
             );
           }
+
+          // websocket for updating the team name
+          else if (eventType == "UPDATE_TEAM") {
+            setState(() {
+              huntProgressModel.teamName = data['teamName'];
+            });
+            
+            showToast("Team name updated to ${data['teamName']}");
+          }
           // print('Received message: $message');
         },
         onError: (error) {
