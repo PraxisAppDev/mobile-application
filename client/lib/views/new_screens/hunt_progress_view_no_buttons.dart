@@ -178,7 +178,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
 
   @override
   Widget build(BuildContext context) {
-    final huntProgressModel = Provider.of<HuntProgressModel>(context);
+    final huntProgressModel = Provider.of<HuntProgressModel>(context, listen: false);
 
     if (isLoading) {
       return const Scaffold(
@@ -193,7 +193,7 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
         child: Column(
           children: [
             const SizedBox(height: 25),
-            _buildStatsBox(huntProgressModel),
+            _buildStatsBox(),
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
@@ -215,9 +215,9 @@ class _HuntProgressViewNoButtonsState extends State<HuntProgressViewNoButtons> {
     super.dispose();
   }
 
-Widget _buildStatsBox(HuntProgressModel model) {
-    final minutes = (model.secondsSpent ~/ 60).toString().padLeft(2, '0');
-    final seconds = (model.secondsSpent % 60).toString().padLeft(2, '0');
+Widget _buildStatsBox() {
+    // final minutes = (model.secondsSpent ~/ 60).toString().padLeft(2, '0');
+    // final seconds = (model.secondsSpent % 60).toString().padLeft(2, '0');
 
     return Container(
       width: 350,
@@ -227,21 +227,41 @@ Widget _buildStatsBox(HuntProgressModel model) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(model.huntName, style: AppStyles.logisticsStyle),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              const Icon(Icons.timer, color: Colors.white),
-              Text('$minutes:$seconds', style: AppStyles.logisticsStyle),
-            ],
+          Text(
+            Provider.of<HuntProgressModel>(context, listen: false).huntName, 
+            style: AppStyles.logisticsStyle
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              const Icon(Icons.two_mp_outlined, color: Colors.white),
-              Text("${model.totalPoints} points",
-                  style: AppStyles.logisticsStyle),
-            ],
+          // Row(
+          //   children: [
+          //     const Icon(Icons.timer, color: Colors.white),
+          //     Text('$minutes:$seconds', style: AppStyles.logisticsStyle),
+          //   ],
+          // ),
+          Consumer<HuntProgressModel>(
+            builder: (context, model, _) {
+              final minutes = (model.secondsSpent ~/ 60).toString().padLeft(2, '0');
+              final seconds = (model.secondsSpent % 60).toString().padLeft(2, '0');
+              return Row(
+                children: [
+                  const Icon(Icons.timer, color: Colors.white),
+                  Text(
+                    '$minutes:$seconds',
+                    style: AppStyles.logisticsStyle),
+                ],
+              );
+            },
+          ),
+          const SizedBox(height: 20),
+          Consumer<HuntProgressModel>(
+            builder: (context, model, _) {
+              return Row(
+                children: [
+                  const Icon(Icons.two_mp_outlined, color: Colors.white),
+                  Text("${model.totalPoints} points", style: AppStyles.logisticsStyle),
+                ],
+              );
+            },
           ),
         ],
       ),

@@ -11,7 +11,7 @@ import '../../provider/websocket_model.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:praxis_afterhours/styles/app_styles.dart';
-import 'package:praxis_afterhours/views/new_screens/hunt_progress_view.dart';
+import 'package:praxis_afterhours/views/new_screens/hunt_progress_view_no_buttons.dart';
 
 class ChallengeViewNoButtons extends StatefulWidget {
   final int currentChallenge;
@@ -118,6 +118,8 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
             },
           );
         }
+      } else if (data['message_type'] == 'SHOW_CHALLENGE_HINT') {
+
       }
     } catch (e) {
       // print("Error handling WebSocket message: $e");
@@ -138,9 +140,9 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => ChallengeViewNoButtons(
-                  huntProgressModel.challengeId,
-                  currentChallenge: widget.currentChallenge + 1,
+            builder: (context) => HuntProgressViewNoButtons(
+                  // huntProgressModel.challengeId,
+                  // currentChallenge: widget.currentChallenge + 1,
                 )),
       );
     } else {
@@ -483,7 +485,7 @@ class _ChallengeContentState extends State<ChallengeContent> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => HuntProgressView()),
+          builder: (context) => HuntProgressViewNoButtons()),
     );
   }
 
