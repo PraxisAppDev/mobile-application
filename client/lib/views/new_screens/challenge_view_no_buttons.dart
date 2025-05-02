@@ -79,7 +79,7 @@ class _ChallengeViewNoButtonsState extends State<ChallengeViewNoButtons> {
   void _handleWebSocketMessage(dynamic message) {
     try {
       final data = message is String ? json.decode(message) : message;
-      if (data['eventType'] == 'CHALLENGE_RESPONSE') {
+      if (data['message_type'] == 'CHALLENGE_RESPONSE') {
         final challengeSolved = data['challengeSolved'] == "true";
 
         if (!challengeSolved) {
