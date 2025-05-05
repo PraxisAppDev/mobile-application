@@ -94,6 +94,8 @@ class HuntProgressModel extends SafeChangeNotifier {
     return index >= 0 && index < pointsEarnedList.length ? pointsEarnedList[index] : 0;
   }
 
+  
+
   void incrementCurrentChallenge() {
     if (!completedChallenges.contains(challengeId)) {
       completedChallenges.add(challengeId);

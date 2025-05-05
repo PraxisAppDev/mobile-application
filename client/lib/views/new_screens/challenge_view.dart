@@ -22,7 +22,7 @@ class _ChallengeViewState extends State<ChallengeView> {
   @override
   void initState() {
     super.initState();
-    final huntProgressModel =
+    final huntProgressModel = 
         Provider.of<HuntProgressModel>(context, listen: false);
     _totalSeconds = huntProgressModel.previousSeconds;
   }

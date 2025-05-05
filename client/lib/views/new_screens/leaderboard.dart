@@ -42,11 +42,11 @@ class _LeaderboardState extends State<Leaderboard> {
                 );
               } else if (snapshot.hasData) {
                 final data = snapshot.data ?? {};
-                // print(data);
+                print(data);
 
-                String huntName = data['name'];
+                String huntName = data['huntName'];
                 String formattedDate = formatDate(data['startDate']);
-                List<dynamic> teams = data['teams'] ?? [];
+                List<dynamic> teams = data['teamsResults'] ?? [];
 
                 return DecoratedBox(
                   decoration: AppStyles.backgroundStyle,
