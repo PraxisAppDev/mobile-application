@@ -134,16 +134,13 @@ void connectWebSocket(
   // print(huntProgressModel.huntId);
   // print(widget.teamName);
 
-  final wsUrl = 'ws://afterhours.praxiseng.com/ws/hunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamName}&huntAlone=false';
+  final wsUrl = 'wss://scavengerhunt.afterhoursdev.com/ws/scavengerhunt?huntId=${huntProgressModel.huntId}&teamId=${widget.teamId}&playerName=$playerName&huntAlone=false';
+
+  // Cancel any existing connection first
+  webSocketModel.disconnect();
 
   // Timer to periodically send pings
   Timer? pingTimer;
-
-  // Function to attempt reconnect if the WebSocket disconnects
-  Future<void> reconnectWebSocket() async {
-    // print("Attempting to reconnect...");
-    connectWebSocket(context, huntProgressModel, webSocketModel);
-  }
 
   try {
     // print('Connecting to WebSocket at: $wsUrl');
@@ -155,48 +152,57 @@ void connectWebSocket(
     // Listen for messages from the WebSocket
     channel.listen(
       (message) {
-        final Map<String, dynamic> data = json.decode(message);
-        final String eventType = data['eventType'];
+        try {
+          final Map<String, dynamic> data = json.decode(message);
+          final String eventType = data['messageType'] ?? data['eventType'];
+          // Debug to see eventType
+          print('Received WebSocket message: $eventType');
 
-        if (eventType == "PLAYER_JOINED_TEAM") {
           setState(() {
-            final newPlayer = {
+            if (eventType == "PLAYER_JOINED_TEAM") {
+              final newPlayer = {
               'name': data['playerName'],
               'teamLeader': false,
             };
-
-            showDeleteButton = false; // hide delete team button
-
             if (!_members.any((member) => member['name'] == newPlayer['name'])) {
               _members.add(newPlayer);
+              showToast("${data['playerName']} joined team");
+              }
+            showDeleteButton = false; // hide delete team button
+            } else if (eventType == "PLAYER_LEFT_TEAM") {
+              _members.removeWhere((member) => member['name'] == data['playerName']);
+              showToast("${data['playerName']} left team");
+            } else if (eventType == "HUNT_STARTED") {
+              showToast("Hunt started");
+            } else if (eventType == "HUNT_ENDED") {
+              showToast("Hunt ended");
+            } else if (eventType == "CHALLENGE_RESPONSE") {
+              showToast("Challenge response");
             }
           });
-          // print("SHOW DELETE BUTTON: $showDeleteButton");
-          showToast("${data['playerName']} joined team");
-        } else if (eventType == "PLAYER_LEFT_TEAM") {
-          setState(() {
-            _members.removeWhere((member) => member['name'] == data['playerName']);
-          });
-          showToast("${data['playerName']} left team");
-        } else if (eventType == "HUNT_STARTED") {
-          showToast("Hunt started");
-        } else if (eventType == "HUNT_ENDED") {
-          showToast("Hunt ended");
-        } else if (eventType == "CHALLENGE_RESPONSE") {
-          showToast("Challenge response");
+        } catch(e) {
+          print('Error processing WebSocket message: $e');
         }
-      },
+      }, 
       onError: (error) {
-        // print('WebSocket error: $error');
+        print('WebSocket error: $error');
         // showToast("WebSocket error: $error");
         // Try to reconnect if error occurs
-        reconnectWebSocket();
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            connectWebSocket(context, huntProgressModel, webSocketModel);
+          }
+        });
       },
       onDone: () {
-        // print('WebSocket closed');
+        print('WebSocket closed');
         //showToast("WebSocket closed");
         // Try to reconnect when WebSocket is closed
-        reconnectWebSocket();
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            connectWebSocket(context, huntProgressModel, webSocketModel);
+          }
+        });
       },
       cancelOnError: true,
     );
@@ -207,10 +213,14 @@ void connectWebSocket(
     });
 
   } catch (e) {
-    // print('Failed to connect to WebSocket: $e');
+    print('Failed to connect to WebSocket: $e');
     // showToast("Failed to connect to WebSocket: $e");
     // Try to reconnect if WebSocket connection fails
-    reconnectWebSocket();
+    Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            connectWebSocket(context, huntProgressModel, webSocketModel);
+          }
+        });
   }
 }
 
