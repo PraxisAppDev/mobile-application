@@ -29,7 +29,6 @@ class _HuntProgressViewState extends State<HuntProgressView> {
     // Initialize the round's data and start the timer
     huntProgressModel.addSecondsSpent(huntProgressModel.secondsSpentThisRound);
     huntProgressModel.addPointsEarned(huntProgressModel.pointsEarnedThisRound);
-    huntProgressModel.startTimer();
     fetchChallengesData();
   }
 

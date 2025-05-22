@@ -48,6 +48,7 @@ class HuntProgressModel extends SafeChangeNotifier {
     _timerStarted = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       secondsSpent++;
+      print("notifyListeners() called from startTimer at :${DateTime.now()}");
       notifyListeners(); // Notify listeners to update only relevant widgets
     });
   }
@@ -62,21 +63,25 @@ class HuntProgressModel extends SafeChangeNotifier {
   void resetTimer() {
     stopTimer();
     secondsSpent = 0;
+    print("notifyListeners() called from resetTimer at :${DateTime.now()}");
     notifyListeners();
   }
 
   void markHuntCompleted(int index) {
     pressedHunts.add(index);
+    print("notifyListeners() called from markHuntCompleted at :${DateTime.now()}");
     notifyListeners();
   }
 
   void addSecondsSpent(int seconds) {
     secondsSpentList.add(seconds);
+    print("notifyListeners() called from addSecondsSpent at :${DateTime.now()}");
     notifyListeners();
   }
 
   void addPointsEarned(int points) {
     pointsEarnedList.add(points);
+    print("notifyListeners() called from addPointsEarned at :${DateTime.now()}");
     notifyListeners();
   }
 
@@ -89,10 +94,13 @@ class HuntProgressModel extends SafeChangeNotifier {
     return index >= 0 && index < pointsEarnedList.length ? pointsEarnedList[index] : 0;
   }
 
+  
+
   void incrementCurrentChallenge() {
     if (!completedChallenges.contains(challengeId)) {
       completedChallenges.add(challengeId);
       currentChallenge++;
+      print("notifyListeners() called from incrementCurrentChallenge at :${DateTime.now()}");
       notifyListeners();
     }
   }
@@ -102,6 +110,7 @@ class HuntProgressModel extends SafeChangeNotifier {
     if (newChallengeId != challengeId) {
       challengeId = newChallengeId;
       challengeNum = newChallengeNum;
+      print("notifyListeners() called from updateChallengeState at :${DateTime.now()}");
       incrementCurrentChallenge();
     }
   }
